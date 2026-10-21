@@ -1,10 +1,19 @@
-/* Biodata maker page. Depends on common.js and biodata-templates.js. */
+/* Biodata and wedding invitation maker pages. Depends on common.js and biodata-templates.js.
+   A page can set window.LLT_MAKER to switch product (see the invitation page). */
 (function () {
   'use strict';
   var L = window.LLT, B = window.Biodata, I = window.BiodataIcons;
   if (!B || !document.getElementById('bd-gallery')) return;
 
   var $ = function (id) { return document.getElementById(id); };
+  var M = Object.assign({
+    product: 'biodata', noun: 'biodata', list: 'TEMPLATES', byId: 'byId', render: 'render', sample: 'SAMPLE',
+    price: 20, nameId: 'b-name', nameHint: 'Please enter your full name first.', defaultTitle: 'BIODATA', filePrefix: 'biodata',
+    fileName: function (d) { return d.name; }, pdfFormat: 'a4', storeKey: 'bd'
+  }, window.LLT_MAKER || {});
+  // Settings name parts of window.Biodata (e.g. 'INVITES', 'renderInvite').
+  M.list = B[M.list]; M.byId = B[M.byId]; M.render = B[M.render]; M.sample = B[M.sample];
+  var RS = function () { return '₹' + M.price; };
   var form = $('bd-form');
   var API = '/api/biodata';
   var PAGE_W = 794, PAGE_H = 1123;
@@ -12,9 +21,9 @@
 
   // ---------- storage ----------
   var store = {
-    get: function (k) { try { return JSON.parse(localStorage.getItem('llt:bd:' + k)); } catch (e) { return null; } },
-    set: function (k, v) { try { localStorage.setItem('llt:bd:' + k, JSON.stringify(v)); return true; } catch (e) { return false; } },
-    del: function (k) { try { localStorage.removeItem('llt:bd:' + k); } catch (e) { /* ignore */ } }
+    get: function (k) { try { return JSON.parse(localStorage.getItem('llt:' + M.storeKey + ':' + k)); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem('llt:' + M.storeKey + ':' + k, JSON.stringify(v)); return true; } catch (e) { return false; } },
+    del: function (k) { try { localStorage.removeItem('llt:' + M.storeKey + ':' + k); } catch (e) { /* ignore */ } }
   };
 
   // ---------- rendering ----------
@@ -42,14 +51,14 @@
   function gallery() {
     var g = $('bd-gallery');
     g.innerHTML = '';
-    B.TEMPLATES.forEach(function (tpl) {
+    M.list.forEach(function (tpl) {
       if (state.filter !== 'all' && tpl.tier !== state.filter) return;
       var card = document.createElement('button');
       card.type = 'button';
       card.className = 'bd-card';
       card.setAttribute('aria-pressed', tpl.id === state.tplId ? 'true' : 'false');
-      card.innerHTML = '<div class="bd-thumbbox">' + B.render(B.SAMPLE, tpl, { thumb: true }) + '</div>' +
-        '<div class="bd-card-meta"><span>' + tpl.name + '</span><span class="bd-pill' + (tpl.tier === 'premium' ? ' paid' : '') + '">' + (tpl.tier === 'premium' ? '₹20' : 'FREE') + '</span></div>';
+      card.innerHTML = '<div class="bd-thumbbox">' + M.render(M.sample, tpl, { thumb: true }) + '</div>' +
+        '<div class="bd-card-meta"><span>' + tpl.name + '</span><span class="bd-pill' + (tpl.tier === 'premium' ? ' paid' : '') + '">' + (tpl.tier === 'premium' ? RS() : 'FREE') + '</span></div>';
       card.addEventListener('click', function () { choose(tpl.id); });
       g.appendChild(card);
       var box = card.querySelector('.bd-thumbbox');
@@ -68,7 +77,7 @@
 
   function choose(id) {
     if (state.order && state.order.locked && state.order.tplId !== id) {
-      if (!confirm('Your paid biodata is final. Switching design starts a new biodata. Continue?')) return;
+      if (!confirm('Your paid ' + M.noun + ' is final. Switching design starts a new ' + M.noun + '. Continue?')) return;
       state.order = null; store.del('order');
     }
     state.tplId = id;
@@ -121,9 +130,14 @@
   function readData() {
     var d = {};
     form.querySelectorAll('[data-key]').forEach(function (el) { d[el.dataset.key] = el.value.trim(); });
-    d.custom = [].map.call($('b-custom').querySelectorAll('.bd-custom-row'), function (row) {
+    if ($('b-custom')) d.custom = [].map.call($('b-custom').querySelectorAll('.bd-custom-row'), function (row) {
       return { label: row.querySelector('[data-c="label"]').value.trim(), value: row.querySelector('[data-c="value"]').value.trim() };
     }).filter(function (c) { return c.label && c.value; });
+    if ($('b-events')) d.events = [].map.call($('b-events').querySelectorAll('.bd-event-row'), function (row) {
+      var o = {};
+      row.querySelectorAll('[data-e]').forEach(function (el) { o[el.dataset.e] = el.value.trim(); });
+      return o;
+    }).filter(function (e) { return e.name || e.date || e.venue; });
     if (state.photo) d.photo = state.photo;
     if (state.deityImg) d.deityImg = state.deityImg;
     return d;
@@ -132,9 +146,24 @@
     if (!d) return;
     if (!d.deity && d.symbol) d.deity = d.symbol; // older saved drafts
     form.querySelectorAll('[data-key]').forEach(function (el) { if (d[el.dataset.key] != null) el.value = d[el.dataset.key]; });
-    $('b-custom').innerHTML = '';
-    (d.custom || []).forEach(addCustom);
+    if ($('b-custom')) { $('b-custom').innerHTML = ''; (d.custom || []).forEach(addCustom); }
+    if ($('b-events')) { $('b-events').innerHTML = ''; (d.events || []).forEach(addEvent); }
   }
+  // Wedding functions (invitation maker)
+  function addEvent(ev) {
+    ev = ev || {};
+    var row = document.createElement('div');
+    row.className = 'bd-event-row';
+    row.innerHTML = '<div class="row2"><div class="field"><label>Function</label><input type="text" data-e="name" maxlength="40" placeholder="e.g. Wedding, Haldi, Reception"></div>' +
+      '<div class="field"><label>Date</label><input type="date" data-e="date"></div>' +
+      '<div class="field"><label>Time</label><input type="text" data-e="time" maxlength="30" placeholder="e.g. 7:00 PM onwards"></div>' +
+      '<div class="field"><label>Venue</label><input type="text" data-e="venue" maxlength="120" placeholder="Hall name, area, city"></div></div>' +
+      '<button type="button" class="btn">Remove this function</button>';
+    row.querySelectorAll('[data-e]').forEach(function (el) { if (ev[el.dataset.e]) el.value = ev[el.dataset.e]; });
+    row.querySelector('button').addEventListener('click', function () { row.remove(); changed(); });
+    $('b-events').appendChild(row);
+  }
+  if ($('b-events-add')) $('b-events-add').addEventListener('click', function () { addEvent(); changed(); });
   function addCustom(c) {
     c = c || {};
     var row = document.createElement('div');
@@ -145,7 +174,7 @@
     row.querySelector('button').addEventListener('click', function () { row.remove(); changed(); });
     $('b-custom').appendChild(row);
   }
-  $('b-custom-add').addEventListener('click', function () { addCustom(); });
+  if ($('b-custom-add')) $('b-custom-add').addEventListener('click', function () { addCustom(); });
 
   // Photo: shrink to max 700 px so it stays light and saves on the device.
   $('b-photo').addEventListener('change', function () {
@@ -160,33 +189,34 @@
   $('b-clear').addEventListener('click', function () {
     if (!confirm('Clear all the details you entered?')) return;
     form.querySelectorAll('[data-key]').forEach(function (el) { el.value = el.tagName === 'SELECT' ? '' : ''; });
-    $('b-title').value = 'BIODATA';
-    $('b-custom').innerHTML = '';
+    $('b-title').value = M.defaultTitle;
+    if ($('b-custom')) $('b-custom').innerHTML = '';
+    if ($('b-events')) $('b-events').innerHTML = '';
     state.photo = null; store.del('photo'); $('b-photo-remove').hidden = true;
     state.deityImg = null; store.del('deityImg'); $('b-deity-img-remove').hidden = true;
     changed();
   });
 
   // ---------- preview ----------
-  function tpl() { return B.byId(state.tplId) || B.TEMPLATES[0]; }
+  function tpl() { return M.byId(state.tplId) || M.list[0]; }
   function isPaid() { return state.order && state.order.tplId === state.tplId && state.order.token && state.order.tier === 'premium'; }
 
   function preview() {
     var t = tpl(), d = readData();
     var box = $('bd-preview');
-    box.innerHTML = B.render(d, t, { watermark: t.tier === 'premium' && !isPaid() });
+    box.innerHTML = M.render(d, t, { watermark: t.tier === 'premium' && !isPaid() });
     fit(box.querySelector('.bd'));
     scaleInto(box);
     if (resize) resize.observe(box);
     $('pv-name').textContent = t.name;
     var pill = $('pv-pill');
-    pill.textContent = t.tier === 'premium' ? (isPaid() ? 'PAID' : '₹20') : 'FREE';
+    pill.textContent = t.tier === 'premium' ? (isPaid() ? 'PAID' : RS()) : 'FREE';
     pill.className = 'bd-pill' + (t.tier === 'premium' && !isPaid() ? ' paid' : '');
     $('pv-note').textContent = t.tier === 'premium'
-      ? (isPaid() ? 'Paid. Download your PDF and JPG. Downloads stay available for 48 hours.' : 'Premium design: pay ₹20 to download without the watermark, as PDF and JPG.')
+      ? (isPaid() ? 'Paid. Download your PDF and JPG. Downloads stay available for 48 hours.' : 'Premium design: pay ' + RS() + ' to download without the watermark, as PDF and JPG.')
       : 'Free design: enter your email to download as PDF and JPG.';
     document.querySelectorAll('[data-dl]').forEach(function (b) {
-      b.textContent = (t.tier === 'premium' && !isPaid() ? 'Pay ₹20 & download ' : 'Download ') + b.dataset.dl.toUpperCase();
+      b.textContent = (t.tier === 'premium' && !isPaid() ? 'Pay ' + RS() + ' & download ' : 'Download ') + b.dataset.dl.toUpperCase();
     });
     lockUi();
   }
@@ -197,11 +227,11 @@
     var banner = $('bd-locked');
     banner.hidden = !locked;
     if (locked) {
-      banner.innerHTML = '<strong>Your paid biodata is final.</strong> To change any detail, start a new edit for ₹20. ' +
-        '<button type="button" class="btn" id="bd-newedit" style="margin-top:8px">Start a new edit (₹20)</button>';
+      banner.innerHTML = '<strong>Your paid ' + M.noun + ' is final.</strong> To change any detail, start a new edit for ' + RS() + '. ' +
+        '<button type="button" class="btn" id="bd-newedit" style="margin-top:8px">Start a new edit (' + RS() + ')</button>';
       $('bd-newedit').disabled = false;
       $('bd-newedit').addEventListener('click', function () {
-        if (!confirm('Start a new edit? You\'ll need to pay ₹20 again to download the changed biodata.')) return;
+        if (!confirm('Start a new edit? You\'ll need to pay ' + RS() + ' again to download the changed ' + M.noun + '.')) return;
         state.order = null; store.del('order'); preview();
       });
     }
@@ -245,9 +275,9 @@
     return new Promise(function (resolve) {
       var m = $('bd-modal');
       var t = tpl();
-      $('m-text').textContent = t.tier === 'premium' ? 'Enter your email, then pay ₹20 securely with UPI, card or net banking.' : 'Enter your email to download your biodata for free.';
-      $('m-submit').textContent = t.tier === 'premium' ? 'Continue to pay ₹20' : 'Continue';
-      $('m-email').value = store.get('email') || $('b-email').value || '';
+      $('m-text').textContent = t.tier === 'premium' ? 'Enter your email, then pay ' + RS() + ' securely with UPI, card or net banking.' : 'Enter your email to download your ' + M.noun + ' for free.';
+      $('m-submit').textContent = t.tier === 'premium' ? 'Continue to pay ' + RS() : 'Continue';
+      $('m-email').value = store.get('email') || ($('b-email') ? $('b-email').value : '') || '';
       $('m-status').textContent = '';
       m.hidden = false;
       $('m-email').focus();
@@ -262,7 +292,7 @@
   function pay(start, who) {
     if (start.dev) {
       return new Promise(function (resolve, reject) {
-        if (!confirm('TEST MODE: payments aren\'t set up yet. Simulate a successful ₹20 payment?')) return reject(new Error('Payment cancelled.'));
+        if (!confirm('TEST MODE: payments aren\'t set up yet. Simulate a successful ' + RS() + ' payment?')) return reject(new Error('Payment cancelled.'));
         api('/verify', { orderId: start.orderId, dev: true }).then(resolve, reject);
       });
     }
@@ -270,8 +300,8 @@
       return new Promise(function (resolve, reject) {
         var rz = new window.Razorpay({
           key: start.keyId, amount: start.amount, currency: 'INR', order_id: start.razorpayOrderId,
-          name: 'LiveLifeTricks', description: 'Biodata design: ' + tpl().name,
-          prefill: { email: who.email, name: $('b-name').value },
+          name: 'LiveLifeTricks', description: (M.product === 'invite' ? 'Invitation design: ' : 'Biodata design: ') + tpl().name,
+          prefill: { email: who.email, name: $(M.nameId).value },
           theme: { color: '#0f766e' },
           handler: function (resp) {
             api('/verify', { orderId: start.orderId, razorpay_order_id: resp.razorpay_order_id, razorpay_payment_id: resp.razorpay_payment_id, razorpay_signature: resp.razorpay_signature }).then(resolve, reject);
@@ -293,7 +323,7 @@
       if (!who) throw new Error('');
       status(t.tier === 'premium' ? 'Opening secure payment…' : 'Preparing your download…');
       return fingerprint().then(function (hash) {
-        return api('/start', { email: who.email, name: $('b-name').value, templateId: t.id, dataHash: hash, consent: who.consent }).then(function (start) {
+        return api('/start', { product: M.product, email: who.email, name: $(M.nameId).value, templateId: t.id, dataHash: hash, consent: who.consent }).then(function (start) {
           if (start.free) return { orderId: start.orderId, token: start.token, tplId: t.id, tier: 'free' };
           return pay(start, who).then(function (v) { return { orderId: start.orderId, token: v.token, tplId: t.id, tier: 'premium', hash: hash, locked: true }; });
         });
@@ -310,10 +340,10 @@
   function exportFile(kind) {
     var t = tpl(), d = readData();
     var holder = $('bd-render');
-    holder.innerHTML = B.render(d, t, {});
+    holder.innerHTML = M.render(d, t, {});
     var el = holder.querySelector('.bd');
     fit(el);
-    var fileName = 'biodata-' + (d.name || 'my').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.' + kind;
+    var fileName = M.filePrefix + '-' + (M.fileName(d) || 'my').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.' + kind;
     return Promise.all([loadScript('/assets/js/vendor/html2canvas.min.js'), kind === 'pdf' ? loadScript('/assets/js/vendor/jspdf.umd.min.js') : null, document.fonts ? document.fonts.ready : null])
       .then(function () { return B.prepareExport(el); })
       .then(function () { return window.html2canvas(el, { scale: 2, backgroundColor: null, logging: false, useCORS: true }); })
@@ -321,8 +351,9 @@
         var jpg = canvas.toDataURL('image/jpeg', 0.92);
         if (kind === 'jpg') { saveUrl(jpg, fileName); }
         else {
-          var pdf = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
-          pdf.addImage(jpg, 'JPEG', 0, 0, 210, 297);
+          var size = M.pdfFormat === 'a5' ? [148, 210] : [210, 297];
+          var pdf = new window.jspdf.jsPDF({ unit: 'mm', format: M.pdfFormat, orientation: 'portrait', compress: true });
+          pdf.addImage(jpg, 'JPEG', 0, 0, size[0], size[1]);
           pdf.save(fileName);
         }
         holder.innerHTML = '';
@@ -338,7 +369,7 @@
   document.querySelectorAll('[data-dl]').forEach(function (btn) {
     btn.addEventListener('click', function () {
       if (busy) return;
-      if (!$('b-name').value.trim()) { status('Please enter your full name first.', true); $('b-name').focus(); return; }
+      if (!$(M.nameId).value.trim()) { status(M.nameHint, true); $(M.nameId).focus(); return; }
       busy = true;
       var kind = btn.dataset.dl;
       ensureOrder()
@@ -364,8 +395,13 @@
   $('b-deity-img-remove').hidden = !state.deityImg;
   state.order = store.get('order');
   var q = new URLSearchParams(location.search).get('design');
-  var startTpl = B.byId(q) ? q : store.get('tpl');
+  var startTpl = M.byId(q) ? q : store.get('tpl');
+  if (!store.get('data') && M.defaults) writeData(M.defaults);
   gallery();
-  if (B.byId(startTpl)) { state.tplId = startTpl; $('step-editor').hidden = false; gallery(); preview(); }
-  api('/config').then(function (c) { state.config = c; }, function () { /* offline: downloads will show the error */ });
+  if (M.byId(startTpl)) { state.tplId = startTpl; $('step-editor').hidden = false; gallery(); preview(); }
+  api('/config').then(function (c) {
+    state.config = c;
+    var p = c.prices && c.prices[M.product];
+    if (p && p !== M.price) { M.price = p; gallery(); if (state.tplId) preview(); }
+  }, function () { /* offline: downloads will show the error */ });
 })();

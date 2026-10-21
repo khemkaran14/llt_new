@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Biodata Admin</title>
+<title>LiveLifeTricks Admin</title>
 <style>
   :root { --bg: #f6f7f7; --card: #fff; --ink: #18211e; --muted: #5d6965; --line: #dfe5e3; --brand: #0f766e; --soft: #e3f3f0; --warn: #8a5a00; --warnbg: #fdf0d5; }
   @media (prefers-color-scheme: dark) { :root { --bg: #0e1412; --card: #151d1a; --ink: #e7eeeb; --muted: #9aa8a3; --line: #2a3632; --brand: #2dd4bf; --soft: #123a35; --warn: #fbbf24; --warnbg: #3a2c10; } }
@@ -39,7 +39,7 @@
 <body>
 <div class="wrap">
   <div id="login" class="card login" hidden>
-    <h1>Biodata admin</h1>
+    <h1>LiveLifeTricks admin</h1>
     <p class="muted">Enter the admin password.</p>
     <form id="login-form">
       <input id="pw" type="password" autocomplete="current-password" style="width:100%" required>
@@ -50,7 +50,7 @@
 
   <div id="dash" hidden>
     <div class="top">
-      <h1>Biodata orders</h1>
+      <h1>Biodata &amp; invitation orders</h1>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button id="refresh">Refresh</button>
         <a class="btn" href="/api/admin/orders.csv">Download CSV</a>
@@ -60,13 +60,14 @@
     <div class="stats" id="stats"></div>
     <div class="filters">
       <input id="q" type="search" placeholder="Search email, name or payment ID">
+      <select id="product"><option value="">Biodata &amp; invitations</option><option value="biodata">Biodata only</option><option value="invite">Invitations only</option></select>
       <select id="tier"><option value="">All designs</option><option value="free">Free</option><option value="premium">Premium</option></select>
       <select id="status"><option value="">Any status</option><option value="paid">Paid</option><option value="free">Free</option><option value="created">Started, not paid</option></select>
       <label class="muted" style="display:flex;align-items:center;gap:6px"><input id="dl" type="checkbox" style="height:auto"> Downloaded only</label>
     </div>
     <div class="tablewrap">
       <table>
-        <thead><tr><th>Date</th><th>Email</th><th>Name</th><th>Design</th><th>Type</th><th>Status</th><th class="num">Paid ₹</th><th>Payment ID</th><th class="num">Downloads</th><th>Last download</th><th>Email OK</th></tr></thead>
+        <thead><tr><th>Date</th><th>Email</th><th>Name</th><th>Product</th><th>Design</th><th>Type</th><th>Status</th><th class="num">Paid ₹</th><th>Payment ID</th><th class="num">Downloads</th><th>Last download</th><th>Email OK</th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
     </div>
@@ -94,15 +95,15 @@
     var s = data.summary;
     $('stats').innerHTML = [['Revenue', '₹' + inr.format(s.revenue)], ['Paid orders', s.paid], ['Free downloads', s.free], ['Unique emails', s.emails], ['Total downloads', s.downloads], ['Started, not paid', s.abandoned]]
       .map(function (x) { return '<div class="card stat"><div class="k">' + x[0] + '</div><div class="v">' + x[1] + '</div></div>'; }).join('');
-    var q = $('q').value.toLowerCase(), tier = $('tier').value, st = $('status').value, dl = $('dl').checked;
+    var q = $('q').value.toLowerCase(), tier = $('tier').value, st = $('status').value, dl = $('dl').checked, prod = $('product').value;
     var rows = data.rows.filter(function (r) {
-      return (!q || (r.email + ' ' + r.name + ' ' + r.paymentId).toLowerCase().indexOf(q) !== -1) && (!tier || r.tier === tier) && (!st || r.status === st) && (!dl || r.downloads > 0);
+      return (!q || (r.email + ' ' + r.name + ' ' + r.paymentId).toLowerCase().indexOf(q) !== -1) && (!tier || r.tier === tier) && (!st || r.status === st) && (!dl || r.downloads > 0) && (!prod || r.product === prod);
     });
     $('rows').innerHTML = rows.map(function (r) {
-      return '<tr><td>' + when(r.createdAt) + '</td><td>' + esc(r.email) + '</td><td>' + esc(r.name) + '</td><td>' + esc(r.template) + '</td>' +
+      return '<tr><td>' + when(r.createdAt) + '</td><td>' + esc(r.email) + '</td><td>' + esc(r.name) + '</td><td>' + (r.product === 'invite' ? 'Invitation' : 'Biodata') + '</td><td>' + esc(r.template) + '</td>' +
         '<td><span class="pill ' + r.tier + '">' + r.tier + '</span></td><td><span class="pill ' + r.status + '">' + (r.status === 'created' ? 'not paid' : r.status) + '</span></td>' +
         '<td class="num">' + (r.amount || '') + '</td><td>' + esc(r.paymentId) + '</td><td class="num">' + r.downloads + '</td><td>' + when(r.lastDownload) + '</td><td>' + (r.consent ? 'Yes' : '—') + '</td></tr>';
-    }).join('') || '<tr><td colspan="11" class="muted">No orders yet.</td></tr>';
+    }).join('') || '<tr><td colspan="12" class="muted">No orders yet.</td></tr>';
     $('count').textContent = rows.length + ' of ' + data.rows.length + ' orders';
   }
   $('login-form').addEventListener('submit', function (e) {
@@ -114,7 +115,7 @@
   });
   $('logout').addEventListener('click', function () { fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' }).then(load); });
   $('refresh').addEventListener('click', load);
-  ['q', 'tier', 'status', 'dl'].forEach(function (id) { $(id).addEventListener('input', function () { if (data) render(); }); });
+  ['q', 'product', 'tier', 'status', 'dl'].forEach(function (id) { $(id).addEventListener('input', function () { if (data) render(); }); });
   load();
 })();
 </script>

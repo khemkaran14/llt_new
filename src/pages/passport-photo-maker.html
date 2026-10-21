@@ -1,0 +1,94 @@
+<!--meta
+{
+  "title": "Passport Photo Maker & Exam Photo/Signature Resizer (KB & Pixels) | LiveLifeTricks",
+  "description": "Free passport size photo maker and exam form resizer: crop and resize photos and signatures to exact pixels and KB (20–50 KB, 10–20 KB) for passport, visa, SSC, IBPS and bank forms. Print 8 photos on a 4×6 sheet. Private: nothing is uploaded.",
+  "path": "/passport-photo-maker/",
+  "priority": "0.9",
+  "breadcrumb": "Passport & Exam Photo Resizer",
+  "scripts": ["photo-maker.js"]
+}
+-->
+<section class="hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › Passport &amp; Exam Photo Resizer</nav>
+    <h1>Passport Photo &amp; Exam Form Photo/Signature Resizer</h1>
+    <p class="lead">Crop, resize and compress your photo or signature to the exact size a form asks for (pixels and KB), and print passport photos at home. Your photo never leaves your device.</p>
+    <div class="badges"><span class="badge">Exact pixels &amp; KB</span><span class="badge">Passport, visa, SSC, bank exams</span><span class="badge">4×6 print sheet</span><span class="badge">Private</span></div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="calc">
+    <div class="card">
+      <div class="field">
+        <span class="label" id="pm-type-label">What are you resizing?</span>
+        <div class="seg" role="group" aria-labelledby="pm-type-label" id="pm-type">
+          <button type="button" data-value="photo" aria-pressed="true">Photo</button>
+          <button type="button" data-value="sign" aria-pressed="false">Signature</button>
+        </div>
+      </div>
+      <div class="field"><label for="pm-preset">Size needed</label><select id="pm-preset"></select>
+        <span class="hint" id="pm-preset-note"></span></div>
+      <div class="row2" id="pm-custom" hidden>
+        <div class="field"><label for="pm-w">Width (px)</label><input id="pm-w" type="number" min="20" max="4000" value="200"></div>
+        <div class="field"><label for="pm-h">Height (px)</label><input id="pm-h" type="number" min="20" max="4000" value="230"></div>
+        <div class="field"><label for="pm-min">Min size (KB)</label><input id="pm-min" type="number" min="0" max="5000" value="20"></div>
+        <div class="field"><label for="pm-max">Max size (KB)</label><input id="pm-max" type="number" min="1" max="5000" value="50"></div>
+      </div>
+      <div class="field">
+        <label for="pm-file">Choose your photo</label>
+        <input id="pm-file" type="file" accept="image/*">
+        <span class="hint">Tip: take the photo in daylight against a plain white or light wall.</span>
+      </div>
+      <div id="pm-editor" hidden>
+        <div class="pm-canvas-wrap"><canvas id="pm-canvas" aria-label="Drag to position the photo"></canvas></div>
+        <p class="small muted" style="text-align:center;margin:6px 0 10px">Drag to move · use the slider to zoom</p>
+        <div class="field"><label for="pm-zoom">Zoom</label><input id="pm-zoom" type="range" min="1" max="4" step="0.01" value="1"></div>
+        <div class="field" id="pm-bright-field"><label for="pm-bright">Brightness</label><input id="pm-bright" type="range" min="-40" max="40" step="1" value="0"></div>
+        <label class="check" id="pm-clean-field" hidden><input type="checkbox" id="pm-clean" checked> Clean background (make the paper pure white)</label>
+        <div class="actions"><button type="button" class="btn" id="pm-rotate">Rotate 90°</button><button type="button" class="btn" id="pm-center">Re-centre</button></div>
+      </div>
+    </div>
+
+    <aside class="card results" aria-live="polite">
+      <h2>Ready file</h2>
+      <div class="pm-out"><img id="pm-out" alt="Resized result"></div>
+      <table class="kv" id="pm-info"></table>
+      <div class="tip" id="pm-warn" hidden></div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="pm-dl" disabled>Download JPG</button>
+        <button type="button" class="btn" id="pm-sheet" disabled>Print sheet (4×6, 8 photos)</button>
+      </div>
+      <p class="small muted" style="margin:12px 0 0">Always check the latest size rules in your exam notice or application portal. Rules change.</p>
+    </aside>
+  </div>
+</section>
+
+<article class="wrap narrow content">
+  <p class="updated">Last updated: {{updated}}</p>
+  <h2>Common photo and signature sizes</h2>
+  <table>
+    <thead><tr><th>Form</th><th>Size</th><th>File size</th></tr></thead>
+    <tbody>
+      <tr><td>Indian passport (digital)</td><td>630 × 810 px (35 × 45 mm), white background</td><td>Up to 250 KB</td></tr>
+      <tr><td>US visa</td><td>600 × 600 px (2 × 2 inch)</td><td>Up to 240 KB</td></tr>
+      <tr><td>IBPS / SBI bank exams: photo</td><td>200 × 230 px</td><td>20–50 KB</td></tr>
+      <tr><td>Bank exams &amp; SSC: signature</td><td>140 × 60 px (common)</td><td>10–20 KB</td></tr>
+    </tbody>
+  </table>
+  <p>Exam bodies change their rules from time to time, and some (like SSC) now take a live photo on the portal. If your notice gives a different size, choose <strong>Custom size</strong> and enter it.</p>
+  <h2>Tips for a photo that gets accepted</h2>
+  <ul>
+    <li>Face the camera straight on, with a neutral expression and eyes open. No glasses glare, no caps.</li>
+    <li>Use a plain white or light background and even light, with no shadows on your face.</li>
+    <li>Your face should fill about 70–80% of the photo height for passports.</li>
+    <li>For signatures, sign with a black or dark blue pen on plain white paper and photograph it straight on.</li>
+  </ul>
+  <h2>Frequently asked questions</h2>
+  <div class="faq-wrap">
+    <details class="faq"><summary>How do I reduce a photo to 20 KB or 50 KB?</summary><p>Pick the preset (or Custom size with your KB limits) and upload your photo. The tool automatically adjusts compression so the file lands within the limit, and shows the final size.</p></details>
+    <details class="faq"><summary>Is my photo uploaded anywhere?</summary><p>No. Everything happens inside your browser. The photo never leaves your phone or computer.</p></details>
+    <details class="faq"><summary>How do I print passport photos at home or a shop?</summary><p>Use "Print sheet" to download a 4×6 inch sheet with 8 passport photos. Print it as a 4×6 photo print at any photo shop or on a home photo printer at 100% scale, then cut along the lines.</p></details>
+    <details class="faq"><summary>Can it remove the background?</summary><p>Not automatically. For best results, take the photo against a plain white wall. For signatures, "Clean background" makes the paper pure white.</p></details>
+  </div>
+</article>

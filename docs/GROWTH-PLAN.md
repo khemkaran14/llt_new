@@ -38,13 +38,15 @@ Add **2–3 calculators a month**. Each needs a strong explanation section, a wo
 | 3 | ✅ HRA calculator | Reuses the tax engine; new 8-city rule is fresh news |
 | 4 | ✅ FD and RD calculators | Steady volume, also popular with seniors |
 | 5 | ✅ PPF calculator | Peaks every March |
-| 6 | Home loan eligibility | Leads to home loan affiliate offers |
+| 6 | ✅ Home loan eligibility | Leads to home loan affiliate offers |
 | 7 | Home loan prepayment / balance transfer | High-intent visitors |
 | 8 | ✅ GST calculator | Very high volume from small businesses |
-| 9 | Gratuity, EPF and NPS calculators | Salaried audience |
-| 10 | Capital gains tax (shares and mutual funds) | High-value audience |
+| 9 | ✅ Gratuity, EPF and NPS calculators | Salaried audience |
+| 10 | ✅ Capital gains tax (shares and mutual funds) | High-value audience |
 | 11 | Advance tax and TDS on salary | Peaks around tax deadlines |
-| 12 | Retirement / FIRE calculator | Shareable, earns links |
+| 12 | ✅ Retirement / FIRE calculator | Shareable, earns links |
+
+Also built beyond the list: Sukanya Samriddhi, inflation and land area converter; wedding tools (biodata ₹20, invitations ₹29, Kundli Milan, budget planner); passport/exam photo resizer and UPI QR standee maker. Wedding and document tools bring searches ChatGPT can't answer with a file, which makes the traffic harder to lose to AI answers.
 
 ## Phase 3 – Guides that feed the calculators (Months 2–12)
 

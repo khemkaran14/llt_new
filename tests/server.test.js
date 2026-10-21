@@ -115,5 +115,20 @@ test('admin: login required, wrong password refused, orders and CSV visible afte
   r = await call('GET', '/api/admin/orders.csv', null, { Cookie: cookie });
   assert.match(r.text, /a@example.com/);
   r = await call('GET', '/admin');
-  assert.match(r.text, /Biodata admin/);
+  assert.match(r.text, /LiveLifeTricks admin/);
+}));
+
+test('wedding invitations: own price, own designs, product shown in admin', () => withServer({ invitePricePaise: 2900 }, async (call) => {
+  let r = await call('GET', '/api/biodata/config');
+  assert.equal(r.json.prices.invite, 29);
+  r = await call('POST', '/api/biodata/start', { product: 'invite', email: 'i@example.com', templateId: 'inv-royal-maroon', dataHash: H1 });
+  assert.equal(r.json.amount, 2900);
+  r = await call('POST', '/api/biodata/start', { product: 'invite', email: 'i@example.com', templateId: 'inv-classic-maroon', dataHash: H1 });
+  assert.equal(r.json.free, true);
+  r = await call('POST', '/api/biodata/start', { product: 'invite', email: 'i@example.com', templateId: 'royal-maroon', dataHash: H1 });
+  assert.equal(r.status, 400, 'biodata design ids are not invitation designs');
+  r = await call('POST', '/api/admin/login', { password: 'pw123' });
+  const cookie = r.headers.get('set-cookie').split(';')[0];
+  r = await call('GET', '/api/admin/orders', null, { Cookie: cookie });
+  assert.ok(r.json.rows.every(x => x.product === 'invite'));
 }));

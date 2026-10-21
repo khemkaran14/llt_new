@@ -1,0 +1,120 @@
+<!--meta
+{
+  "title": "Kundli Milan – Free Guna Matching (36 Points) by Date of Birth | LiveLifeTricks",
+  "description": "Free Kundli Milan: Ashtakoota guna matching out of 36 from date and time of birth, or from nakshatra. See Varna, Vashya, Tara, Yoni, Graha Maitri, Gana, Bhakoot and Nadi scores with simple explanations.",
+  "path": "/kundli-milan/",
+  "priority": "0.9",
+  "breadcrumb": "Kundli Milan",
+  "scripts": ["kundli.js", "kundli-ui.js"]
+}
+-->
+<section class="hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › Kundli Milan</nav>
+    <h1>Kundli Milan (Guna Matching)</h1>
+    <p class="lead">Traditional Ashtakoota matching out of 36 points, from birth date and time, or from the nakshatra if you already know it. Every koota is explained in plain words.</p>
+    <div class="badges"><span class="badge">36-point Ashtakoota</span><span class="badge">Lahiri ayanamsa</span><span class="badge">Nadi &amp; Bhakoot dosha</span><span class="badge">Free &amp; private</span></div>
+  </div>
+</section>
+
+<section class="wrap">
+  <form id="kd-form" autocomplete="off" onsubmit="return false">
+    <div class="kd-grid">
+    <fieldset class="card kd-person">
+      <legend>Boy</legend>
+      <div class="field"><label for="boy-name">Name</label><input id="boy-name" data-key="boyName" type="text" maxlength="40" value="Rahul"></div>
+      <div class="field">
+        <span class="label" id="boy-mode-label">I know</span>
+        <div class="seg" role="group" aria-labelledby="boy-mode-label" data-key="boyMode" data-value="birth">
+          <button type="button" data-value="birth" aria-pressed="true">Birth date &amp; time</button>
+          <button type="button" data-value="nak" aria-pressed="false">Nakshatra</button>
+        </div>
+      </div>
+      <div class="kd-birth" data-for="boy">
+        <div class="row2">
+          <div class="field"><label for="boy-date">Date of birth</label><input id="boy-date" data-key="boyDate" type="date" value="1995-08-21"></div>
+          <div class="field"><label for="boy-time">Time of birth</label><input id="boy-time" data-key="boyTime" type="time" value="10:30"></div>
+        </div>
+        <div class="field"><label for="boy-tz">Born in (time zone)</label><select id="boy-tz" data-key="boyTz"><option value="5.5">India (IST) (UTC+5:30)</option><option value="5.75">Nepal (UTC+5:45)</option><option value="6">Bangladesh (UTC+6)</option><option value="4">UAE / Oman (UTC+4)</option><option value="3">Saudi Arabia / Qatar / Kuwait (UTC+3)</option><option value="8">Singapore / Malaysia (UTC+8)</option><option value="0">UK (winter) / UTC (UTC+0)</option><option value="1">UK (summer) / Europe (winter) (UTC+1)</option><option value="-5">US East (winter) (UTC-5)</option><option value="-4">US East (summer) (UTC-4)</option><option value="-8">US West (winter) (UTC-8)</option><option value="-7">US West (summer) (UTC-7)</option><option value="10">Australia East (winter) (UTC+10)</option><option value="-6">US Central (winter) (UTC-6)</option></select></div>
+      </div>
+      <div class="kd-nak" data-for="boy" hidden>
+        <div class="row2">
+          <div class="field"><label for="boy-nak">Nakshatra</label><select id="boy-nak" data-key="boyNak"><option value="0">Ashwini</option><option value="1">Bharani</option><option value="2">Krittika</option><option value="3">Rohini</option><option value="4">Mrigashira</option><option value="5">Ardra</option><option value="6">Punarvasu</option><option value="7">Pushya</option><option value="8">Ashlesha</option><option value="9">Magha</option><option value="10">Purva Phalguni</option><option value="11">Uttara Phalguni</option><option value="12">Hasta</option><option value="13">Chitra</option><option value="14">Swati</option><option value="15">Vishakha</option><option value="16">Anuradha</option><option value="17">Jyeshtha</option><option value="18">Mula</option><option value="19">Purva Ashadha</option><option value="20">Uttara Ashadha</option><option value="21">Shravana</option><option value="22">Dhanishta</option><option value="23">Shatabhisha</option><option value="24">Purva Bhadrapada</option><option value="25">Uttara Bhadrapada</option><option value="26">Revati</option></select></div>
+          <div class="field"><label for="boy-pada">Pada (charan)</label><select id="boy-pada" data-key="boyPada"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+        </div>
+      </div>
+      <p class="small kd-sign" id="boy-sign"></p>
+    </fieldset>
+    <fieldset class="card kd-person">
+      <legend>Girl</legend>
+      <div class="field"><label for="girl-name">Name</label><input id="girl-name" data-key="girlName" type="text" maxlength="40" value="Priya"></div>
+      <div class="field">
+        <span class="label" id="girl-mode-label">I know</span>
+        <div class="seg" role="group" aria-labelledby="girl-mode-label" data-key="girlMode" data-value="birth">
+          <button type="button" data-value="birth" aria-pressed="true">Birth date &amp; time</button>
+          <button type="button" data-value="nak" aria-pressed="false">Nakshatra</button>
+        </div>
+      </div>
+      <div class="kd-birth" data-for="girl">
+        <div class="row2">
+          <div class="field"><label for="girl-date">Date of birth</label><input id="girl-date" data-key="girlDate" type="date" value="1998-03-14"></div>
+          <div class="field"><label for="girl-time">Time of birth</label><input id="girl-time" data-key="girlTime" type="time" value="06:45"></div>
+        </div>
+        <div class="field"><label for="girl-tz">Born in (time zone)</label><select id="girl-tz" data-key="girlTz"><option value="5.5">India (IST) (UTC+5:30)</option><option value="5.75">Nepal (UTC+5:45)</option><option value="6">Bangladesh (UTC+6)</option><option value="4">UAE / Oman (UTC+4)</option><option value="3">Saudi Arabia / Qatar / Kuwait (UTC+3)</option><option value="8">Singapore / Malaysia (UTC+8)</option><option value="0">UK (winter) / UTC (UTC+0)</option><option value="1">UK (summer) / Europe (winter) (UTC+1)</option><option value="-5">US East (winter) (UTC-5)</option><option value="-4">US East (summer) (UTC-4)</option><option value="-8">US West (winter) (UTC-8)</option><option value="-7">US West (summer) (UTC-7)</option><option value="10">Australia East (winter) (UTC+10)</option><option value="-6">US Central (winter) (UTC-6)</option></select></div>
+      </div>
+      <div class="kd-nak" data-for="girl" hidden>
+        <div class="row2">
+          <div class="field"><label for="girl-nak">Nakshatra</label><select id="girl-nak" data-key="girlNak"><option value="0">Ashwini</option><option value="1">Bharani</option><option value="2">Krittika</option><option value="3">Rohini</option><option value="4">Mrigashira</option><option value="5">Ardra</option><option value="6">Punarvasu</option><option value="7">Pushya</option><option value="8">Ashlesha</option><option value="9">Magha</option><option value="10">Purva Phalguni</option><option value="11">Uttara Phalguni</option><option value="12">Hasta</option><option value="13">Chitra</option><option value="14">Swati</option><option value="15">Vishakha</option><option value="16">Anuradha</option><option value="17">Jyeshtha</option><option value="18">Mula</option><option value="19">Purva Ashadha</option><option value="20">Uttara Ashadha</option><option value="21">Shravana</option><option value="22">Dhanishta</option><option value="23">Shatabhisha</option><option value="24">Purva Bhadrapada</option><option value="25">Uttara Bhadrapada</option><option value="26">Revati</option></select></div>
+          <div class="field"><label for="girl-pada">Pada (charan)</label><select id="girl-pada" data-key="girlPada"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+        </div>
+      </div>
+      <p class="small kd-sign" id="girl-sign"></p>
+    </fieldset>
+    </div>
+  </form>
+
+  <div class="card kd-result" aria-live="polite">
+    <div class="kd-score">
+      <div class="kd-ring"><svg viewBox="0 0 42 42" aria-hidden="true"><circle cx="21" cy="21" r="15.915" fill="none" stroke="var(--surface-2)" stroke-width="4"></circle><circle id="kd-arc" cx="21" cy="21" r="15.915" fill="none" stroke="var(--brand)" stroke-width="4" stroke-linecap="round" stroke-dasharray="0 100" stroke-dashoffset="25"></circle></svg>
+        <div class="kd-num"><span id="kd-total">–</span><small>/ 36</small></div></div>
+      <div><h2 id="kd-verdict" style="margin:0 0 6px">–</h2><p class="muted" id="kd-summary"></p><div class="tip" id="kd-dosha" hidden></div></div>
+    </div>
+    <div class="table-wrap" style="margin-top:16px">
+      <table class="data" id="kd-table"><thead><tr><th>Koota</th><th id="kd-h-boy">Boy</th><th id="kd-h-girl">Girl</th><th>Score</th><th>What it means</th></tr></thead><tbody></tbody></table>
+    </div>
+    <div class="actions"><button type="button" class="btn btn-primary" data-share>Copy link to this result</button><button type="button" class="btn" onclick="window.print()">Print</button></div>
+  </div>
+</section>
+
+<article class="wrap narrow content">
+  <p class="updated">Last updated: {{updated}}</p>
+  <h2>How guna milan is scored</h2>
+  <table>
+    <thead><tr><th>Koota</th><th>Points</th><th>Looks at</th></tr></thead>
+    <tbody>
+      <tr><td>Varna</td><td>1</td><td>Spiritual compatibility</td></tr>
+      <tr><td>Vashya</td><td>2</td><td>Mutual attraction and influence</td></tr>
+      <tr><td>Tara</td><td>3</td><td>Health and well-being</td></tr>
+      <tr><td>Yoni</td><td>4</td><td>Physical compatibility</td></tr>
+      <tr><td>Graha Maitri</td><td>5</td><td>Friendship of the Moon-sign lords, mental compatibility</td></tr>
+      <tr><td>Gana</td><td>6</td><td>Temperament (Deva, Manushya, Rakshasa)</td></tr>
+      <tr><td>Bhakoot</td><td>7</td><td>Family welfare and prosperity</td></tr>
+      <tr><td>Nadi</td><td>8</td><td>Health and children</td></tr>
+    </tbody>
+  </table>
+  <p>Traditionally, <strong>18 or more out of 36</strong> is considered acceptable, 25+ very good and 33+ excellent.</p>
+  <h2>How we calculate</h2>
+  <p>We work out the Moon's exact position at the time of birth with standard astronomical formulas (Meeus) and the <strong>Lahiri ayanamsa</strong> used in most Indian panchangs, giving the Moon sign (rashi), nakshatra and pada. If someone was born when the Moon was close to the edge of a nakshatra, a few minutes' difference in birth time can change it. We flag those cases.</p>
+  <h2>Important</h2>
+  <p>Guna milan is a traditional practice and only one part of a full horoscope reading. It doesn't include Manglik (Mangal) dosha or the many exceptions (dosha cancellations) a pandit or astrologer considers. Use it as a starting point, and remember that understanding, values and respect matter most in a marriage.</p>
+  <h2>Frequently asked questions</h2>
+  <div class="faq-wrap">
+    <details class="faq"><summary>What if we have Nadi dosha?</summary><p>Nadi dosha (0 of 8 points) means both have the same Nadi. Traditionally there are exceptions, for example when both share the same nakshatra but different rashis, or the same rashi but different nakshatras. Many families consult an astrologer for remedies.</p></details>
+    <details class="faq"><summary>Why does my result differ from another website?</summary><p>Small differences in ayanamsa, time zone or birth time can change the nakshatra near boundaries, and some sites use slightly different tables for Gana or Vashya. If you know your nakshatra from your family's kundli, choose "Nakshatra" for an exact match.</p></details>
+    <details class="faq"><summary>Is my birth data stored?</summary><p>No. The matching is calculated in your browser.</p></details>
+  </div>
+  <div class="card cta" style="margin-top:28px">
+    <div><strong>Making a biodata?</strong><br><span class="muted">45 beautiful designs with your rashi, nakshatra and gotra.</span></div>
+    <a class="btn btn-primary" href="/biodata/">Open biodata maker →</a>
+  </div>
+</article>

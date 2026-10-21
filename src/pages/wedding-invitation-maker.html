@@ -1,0 +1,157 @@
+<!--meta
+{
+  "title": "Wedding Invitation Maker – Free Indian Wedding Card for WhatsApp & Print | LiveLifeTricks",
+  "description": "Make a beautiful Indian wedding invitation card online: 22 designs (6 free), Ganesha and other god icons, all your functions (haldi, mehendi, wedding, reception), couple photo. Download JPG for WhatsApp or PDF to print.",
+  "path": "/wedding-invitation-maker/",
+  "priority": "0.9",
+  "breadcrumb": "Wedding Invitation Maker",
+  "styles": ["biodata.css"],
+  "externalStyles": ["https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:wght@500;700&family=Great+Vibes&family=Lora:wght@400;600&family=Marcellus&family=Playfair+Display:wght@500;700&family=Poppins:wght@400;600&family=Noto+Sans+Devanagari:wght@500&family=Noto+Sans+Gurmukhi:wght@500&family=Noto+Naskh+Arabic:wght@500&display=swap"],
+  "scripts": ["biodata-icons.js", "biodata-templates.js", "biodata-ui.js"]
+}
+-->
+<script>
+  window.LLT_MAKER = {
+    product: 'invite', noun: 'invitation', list: 'INVITES', byId: 'inviteById', render: 'renderInvite', sample: 'INVITE_SAMPLE',
+    price: 29, nameId: 'b-groom', nameHint: 'Please enter the groom\'s and bride\'s names first.', defaultTitle: 'WEDDING INVITATION',
+    filePrefix: 'wedding-invitation', pdfFormat: 'a5', storeKey: 'inv',
+    fileName: function (d) { return [d.groom, d.bride].filter(Boolean).join('-'); },
+    defaults: { title: 'WEDDING INVITATION', hostSide: 'groom', joiner: 'weds', deity: 'ganesha', invocation: '|| Shree Ganeshay Namah ||',
+      message: 'With the blessings of our elders, we joyfully invite you to celebrate the wedding of',
+      events: [{ name: 'Wedding' }, { name: 'Reception' }] }
+  };
+</script>
+<section class="hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › Wedding Invitation Maker</nav>
+    <h1>Wedding Invitation Maker</h1>
+    <p class="lead">Design a beautiful wedding card in minutes: pick a design, add the couple, families and every function, then download a JPG to share on WhatsApp or a PDF to print.</p>
+    <div class="badges">
+      <span class="badge">6 free designs</span>
+      <span class="badge">16 premium designs, ₹29 each</span>
+      <span class="badge">God icons for every religion</span>
+      <span class="badge">WhatsApp JPG + print PDF</span>
+    </div>
+    <div class="bd-steps"><span><b>1.</b> Choose a design</span><span>→</span><span><b>2.</b> Add details &amp; functions</span><span>→</span><span><b>3.</b> Download &amp; share</span></div>
+  </div>
+</section>
+
+<section class="wrap" id="step-designs">
+  <div class="cta" style="margin-bottom:14px">
+    <h2 style="margin:0">Choose a design</h2>
+    <div class="seg" role="group" aria-label="Filter designs" id="bd-filter">
+      <button type="button" data-value="all" aria-pressed="true">All 22</button>
+      <button type="button" data-value="free" aria-pressed="false">Free</button>
+      <button type="button" data-value="premium" aria-pressed="false">Premium ₹29</button>
+    </div>
+  </div>
+  <div class="bd-gallery" id="bd-gallery"></div>
+</section>
+
+<section class="wrap" id="step-editor" hidden>
+  <h2>Add your details</h2>
+  <div class="bd-editor">
+    <form class="card bd-form" id="bd-form" autocomplete="off" onsubmit="return false">
+      <div class="bd-locked" id="bd-locked" hidden></div>
+      <div class="row2">
+        <div class="field"><label for="b-deity">God / religious icon</label><select id="b-deity" data-key="deity"><option value="">None</option></select></div>
+        <div class="field"><label for="b-invocation">Top line <span class="hint">Pick one or type your own.</span></label><input id="b-invocation" data-key="invocation" type="text" maxlength="60" list="b-inv-list"><datalist id="b-inv-list"></datalist></div>
+      </div>
+      <div class="field">
+        <label for="b-deity-img">Or use your own god picture <span class="hint">Optional.</span></label>
+        <input id="b-deity-img" type="file" accept="image/*">
+        <button type="button" class="btn" id="b-deity-img-remove" hidden style="margin-top:8px">Remove god picture</button>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="b-title">Heading</label><input id="b-title" data-key="title" type="text" maxlength="40" value="WEDDING INVITATION"></div>
+        <div class="field"><label for="b-host">Invitation from</label><select id="b-host" data-key="hostSide"><option value="groom">Groom's family (groom's name first)</option><option value="bride">Bride's family (bride's name first)</option></select></div>
+      </div>
+      <div class="field"><label for="b-message">Invitation message</label><textarea id="b-message" data-key="message" rows="2" maxlength="220"></textarea></div>
+
+      <details class="more" open><summary>The couple</summary>
+        <div class="row2">
+          <div class="field"><label for="b-groom">Groom's name</label><input id="b-groom" data-key="groom" type="text" maxlength="40"></div>
+          <div class="field"><label for="b-groomParents">Groom's parents <span class="hint">e.g. S/o Mrs. &amp; Mr. Anil Mehta</span></label><input id="b-groomParents" data-key="groomParents" type="text" maxlength="80"></div>
+          <div class="field"><label for="b-bride">Bride's name</label><input id="b-bride" data-key="bride" type="text" maxlength="40"></div>
+          <div class="field"><label for="b-brideParents">Bride's parents <span class="hint">e.g. D/o Mrs. &amp; Mr. Rajesh Sharma</span></label><input id="b-brideParents" data-key="brideParents" type="text" maxlength="80"></div>
+        </div>
+        <div class="field"><label for="b-joiner">Between the names</label><select id="b-joiner" data-key="joiner"><option>weds</option><option>&amp;</option><option>with</option><option>and</option></select></div>
+        <div class="field">
+          <label for="b-photo">Couple photo <span class="hint">Optional.</span></label>
+          <input id="b-photo" type="file" accept="image/*">
+          <button type="button" class="btn" id="b-photo-remove" hidden style="margin-top:8px">Remove photo</button>
+        </div>
+      </details>
+
+      <details class="more" open><summary>Functions (haldi, mehendi, wedding, reception…)</summary>
+        <div id="b-events"></div>
+        <button type="button" class="btn" id="b-events-add">+ Add a function</button>
+      </details>
+
+      <details class="more"><summary>RSVP &amp; closing line</summary>
+        <div class="field"><label for="b-rsvp">RSVP / contact</label><input id="b-rsvp" data-key="rsvp" type="text" maxlength="100" placeholder="RSVP: Mehta family · +91 98765 43210"></div>
+        <div class="field"><label for="b-compliments">Closing line <span class="hint">Optional.</span></label><input id="b-compliments" data-key="compliments" type="text" maxlength="100" placeholder="With best compliments from relatives &amp; friends"></div>
+      </details>
+
+      <div class="actions"><button type="button" class="btn" id="b-clear">Clear all details</button></div>
+    </form>
+
+    <div class="bd-preview-col">
+      <div class="card">
+        <div class="cta" style="margin-bottom:10px">
+          <div><strong id="pv-name"></strong> <span class="bd-pill" id="pv-pill"></span></div>
+          <button type="button" class="btn" id="pv-change">Change design</button>
+        </div>
+        <div class="bd-previewbox" id="bd-preview"></div>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" data-dl="jpg">Download JPG</button>
+          <button type="button" class="btn btn-primary" data-dl="pdf">Download PDF</button>
+        </div>
+        <p class="small muted" id="pv-note" style="margin:10px 0 0"></p>
+        <p class="bd-status" id="pv-status" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="bd-modal" id="bd-modal" hidden role="dialog" aria-modal="true" aria-labelledby="m-title">
+  <form class="bd-modal-box" id="m-form">
+    <h2 id="m-title">Almost done</h2>
+    <p class="muted small" id="m-text">Enter your email to download your invitation.</p>
+    <div class="field"><label for="m-email">Your email</label><input id="m-email" type="email" required maxlength="120" autocomplete="email"></div>
+    <label class="check"><input type="checkbox" id="m-consent"> Send me occasional useful tips from LiveLifeTricks (optional)</label>
+    <p class="small muted">We save your email, name and chosen design. Your invitation details and photos are never uploaded. <a href="/privacy-policy/" target="_blank">Privacy policy</a></p>
+    <div class="actions">
+      <button type="submit" class="btn btn-primary" id="m-submit">Continue</button>
+      <button type="button" class="btn" id="m-cancel">Cancel</button>
+    </div>
+    <p class="bd-status" id="m-status"></p>
+  </form>
+</div>
+
+<div class="bd-hidden-render" id="bd-render" aria-hidden="true"></div>
+
+<article class="wrap narrow content">
+  <p class="updated">Last updated: {{updated}}</p>
+  <h2>What to write on an Indian wedding card</h2>
+  <ul>
+    <li><strong>A blessing at the top:</strong> Ganesha with "|| Shree Ganeshay Namah ||", Ik Onkar, Bismillah or a cross, as your family prefers.</li>
+    <li><strong>Who is inviting:</strong> usually the groom's or the bride's family. Put that side's name first.</li>
+    <li><strong>The couple and their parents</strong>, e.g. "Rahul (S/o Mrs. &amp; Mr. Anil Mehta) weds Priya (D/o Mrs. &amp; Mr. Rajesh Sharma)".</li>
+    <li><strong>Every function</strong> with day, date, time and venue: haldi, mehendi, sangeet, wedding and reception.</li>
+    <li><strong>RSVP:</strong> a family member's phone number.</li>
+  </ul>
+  <h2>WhatsApp or print?</h2>
+  <p>Download the <strong>JPG</strong> to share on WhatsApp, Instagram or email: it's sharp on phones and small enough to send quickly. Download the <strong>PDF</strong> (A5 size) to print at home or at a printing shop on card paper.</p>
+  <h2>Frequently asked questions</h2>
+  <div class="faq-wrap">
+    <details class="faq"><summary>Is the wedding invitation maker free?</summary><p>Yes, 6 designs are completely free with your email. The 16 premium designs cost ₹29 each, without the preview watermark, as JPG and PDF.</p></details>
+    <details class="faq"><summary>Can I add Ganesha or another god?</summary><p>Yes. Choose Ganesha, Om, Kalash, Khanda, Ik Onkar, Crescent &amp; Star, Cross, Dharma Wheel and more, or upload your own family god picture.</p></details>
+    <details class="faq"><summary>Can I change the card after paying?</summary><p>A paid card is final, so double-check names, dates and venues before you pay. To change something later, start a new edit for ₹29.</p></details>
+    <details class="faq"><summary>Are our details private?</summary><p>Yes. The card is created in your browser. We only store your email, the names on the card and the design you chose.</p></details>
+  </div>
+  <div class="card cta" style="margin-top:28px">
+    <div><strong>Planning the wedding?</strong><br><span class="muted">Set and track your budget across every expense.</span></div>
+    <a class="btn btn-primary" href="/wedding-budget-planner/">Open wedding budget planner →</a>
+  </div>
+</article>

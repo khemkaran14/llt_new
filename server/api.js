@@ -18,7 +18,8 @@ const HASH_RE = /^[a-f0-9]{64}$/;
 
 function createApp(opts) {
   const cfg = Object.assign({
-    pricePaise: 2000,
+    pricePaise: 2000,          // biodata
+    invitePricePaise: 2900,    // wedding invitation
     downloadWindowHours: 48,
     maxDownloads: 10,
     adminPassword: '',
@@ -95,6 +96,7 @@ function createApp(opts) {
 
     'GET /api/biodata/config': () => ({
       price: cfg.pricePaise / 100,
+      prices: { biodata: cfg.pricePaise / 100, invite: cfg.invitePricePaise / 100 },
       keyId: cfg.razorpay ? cfg.razorpay.keyId : '',
       payments: !!cfg.razorpay || cfg.devPayments,
       devPayments: cfg.devPayments && !cfg.razorpay
@@ -105,14 +107,16 @@ function createApp(opts) {
       const b = await json(req);
       const email = clean(b.email, 254).toLowerCase();
       if (!EMAIL_RE.test(email)) return [400, { error: 'Please enter a valid email address.' }];
-      const tpl = Biodata.byId(String(b.templateId || ''));
+      const product = b.product === 'invite' ? 'invite' : 'biodata';
+      const tpl = product === 'invite' ? Biodata.inviteById(String(b.templateId || '')) : Biodata.byId(String(b.templateId || ''));
       if (!tpl) return [400, { error: 'Unknown design.' }];
+      const pricePaise = product === 'invite' ? cfg.invitePricePaise : cfg.pricePaise;
       const hash = String(b.dataHash || '');
       if (!HASH_RE.test(hash)) return [400, { error: 'Missing biodata fingerprint.' }];
       const order = {
-        id: newId(), createdAt: new Date(cfg.now()).toISOString(), email, name: clean(b.name, 80),
+        id: newId(), createdAt: new Date(cfg.now()).toISOString(), email, name: clean(b.name, 80), product,
         templateId: tpl.id, templateName: tpl.name, tier: tpl.tier,
-        amount: tpl.tier === 'premium' ? cfg.pricePaise / 100 : 0,
+        amount: tpl.tier === 'premium' ? pricePaise / 100 : 0,
         status: tpl.tier === 'premium' ? 'created' : 'free',
         consent: !!b.consent, dataHash: hash, downloads: []
       };
@@ -123,19 +127,19 @@ function createApp(opts) {
       if (cfg.razorpay) {
         let rzp;
         try {
-          rzp = await cfg.razorpay.createOrder({ amount: cfg.pricePaise, receipt: order.id, notes: { template: tpl.id, email } });
+          rzp = await cfg.razorpay.createOrder({ amount: pricePaise, receipt: order.id, notes: { product, template: tpl.id, email } });
         } catch (e) {
           console.error('Razorpay order failed:', e.message);
           return [502, { error: 'Payment service is not responding. Please try again.' }];
         }
         order.rzpOrderId = rzp.id;
         store.insert(order);
-        return { orderId: order.id, free: false, razorpayOrderId: rzp.id, amount: cfg.pricePaise, keyId: cfg.razorpay.keyId };
+        return { orderId: order.id, free: false, razorpayOrderId: rzp.id, amount: pricePaise, keyId: cfg.razorpay.keyId };
       }
       if (cfg.devPayments) {
         order.rzpOrderId = 'dev_' + order.id;
         store.insert(order);
-        return { orderId: order.id, free: false, dev: true, razorpayOrderId: order.rzpOrderId, amount: cfg.pricePaise };
+        return { orderId: order.id, free: false, dev: true, razorpayOrderId: order.rzpOrderId, amount: pricePaise };
       }
       return [503, { error: 'Payments are not set up yet. Please try a free design.' }];
     },
@@ -168,7 +172,7 @@ function createApp(opts) {
       if (!HASH_RE.test(hash)) return [400, { error: 'Missing biodata fingerprint.' }];
       if (order.tier === 'premium') {
         if (order.status !== 'paid') return [402, { error: 'Payment is needed for this design.' }];
-        if (hash !== order.dataHash) return [409, { error: 'This biodata was changed after payment. Each paid download is for one final version — start a new edit (₹' + (cfg.pricePaise / 100) + ') to download changes.', code: 'changed' }];
+        if (hash !== order.dataHash) return [409, { error: 'This ' + (order.product === 'invite' ? 'invitation' : 'biodata') + ' was changed after payment. Each paid download is for one final version — start a new edit (₹' + order.amount + ') to download changes.', code: 'changed' }];
         const age = cfg.now() - Date.parse(order.paidAt);
         if (age > cfg.downloadWindowHours * 3600 * 1000) return [410, { error: 'This download has expired. Start a new edit to download again.', code: 'expired' }];
         if (order.downloads.length >= cfg.maxDownloads) return [429, { error: 'Download limit reached for this order.', code: 'limit' }];
@@ -206,7 +210,7 @@ function createApp(opts) {
     'GET /api/admin/orders': (req) => {
       if (!isAdmin(req)) return [401, { error: 'Please log in.' }];
       const rows = store.all().slice().reverse().map(o => ({
-        id: o.id, createdAt: o.createdAt, email: o.email, name: o.name, template: o.templateName, tier: o.tier,
+        id: o.id, createdAt: o.createdAt, email: o.email, name: o.name, product: o.product || 'biodata', template: o.templateName, tier: o.tier,
         amount: o.status === 'paid' ? o.amount : 0, status: o.status, paymentId: o.paymentId || '', paidAt: o.paidAt || '',
         downloads: o.downloads.length, lastDownload: o.downloads.length ? o.downloads[o.downloads.length - 1].at : '', consent: !!o.consent
       }));
@@ -222,9 +226,9 @@ function createApp(opts) {
     },
     'GET /api/admin/orders.csv': (req) => {
       if (!isAdmin(req)) return [401, 'Please log in.'];
-      const cols = ['createdAt', 'email', 'name', 'templateName', 'tier', 'status', 'amount', 'paymentId', 'paidAt', 'downloads', 'consent'];
+      const cols = ['createdAt', 'email', 'name', 'product', 'templateName', 'tier', 'status', 'amount', 'paymentId', 'paidAt', 'downloads', 'consent'];
       const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""').replace(/^[=+\-@]/, "'$&") + '"';
-      const lines = [cols.join(',')].concat(store.all().map(o => cols.map(c => q(c === 'downloads' ? o.downloads.length : c === 'amount' ? (o.status === 'paid' ? o.amount : 0) : o[c])).join(',')));
+      const lines = [cols.join(',')].concat(store.all().map(o => cols.map(c => q(c === 'downloads' ? o.downloads.length : c === 'amount' ? (o.status === 'paid' ? o.amount : 0) : c === 'product' ? (o.product || 'biodata') : o[c])).join(',')));
       return { raw: lines.join('\n'), headers: { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="biodata-orders.csv"' } };
     }
   };

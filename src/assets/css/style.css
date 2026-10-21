@@ -1,3 +1,4 @@
+[hidden] { display: none !important; }
 :root {
   --bg: #f7f8f7;
   --surface: #ffffff;
@@ -340,3 +341,82 @@ input[type="date"] { height: 46px; padding: 0 12px; background: var(--surface); 
 .rc-signs { display: flex; gap: 28px; flex-wrap: wrap; justify-content: flex-end; font-size: 12.5px; }
 .rc-sign { text-align: center; min-width: 140px; }
 .rc-sign .sign-line { width: 150px; border-bottom: 1px solid #333; margin: 30px auto 6px; }
+
+/* Sections */
+.cat-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.cat-pills a { text-decoration: none; background: var(--surface); border: 1px solid var(--line); color: var(--text); padding: 8px 14px; border-radius: 999px; font-weight: 600; font-size: .92rem; }
+.cat-pills a:hover { border-color: var(--brand); color: var(--brand-strong); }
+.home-cat { margin-top: 28px; }
+.cat-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 0 0 12px; }
+.cat-head h2 { margin: 0; }
+.cat-head a { font-weight: 600; text-decoration: none; }
+.tag-new { display: inline-block; font-size: .68rem; font-weight: 800; letter-spacing: .04em; background: #fdf0d5; color: #8a5a00; padding: 2px 8px; border-radius: 999px; vertical-align: middle; }
+.promo { text-decoration: none; color: inherit; border-color: var(--brand); }
+.related { margin-top: 36px; }
+@media (min-width: 721px) and (max-width: 1080px) { .site-nav a { padding: 8px 8px; font-size: .92rem; } }
+
+/* Wedding budget */
+.wb-table td { padding: 6px 8px; }
+.wb-in { width: 100%; min-width: 0; height: 38px; padding: 0 8px; font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.wb-in.wb-num { width: 110px; text-align: right; }
+.wb-table td:nth-child(2) .wb-in { width: 70px; margin-right: 4px; }
+.wb-table td:first-child .wb-in { min-width: 180px; }
+.wb-over { color: #b42318; font-weight: 700; }
+.wb-table tfoot th { padding: 10px 12px; text-align: right; background: var(--surface-2); }
+.wb-table tfoot th:first-child { text-align: left; }
+@media print { .wb-in { border: 0; } .wb-del, .wb-top .actions { display: none !important; } }
+
+/* UPI standee */
+.upi-sheet { display: grid; gap: 16px; justify-content: center; }
+.upi-sheet.upi-a5 { grid-template-columns: repeat(2, minmax(0, 300px)); }
+.upi-sheet.upi-a6 { grid-template-columns: repeat(2, minmax(0, 260px)); }
+.upi-card { width: 360px; max-width: 100%; aspect-ratio: 1 / 1.414; background: var(--u-bg); color: #1a1a1a; border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid rgba(0,0,0,.08); box-shadow: var(--shadow); font-family: var(--font); }
+.upi-sheet.upi-a5 .upi-card, .upi-sheet.upi-a6 .upi-card { width: 100%; }
+.upi-band { background: var(--u-band); color: var(--u-band-ink); padding: 18px 16px; text-align: center; }
+.upi-shop { font-size: 1.35em; font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; }
+.upi-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 14px 18px; text-align: center; }
+.upi-scan { font-weight: 900; letter-spacing: .12em; font-size: 1.3em; color: var(--u-accent); }
+.upi-qrbox { width: 62%; aspect-ratio: 1; background: #fff; padding: 12px; border-radius: 14px; border: 3px solid var(--u-accent); }
+.upi-qrbox svg { display: block; width: 100%; height: 100%; }
+.upi-qr-empty { width: 100%; height: 100%; display: grid; place-items: center; color: #999; font-size: .85em; }
+.upi-amount { font-weight: 800; font-size: 1.1em; }
+.upi-id { font-weight: 700; font-size: .95em; overflow-wrap: anywhere; }
+.upi-payee { font-size: .85em; color: #555; margin-top: -6px; }
+.upi-apps { font-size: .78em; color: #444; line-height: 1.4; }
+.upi-apps span { color: #777; }
+.upi-phone { font-size: .85em; font-weight: 600; }
+.upi-foot { font-size: .62em; color: #888; text-align: center; padding: 6px 0 8px; }
+@media print {
+  html.print-upi body * { visibility: hidden; }
+  html.print-upi .upi-sheet, html.print-upi .upi-sheet * { visibility: visible; }
+  html.print-upi .doc-wrap { position: absolute; left: 0; top: 0; width: 100%; }
+  html.print-upi .upi-card { box-shadow: none; break-inside: avoid; }
+  html.print-upi .upi-sheet.upi-a4 .upi-card { width: 170mm; margin: 0 auto; font-size: 150%; }
+  html.print-upi .upi-sheet.upi-a5 { grid-template-columns: 1fr; } html.print-upi .upi-sheet.upi-a5 .upi-card { width: 120mm; margin: 0 auto 6mm; font-size: 105%; }
+  html.print-upi .upi-sheet.upi-a6 { grid-template-columns: repeat(2, 92mm); gap: 6mm; } html.print-upi .upi-sheet.upi-a6 .upi-card { width: 92mm; }
+}
+
+/* Photo resizer */
+.pm-canvas-wrap { display: flex; justify-content: center; background: repeating-conic-gradient(var(--surface-2) 0 25%, var(--surface) 0 50%) 0 0 / 16px 16px; border-radius: 12px; padding: 10px; }
+#pm-canvas { max-width: 100%; touch-action: none; cursor: grab; box-shadow: 0 0 0 1px var(--line); background: #fff; }
+.pm-out { display: flex; justify-content: center; align-items: center; min-height: 140px; background: var(--surface-2); border-radius: 12px; padding: 12px; margin-bottom: 10px; }
+.pm-out img { max-width: 100%; max-height: 260px; box-shadow: 0 0 0 1px var(--line); background: #fff; }
+.pm-out img:not([src]) { display: none; }
+
+/* Kundli */
+.kd-grid { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 860px) { .kd-grid { grid-template-columns: 1fr 1fr; } }
+.kd-person legend { font-size: 1.1rem; padding: 0 6px; }
+.kd-person { border: 1px solid var(--line); }
+.kd-sign { background: var(--brand-soft); color: var(--text); border-radius: 10px; padding: 10px 12px; margin: 4px 0 0; }
+.kd-warn { color: var(--accent); font-weight: 600; }
+.kd-result { margin-top: 16px; }
+.kd-score { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
+.kd-ring { position: relative; width: 140px; height: 140px; flex: none; }
+.kd-ring svg { width: 100%; height: 100%; }
+.kd-num { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; font-size: 2.2rem; font-weight: 800; line-height: 1; }
+.kd-num small { font-size: .9rem; color: var(--muted); font-weight: 600; }
+.kd-score > div:last-child { flex: 1; min-width: 220px; }
+.kd-good { color: var(--good); font-weight: 700; }
+.kd-bad { color: #b42318; font-weight: 700; }
+#kd-table td:last-child { white-space: normal; min-width: 200px; color: var(--muted); }

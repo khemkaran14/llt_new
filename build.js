@@ -46,6 +46,49 @@ copyDir(path.join(SRC, 'assets'), path.join(DIST, 'assets'));
 copyDir(path.join(SRC, 'static'), DIST);
 
 const layout = fs.readFileSync(path.join(SRC, 'layout.html'), 'utf8');
+const { ICONS, CATEGORIES, TOOLS } = require('./src/tools.js');
+const catOf = id => CATEGORIES.find(c => c.id === id);
+const toolOf = p => TOOLS.find(t => t.path === p);
+
+function iconSvg(name) {
+  return '<span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || ICONS.doc) + '</svg></span>';
+}
+function toolCard(t) {
+  return '<a class="card tool-card" href="' + t.path + '">' + iconSvg(t.icon) + '<h3>' + t.name + (t.isNew ? ' <span class="tag-new">New</span>' : '') + '</h3><p>' + t.blurb + '</p></a>';
+}
+function toolsIn(catId) {
+  const list = TOOLS.filter(t => t.cat === catId);
+  return list.filter(t => t.popular).concat(list.filter(t => !t.popular));
+}
+const navHtml = current => CATEGORIES.map(c => '<a href="' + c.path + '"' + (c.id === current ? ' aria-current="page"' : '') + '>' + c.short + '</a>').join('\n      ') + '\n      <a href="/about/">About</a>';
+const footerCols = CATEGORIES.map(c => '<div>\n      <h2 class="footer-h">' + c.name.replace('&', '&amp;') + '</h2>\n      <ul>\n' +
+  toolsIn(c.id).slice(0, 6).map(t => '        <li><a href="' + t.path + '">' + t.name + '</a></li>').join('\n') +
+  '\n        <li><a href="' + c.path + '"><strong>All ' + c.short.toLowerCase() + ' tools →</strong></a></li>\n      </ul>\n    </div>').join('\n    ');
+const homeSections = CATEGORIES.map(c => {
+  const list = toolsIn(c.id);
+  return '<section class="wrap home-cat" id="' + c.id + '">\n  <div class="cat-head"><h2>' + c.name.replace('&', '&amp;') + '</h2><a href="' + c.path + '">All ' + list.length + ' tools →</a></div>\n  <div class="tool-grid">' +
+    list.slice(0, 6).map(toolCard).join('') + '</div>\n</section>';
+}).join('\n');
+
+// One page per section, listing all its tools
+function categoryPage(c) {
+  const list = toolsIn(c.id);
+  return {
+    meta: { title: c.name + ' Tools & Calculators | LiveLifeTricks', description: c.intro, path: c.path, priority: '0.8', breadcrumb: c.name },
+    body: '<section class="hero"><div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › ' + c.name.replace('&', '&amp;') + '</nav>' +
+      '<h1>' + c.name.replace('&', '&amp;') + '</h1><p class="lead">' + c.intro + '</p></div></section>\n<section class="wrap"><div class="tool-grid">' + list.map(toolCard).join('') + '</div></section>\n'
+  };
+}
+function crumbsFor(t, current) {
+  const c = catOf(t.cat);
+  return '<nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="' + c.path + '">' + c.name.replace('&', '&amp;') + '</a> › ' + current + '</nav>';
+}
+function relatedFor(t) {
+  const others = toolsIn(t.cat).filter(x => x.path !== t.path).slice(0, 4);
+  if (!others.length) return '';
+  const c = catOf(t.cat);
+  return '\n<section class="wrap related"><div class="cat-head"><h2>More ' + c.name.replace('&', '&amp;').toLowerCase() + ' tools</h2><a href="' + c.path + '">See all →</a></div><div class="tool-grid">' + others.map(toolCard).join('') + '</div></section>\n';
+}
 const pages = [];
 
 const sources = [];
@@ -56,6 +99,7 @@ for (const file of fs.readdirSync(path.join(SRC, 'pages')).sort()) {
   if (!m) throw new Error(file + ': missing <!--meta --> block');
   sources.push({ meta: JSON.parse(m[1]), body: raw.slice(m[0].length) });
 }
+CATEGORIES.forEach(c => sources.push(categoryPage(c)));
 const genDir = path.join(SRC, 'generators');
 if (fs.existsSync(genDir)) {
   for (const file of fs.readdirSync(genDir).sort()) {
@@ -75,8 +119,17 @@ function embedBox(meta) {
     '  </details>\n</section>\n';
 }
 
+const built = new Set();
 for (const { meta, body: rawBody } of sources) {
-  const body = meta.embed ? rawBody + embedBox(meta) : rawBody;
+  built.add(meta.path);
+  let body = rawBody;
+  const tool = toolOf(meta.path);
+  if (tool) {
+    const cat = catOf(tool.cat);
+    meta.breadcrumbParent = { name: cat.name, path: cat.path };
+    body = body.replace(/<nav class="crumbs"[\s\S]*?<\/nav>/, crumbsFor(tool, meta.breadcrumb || tool.name)) + relatedFor(tool);
+  }
+  if (meta.embed) body += embedBox(meta);
   const url = config.siteUrl + meta.path;
 
   const schemas = [];
@@ -134,7 +187,10 @@ for (const { meta, body: rawBody } of sources) {
     year: String(new Date().getFullYear()),
     updated: meta.updated || today,
     head: head,
-    scripts: scripts
+    scripts: scripts,
+    nav: navHtml(tool ? tool.cat : (CATEGORIES.find(c => c.path === meta.path) || {}).id),
+    footerCols: footerCols,
+    homeSections: homeSections
   };
   const html = layout
     .replace('{{content}}', () => body)
@@ -153,3 +209,5 @@ const sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://w
 fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sitemap);
 fs.writeFileSync(path.join(DIST, 'robots.txt'), 'User-agent: *\nAllow: /\n\nSitemap: ' + config.siteUrl + '/sitemap.xml\n');
 console.log('built sitemap.xml with', pages.length, 'pages');
+const missing = TOOLS.filter(t => !built.has(t.path)).map(t => t.path);
+if (missing.length) console.log('NOTE: listed in src/tools.js but no page yet:', missing.join(', '));

@@ -11,6 +11,7 @@
  *   RAZORPAY_KEY_SECRET=...
  *   RAZORPAY_WEBHOOK_SECRET=...   (optional, recommended)
  *   BIODATA_PRICE=20              (rupees)
+ *   INVITE_PRICE=29               (rupees, wedding invitations)
  *   DEV_PAYMENTS=1                (local testing only: fake payments without Razorpay)
  */
 'use strict';
@@ -32,6 +33,7 @@ const app = createApp({
   store,
   razorpay,
   pricePaise: Math.round(Number(env.BIODATA_PRICE || 20) * 100),
+  invitePricePaise: Math.round(Number(env.INVITE_PRICE || 29) * 100),
   adminPassword: env.ADMIN_PASSWORD || '',
   sessionSecret: env.SESSION_SECRET || undefined,
   webhookSecret: env.RAZORPAY_WEBHOOK_SECRET || '',

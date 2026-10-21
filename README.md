@@ -1,4 +1,4 @@
-# LiveLifeTricks – Income Tax & EMI Calculators
+# LiveLifeTricks – Money, Wedding & Document Tools
 
 Website for **livelifetricks.com**:
 
@@ -12,11 +12,15 @@ Website for **livelifetricks.com**:
 - **Free tools:** Prepay Loan or Invest? (`/prepay-or-invest/`), Rent Receipt Generator (`/rent-receipt-generator/`), Tax Calendar with calendar reminders (`/tax-calendar/`).
 - **Marriage biodata maker** (`/biodata/`): 45 designs (15 free, 30 premium at ₹20) from `src/assets/js/biodata-templates.js`, religious icons for every faith from `src/assets/js/biodata-icons.js` (plus custom god-picture upload), a live preview, and PDF/JPG export in the browser. Free downloads need an email; premium needs a Razorpay payment, and the paid biodata is locked (changing it needs a new ₹20 payment). The server in `server/` stores orders and runs the admin dashboard at `/admin`. Biodata details and photos never leave the visitor's browser.
 - **Receipt & invoice generators** (`/receipt-generators/`): GST/non-GST invoice with UPI QR code, quotation, proforma invoice and delivery challan (`src/generators/invoice-pages.js` + `assets/js/invoice.js`), plus payment, fee, security deposit, society maintenance and vehicle/item sale receipts. Each receipt type is a small definition in `src/generators/receipt-pages.js`, so new ones are quick to add. Deliberately no fuel, restaurant, medical, hotel/travel bills or salary slips, because self-made versions of those are used for fake claims.
+- **More calculators** (`src/generators/calc-pages.js` + `assets/js/more-calcs.js`, maths in `finance-engines.js`): Sukanya Samriddhi, NPS (PFRDA December 2025 exit rules), EPF, gratuity, capital gains tax on shares and mutual funds, home loan eligibility, retirement/FIRE planner, inflation, and a state-wise land area converter (`land-units.js`).
+- **Wedding tools:** invitation card maker (`/wedding-invitation-maker/`, 22 designs: 6 free, 16 premium at ₹29, same engine and payment flow as the biodata maker), Kundli Milan / 36-point Guna Milan from birth details or nakshatra (`kundli.js`), and a wedding budget planner with CSV export.
+- **Documents & photos:** passport, visa and exam form photo and signature resizer with exact pixel and KB limits and a 4×6 print sheet (`/passport-photo-maker/`), and a printable UPI "Scan & Pay" QR standee maker (`/upi-qr-code-generator/`).
+- **Site sections:** every tool is listed once in `src/tools.js`. That list builds the menu, footer, homepage sections, the five section pages (`/tax-and-salary/`, `/loans-and-property/`, `/savings-and-retirement/`, `/wedding/`, `/documents-and-photos/`), breadcrumbs and "related tools". **To add a tool**, create its page and add one line to `src/tools.js`.
 - **Income tax by salary:** 24 pages from ₹5 lakh to ₹50 lakh (`/income-tax-on-salary/…`), generated at build time by `src/generators/salary-pages.js` from the same tax engine. Add more amounts to `LAKHS` there.
 - **Embeddable calculators:** any page with `"embed": true` gets an "Add this calculator to your website" box. Opening a page with `?embed=1` shows only the calculator plus a credit link back to the site, which earns backlinks.
 - Home, About, Contact, Privacy policy, Disclaimer and 404 pages (needed for AdSense approval), plus an automatic `sitemap.xml` and `robots.txt`, SEO tags, FAQ structured data and dark mode.
 
-It's a plain static site with no database and no server code, so it's fast and cheap to host next to your other sites. See [docs/GROWTH-PLAN.md](docs/GROWTH-PLAN.md) for the plan to grow it towards a sale.
+It's a static site (only the paid designs use the small server in `server/`), so it's fast and cheap to host next to your other sites. See [docs/GROWTH-PLAN.md](docs/GROWTH-PLAN.md) for the plan to grow it towards a sale.
 
 ## Folder layout
 
@@ -235,6 +239,8 @@ SITE_DIR=/var/www/livelifetricks.com bash /root/livelifetricks/deploy/update-fro
 
 Tax rules live in one file: `src/assets/js/tax-engine.js`.
 
+Other rates to check: EPF and SSY/PPF defaults in `src/generators/calc-pages.js` (small-savings rates change every quarter), capital gains rates in `capitalGains()` in `finance-engines.js`.
+
 Other things to update each year: the deadlines list at the top of `src/assets/js/tax-calendar.js`, the PPF default rate in `src/pages/ppf-calculator.html` (reviewed every quarter), and the GST slabs listed in `src/pages/gst-calculator.html`.
 
 - **Slabs and rates:** `NEW_SLABS`, `oldSlabs()` and `SURCHARGE`
@@ -246,7 +252,7 @@ After every Union Budget (1 February), check the rules, add the new year to `YEA
 
 ---
 
-# Biodata maker: server, payments and admin
+# Biodata & invitation makers: server, payments and admin
 
 The biodata page is static, but payments, emails and the admin dashboard need the small Node server in `server/` (no npm packages). nginx sends `/api/*` and `/admin` to it.
 
@@ -257,7 +263,7 @@ The biodata page is static, but payments, emails and the admin dashboard need th
 | `server/admin.html` | Admin dashboard: orders, revenue, emails, CSV export |
 | `deploy/llt-api.service` | systemd service that keeps the server running |
 | `deploy/nginx-api.conf` | nginx lines that send `/api` and `/admin` to the server |
-| `deploy/api.env.example` | Settings (admin password, Razorpay keys) |
+| `deploy/api.env.example` | Settings (admin password, Razorpay keys, `BIODATA_PRICE`, `INVITE_PRICE`) |
 
 **Test locally** (fake payments, no Razorpay needed):
 

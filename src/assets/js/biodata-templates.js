@@ -278,6 +278,29 @@
     return [d.education, d.occupation].filter(Boolean).map(esc).join(' &middot; ');
   }
 
+  // Page style and ornaments shared by biodata and invitation designs.
+  // Ornaments are inline SVG (not CSS background images) so they also appear in the PDF/JPG export.
+  function decorations(tpl, p) {
+    var has = function (k) { return tpl.ornaments.indexOf(k) !== -1; };
+    var outerBg = p.outerGrad || p.outer || p.bg;
+    var style = 'background:' + outerBg + ';--bd-bg:' + p.bg + ';--bd-ink:' + p.ink + ';--bd-accent:' + p.accent + ';--bd-accent2:' + p.accent2 + ';--bd-soft:' + p.soft +
+      ';--bd-side:' + p.side + ';--bd-side-ink:' + p.sideInk + ';--bd-head:' + FONTS[tpl.head] + ';--bd-body:' + FONTS[tpl.body] + ';--bd-name:' + FONTS[tpl.nameFont] + ';';
+    var orn = '', under = '';
+    if (has('mandala')) orn += '<div class="bd-mandala">' + mandala(520, p.accent2, 0.24) + '</div>';
+    if (has('corners')) { var cs = corner(p.accent2); orn += ['tl', 'tr', 'bl', 'br'].map(function (k) { return '<div class="bd-corner bd-corner-' + k + '">' + cs + '</div>'; }).join(''); }
+    if (has('border')) orn += '<div class="bd-border"></div>';
+    var garl = has('garland') ? '<div class="bd-garland">' + garland(p.accent, p.accent2) + '</div>' : '';
+    if (has('dots')) under += '<div class="bd-fill">' + pattern('dots', p.outer ? '#ffffff' : p.accent2, p.outer ? 0.28 : 0.45) + '</div>';
+    if (has('dotsLight')) under += '<div class="bd-fill">' + pattern('dots', '#ffffff', 0.3) + '</div>';
+    if (has('damask')) under += '<div class="bd-fill">' + pattern('damask', p.accent2, 0.35) + '</div>';
+    if (has('vine')) orn += '<div class="bd-fill bd-over">' + vine(p.leaf || p.accent, p.bloom || p.accent2) + '</div>';
+    if (has('foil')) orn += '<div class="bd-foil bd-foil-l1"></div><div class="bd-foil bd-foil-l2"></div><div class="bd-foil bd-foil-r1"></div><div class="bd-foil bd-foil-r2"></div>';
+    if (has('foilframe')) orn += '<div class="bd-foil bd-ff-t"></div><div class="bd-foil bd-ff-b"></div><div class="bd-foil bd-ff-l"></div><div class="bd-foil bd-ff-r"></div>';
+    if (has('rangoli')) { var rg = rangoli(p.accent2, p.third || p.accent, p.accent); under += '<div class="bd-fill bd-clip"><div class="bd-rangoli bd-rangoli-tl">' + rg + '</div><div class="bd-rangoli bd-rangoli-br">' + rg + '</div></div>'; }
+    if (has('paisley')) { var pz = paisley(p.accent2, '#f6c453'); orn += ['tl', 'tr', 'bl', 'br'].map(function (k) { return '<div class="bd-paisley bd-corner-' + k + '">' + pz + '</div>'; }).join(''); }
+    return { style: style, orn: under + orn, garl: garl, has: has };
+  }
+
   function render(d, tplOrId, opts) {
     d = d || {};
     opts = opts || {};
@@ -287,30 +310,8 @@
     var secs = sections(d);
     var name = esc(d.name || 'Your Name');
     var title = esc(d.title || 'BIODATA');
-    var outerBg = p.outerGrad || p.outer || p.bg;
-    var style = 'background:' + outerBg + ';--bd-bg:' + p.bg + ';--bd-ink:' + p.ink + ';--bd-accent:' + p.accent + ';--bd-accent2:' + p.accent2 + ';--bd-soft:' + p.soft +
-      ';--bd-side:' + p.side + ';--bd-side-ink:' + p.sideInk + ';--bd-head:' + FONTS[tpl.head] + ';--bd-body:' + FONTS[tpl.body] + ';--bd-name:' + FONTS[tpl.nameFont] + ';';
-
-    // Ornaments are inline SVG (not CSS background images) so they also appear in the PDF/JPG export.
-    var orn = '';
-    if (tpl.ornaments.indexOf('mandala') !== -1) orn += '<div class="bd-mandala">' + mandala(520, p.accent2, 0.24) + '</div>';
-    if (tpl.ornaments.indexOf('corners') !== -1) {
-      var cs = corner(p.accent2);
-      orn += ['tl', 'tr', 'bl', 'br'].map(function (k) { return '<div class="bd-corner bd-corner-' + k + '">' + cs + '</div>'; }).join('');
-    }
-    if (tpl.ornaments.indexOf('border') !== -1) orn += '<div class="bd-border"></div>';
-    var garl = tpl.ornaments.indexOf('garland') !== -1 ? '<div class="bd-garland">' + garland(p.accent, p.accent2) + '</div>' : '';
-    var has = function (k) { return tpl.ornaments.indexOf(k) !== -1; };
-    var under = ''; // drawn below everything else
-    if (has('dots')) under += '<div class="bd-fill">' + pattern('dots', p.outer ? '#ffffff' : p.accent2, p.outer ? 0.28 : 0.45) + '</div>';
-    if (has('dotsLight')) under += '<div class="bd-fill">' + pattern('dots', '#ffffff', 0.3) + '</div>';
-    if (has('damask')) under += '<div class="bd-fill">' + pattern('damask', p.accent2, 0.35) + '</div>';
-    if (has('vine')) orn += '<div class="bd-fill bd-over">' + vine(p.leaf || p.accent, p.bloom || p.accent2) + '</div>';
-    if (has('foil')) orn += '<div class="bd-foil bd-foil-l1"></div><div class="bd-foil bd-foil-l2"></div><div class="bd-foil bd-foil-r1"></div><div class="bd-foil bd-foil-r2"></div>';
-    if (has('foilframe')) orn += '<div class="bd-foil bd-ff-t"></div><div class="bd-foil bd-ff-b"></div><div class="bd-foil bd-ff-l"></div><div class="bd-foil bd-ff-r"></div>';
-    if (has('rangoli')) { var rg = rangoli(p.accent2, p.third || p.accent, p.accent); under += '<div class="bd-fill bd-clip"><div class="bd-rangoli bd-rangoli-tl">' + rg + '</div><div class="bd-rangoli bd-rangoli-br">' + rg + '</div></div>'; }
-    if (has('paisley')) { var pz = paisley(p.accent2, '#f6c453'); orn += ['tl', 'tr', 'bl', 'br'].map(function (k) { return '<div class="bd-paisley bd-corner-' + k + '">' + pz + '</div>'; }).join(''); }
-    orn = under + orn;
+    var deco = decorations(tpl, p);
+    var style = deco.style, orn = deco.orn, garl = deco.garl, has = deco.has;
 
     var body;
     var all = secs.map(sectionHtml).join('') + aboutHtml(d);
@@ -361,6 +362,88 @@
     hobbies: 'Reading, classical dance, travel'
   };
 
+  // ---------- Wedding invitations ----------
+  var INVITES = [
+    t('inv-classic-maroon', 'Classic Maroon', 'free', 'classic', 'maroon', { orn: ['border'], head: 'cinzel', nameFont: 'vibes' }),
+    t('inv-simple-navy', 'Simple Navy', 'free', 'classic', 'navy', { orn: ['border'], head: 'playfair', nameFont: 'vibes' }),
+    t('inv-sage-card', 'Sage Card', 'free', 'panel', 'sagePanel', { head: 'playfair', nameFont: 'vibes', panel: 'round' }),
+    t('inv-blue-card', 'Blue Card', 'free', 'panel', 'bluePanel', { head: 'cormorant', nameFont: 'vibes', panel: 'round' }),
+    t('inv-peach-dots', 'Peach Dots', 'free', 'classic', 'peach', { orn: ['dots'], head: 'playfair', nameFont: 'vibes' }),
+    t('inv-lilac-card', 'Lilac Card', 'free', 'panel', 'lilac', { head: 'cormorant', nameFont: 'vibes', panel: 'round' }),
+    t('inv-royal-maroon', 'Royal Maroon & Gold', 'premium', 'classic', 'maroon', { orn: ['border', 'corners', 'mandala'], head: 'cinzel', nameFont: 'vibes' }),
+    t('inv-sage-foil', 'Sage & Gold Foil', 'premium', 'classic', 'sageFoil', { orn: ['foil'], head: 'cinzel', nameFont: 'vibes' }),
+    t('inv-royal-blue-foil', 'Royal Blue Foil', 'premium', 'classic', 'blueFoil', { orn: ['foil'], head: 'cinzel', nameFont: 'vibes' }),
+    t('inv-wine-frame', 'Wine & Gold Frame', 'premium', 'panel', 'wine', { orn: ['foilframe'], head: 'cinzel', nameFont: 'vibes' }),
+    t('inv-palace-maroon', 'Palace Maroon', 'premium', 'panel', 'maroonArch', { orn: ['damask', 'archline'], head: 'cinzel', nameFont: 'vibes', panel: 'arch' }),
+    t('inv-palace-emerald', 'Palace Emerald', 'premium', 'panel', 'emeraldArch', { orn: ['damask', 'archline'], head: 'cinzel', nameFont: 'vibes', panel: 'arch' }),
+    t('inv-palace-blue', 'Palace Blue', 'premium', 'panel', 'blueArch', { orn: ['dots', 'archline'], head: 'marcellus', nameFont: 'vibes', panel: 'arch' }),
+    t('inv-vine-ivory', 'Ivory Vines', 'premium', 'classic', 'ivoryVine', { orn: ['vine'], head: 'cormorant', nameFont: 'vibes' }),
+    t('inv-vine-blush', 'Blush Vines', 'premium', 'classic', 'blushVine', { orn: ['vine'], head: 'cormorant', nameFont: 'vibes' }),
+    t('inv-rangoli', 'Rangoli Turquoise', 'premium', 'panel', 'turquoise', { orn: ['rangoli'], head: 'marcellus', nameFont: 'vibes', panel: 'round' }),
+    t('inv-plum-damask', 'Plum Damask', 'premium', 'panel', 'plum', { orn: ['damask', 'foilframe'], head: 'cinzel', nameFont: 'vibes' }),
+    t('inv-magenta-gold', 'Magenta & Gold', 'premium', 'panel', 'magenta', { orn: ['foilframe', 'corners'], head: 'cinzel', nameFont: 'vibes' }),
+    t('inv-sunset', 'Sunset Glow', 'premium', 'panel', 'sunset', { orn: ['dotsLight'], head: 'playfair', nameFont: 'vibes', panel: 'round' }),
+    t('inv-midnight-gold', 'Midnight Gold', 'premium', 'classic', 'night', { orn: ['border', 'corners', 'mandala'], head: 'cinzel', nameFont: 'vibes' }),
+    t('inv-marigold', 'Marigold', 'premium', 'classic', 'marigold', { orn: ['garland', 'border'], head: 'marcellus', nameFont: 'vibes' }),
+    t('inv-paisley', 'Saffron Paisley', 'premium', 'panel', 'saffronPaisley', { orn: ['paisley'], head: 'marcellus', nameFont: 'vibes' })
+  ];
+  function inviteById(id) { for (var i = 0; i < INVITES.length; i++) if (INVITES[i].id === id) return INVITES[i]; return null; }
+  var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  function longDate(dt) {
+    if (!dt) return '';
+    var p = String(dt).split('-').map(Number);
+    if (p.length !== 3 || !p[0]) return dt;
+    var x = new Date(p[0], p[1] - 1, p[2]);
+    return DAYS[x.getDay()] + ', ' + p[2] + ' ' + MONTHS[p[1] - 1] + ' ' + p[0];
+  }
+  function renderInvite(d, tplOrId, opts) {
+    d = d || {};
+    opts = opts || {};
+    var tpl = typeof tplOrId === 'string' ? inviteById(tplOrId) : tplOrId;
+    if (!tpl) tpl = INVITES[0];
+    var p = P[tpl.palette], deco = decorations(tpl, p);
+    var brideFirst = d.hostSide === 'bride';
+    var first = brideFirst ? { n: d.bride || 'Bride', par: d.brideParents } : { n: d.groom || 'Groom', par: d.groomParents };
+    var second = brideFirst ? { n: d.groom || 'Groom', par: d.groomParents } : { n: d.bride || 'Bride', par: d.brideParents };
+    var events = (d.events || []).filter(function (e) { return e.name || e.date || e.venue; });
+    var evHtml = events.map(function (e) {
+      return '<div class="inv-ev">' + (e.name ? '<div class="inv-ev-name">' + esc(e.name) + '</div>' : '') +
+        (e.date ? '<div class="inv-ev-date">' + esc(longDate(e.date)) + '</div>' : '') +
+        (e.time ? '<div class="inv-ev-time">' + esc(e.time) + '</div>' : '') +
+        (e.venue ? '<div class="inv-ev-venue">' + esc(e.venue) + '</div>' : '') + '</div>';
+    }).join('');
+    var content = topLine(d, p) +
+      '<div class="bd-title">' + esc(d.title || 'WEDDING INVITATION') + '</div>' +
+      (d.message ? '<p class="inv-msg">' + esc(d.message) + '</p>' : '') +
+      (d.photo ? photoHtml(d, tpl) : '') +
+      '<div class="inv-names"><div class="bd-name">' + esc(first.n) + '</div>' + (first.par ? '<div class="inv-par">' + esc(first.par) + '</div>' : '') +
+      '<div class="inv-weds">' + esc(d.joiner || 'weds') + '</div>' +
+      '<div class="bd-name">' + esc(second.n) + '</div>' + (second.par ? '<div class="inv-par">' + esc(second.par) + '</div>' : '') + '</div>' +
+      '<div class="bd-divider"></div>' +
+      (evHtml ? '<div class="inv-events' + (events.length > 2 ? ' inv-events-grid' : '') + '">' + evHtml + '</div>' : '') +
+      (d.rsvp ? '<div class="inv-rsvp">' + esc(d.rsvp) + '</div>' : '') +
+      (d.compliments ? '<div class="inv-compl">' + esc(d.compliments) + '</div>' : '');
+    var body;
+    if (tpl.layout === 'panel') {
+      var shape = tpl.panel === 'arch' ? '<div class="bd-fill">' + archPanel(p.bg, deco.has('archline') ? p.accent2 : '') + '</div>' : '';
+      body = shape + '<div class="bd-panel bd-panel-' + tpl.panel + '">' + deco.garl + '<div class="bd-content">' + content + '</div></div>';
+    } else {
+      body = deco.garl + '<div class="bd-content">' + content + '</div>';
+    }
+    var credit = tpl.tier === 'free' && !opts.noCredit ? '<div class="bd-credit">Made free at livelifetricks.com/wedding-invitation-maker</div>' : '';
+    var mark = opts.watermark ? '<div class="bd-watermark"><span>PREVIEW</span><span>PREVIEW</span><span>PREVIEW</span></div>' : '';
+    return '<div class="bd bd-invite bd-' + tpl.layout + (deco.has('foil') ? ' bd-has-foil' : '') + '" style="' + deco.style + '"><div class="bd-scale">' + deco.orn + body + credit + '</div>' + mark + '</div>';
+  }
+  var INVITE_SAMPLE = {
+    deity: 'ganesha', invocation: '|| Shree Ganeshay Namah ||', title: 'WEDDING INVITATION',
+    message: 'With the blessings of our elders, we joyfully invite you to celebrate the wedding of',
+    hostSide: 'groom', groom: 'Rahul', groomParents: 'S/o Mrs. & Mr. Anil Mehta', bride: 'Priya', brideParents: 'D/o Mrs. & Mr. Rajesh Sharma', joiner: 'weds',
+    events: [{ name: 'Haldi & Mehendi', date: '2027-02-12', time: '11:00 AM onwards', venue: 'Mehta Residence, Jaipur' },
+      { name: 'Wedding', date: '2027-02-14', time: 'Baraat 7:00 PM · Pheras 10:30 PM', venue: 'Rambagh Gardens, Jaipur' },
+      { name: 'Reception', date: '2027-02-15', time: '7:30 PM onwards', venue: 'Hotel Clarks Amer, Jaipur' }],
+    rsvp: 'RSVP: Mehta family · +91 98765 43210', compliments: 'With best compliments from relatives & friends'
+  };
+
   /*
    * Before exporting: the PDF/JPG library garbles right-to-left scripts (Arabic, Urdu, Hebrew),
    * so single-line RTL text is drawn by the browser's own canvas and swapped in as an image.
@@ -391,7 +474,8 @@
     });
   }
 
-  var api = { TEMPLATES: TEMPLATES, PALETTES: P, byId: byId, render: render, sections: sections, SAMPLE: SAMPLE, Icons: Icons, prepareExport: prepareExport };
+  var api = { TEMPLATES: TEMPLATES, PALETTES: P, byId: byId, render: render, sections: sections, SAMPLE: SAMPLE, Icons: Icons, prepareExport: prepareExport,
+    INVITES: INVITES, inviteById: inviteById, renderInvite: renderInvite, INVITE_SAMPLE: INVITE_SAMPLE };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Biodata = api;
 })(this);

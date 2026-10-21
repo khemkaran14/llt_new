@@ -1,0 +1,68 @@
+<!--meta
+{
+  "title": "Wedding Budget Planner – Indian Wedding Cost Calculator | LiveLifeTricks",
+  "description": "Free Indian wedding budget planner: split your budget across venue, catering, decor, photography, outfits and more, track what's spent and paid, and print or export to Excel.",
+  "path": "/wedding-budget-planner/",
+  "priority": "0.8",
+  "breadcrumb": "Wedding Budget Planner",
+  "scripts": ["wedding-budget.js"]
+}
+-->
+<section class="hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › Wedding Budget Planner</nav>
+    <h1>Wedding Budget Planner</h1>
+    <p class="lead">Set your total budget, see a sensible split across every expense, then track what you've actually spent and paid. Saved on your device, ready to print or export to Excel.</p>
+    <div class="badges"><span class="badge">Indian wedding categories</span><span class="badge">Spent vs planned</span><span class="badge">Excel / CSV export</span></div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="card wb-top">
+    <div class="row2">
+      <div class="field"><label for="wb-total">Total wedding budget</label><div class="money"><input id="wb-total" data-money inputmode="numeric" type="text" value="1500000"></div></div>
+      <div class="field"><label for="wb-guests">Number of guests</label><input id="wb-guests" type="number" min="0" max="10000" value="300"></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">Planned</div><div class="v" id="wb-planned">–</div></div>
+      <div class="stat"><div class="k">Spent so far</div><div class="v" id="wb-spent">–</div></div>
+      <div class="stat"><div class="k">Paid</div><div class="v" id="wb-paid">–</div></div>
+      <div class="stat"><div class="k">Still to pay</div><div class="v" id="wb-due">–</div></div>
+      <div class="stat"><div class="k">Cost per guest</div><div class="v" id="wb-perguest">–</div></div>
+    </div>
+    <div class="tip" id="wb-warn" hidden></div>
+    <div class="actions">
+      <button type="button" class="btn" id="wb-add">+ Add a category</button>
+      <button type="button" class="btn" id="wb-reset">Reset to suggested split</button>
+      <button type="button" class="btn" id="wb-csv">Download Excel (CSV)</button>
+      <button type="button" class="btn btn-primary" onclick="window.print()">Print</button>
+    </div>
+  </div>
+  <div class="table-wrap" style="margin-top:16px">
+    <table class="data wb-table" id="wb-table">
+      <thead><tr><th>Category</th><th>Share</th><th>Planned</th><th>Actual cost</th><th>Paid</th><th>Due</th><th></th></tr></thead>
+      <tbody></tbody>
+      <tfoot></tfoot>
+    </table>
+  </div>
+  <p class="small muted">Change the share (%) to re-plan, or type a planned amount directly. Everything is saved on this device only.</p>
+</section>
+
+<article class="wrap narrow content">
+  <p class="updated">Last updated: {{updated}}</p>
+  <h2>How Indian wedding budgets usually split</h2>
+  <p>Food and venue together usually take <strong>40–50%</strong> of the budget. Outfits and jewellery are the next biggest item. Keep <strong>5–10% as a buffer</strong>: almost every wedding goes over somewhere.</p>
+  <h2>Ways to save without it showing</h2>
+  <ul>
+    <li><strong>Cut the guest list first.</strong> Catering is charged per plate, so every 50 guests can save lakhs.</li>
+    <li><strong>Pick an off-season date</strong> or a weekday: venues and decorators charge much less.</li>
+    <li><strong>Combine functions</strong>, like haldi and mehendi on the same day at the same venue.</li>
+    <li><strong>Send digital invitations</strong> on WhatsApp instead of printed boxes. Try our <a href="/wedding-invitation-maker/">invitation maker</a>.</li>
+    <li><strong>Get 3 quotes</strong> for every big vendor, and pay advances by UPI or bank transfer so you have records.</li>
+  </ul>
+  <h2>Frequently asked questions</h2>
+  <div class="faq-wrap">
+    <details class="faq"><summary>How much does an average Indian wedding cost?</summary><p>It varies hugely by city and guest count: from a few lakh for a small ceremony to several crore. Mid-sized weddings with 200–400 guests in big cities commonly cost ₹10–30 lakh.</p></details>
+    <details class="faq"><summary>Is my budget saved?</summary><p>Yes, in your own browser on this device. Use "Download Excel" to keep a copy or share it with family.</p></details>
+  </div>
+</article>
