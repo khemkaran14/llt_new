@@ -70,3 +70,34 @@ test('salary: variable pay is left out of monthly in-hand', () => {
   assert.ok(b.monthlyInHand < a.monthlyInHand);
   assert.ok(a.tax > 0);
 });
+
+const Words = require('../src/assets/js/words.js');
+
+test('prepay vs invest: same rates means about the same result before tax', () => {
+  const r = Fin.prepayVsInvest({ balance: 3000000, loanRate: 9, months: 180, extra: 10000, investReturn: 9, gainsTax: 0 });
+  near(r.prepay.final, r.invest.final, r.prepay.final * 0.002);
+  assert.ok(r.prepay.closedAt < 180);
+  assert.ok(r.prepay.interest < r.invest.interest);
+});
+
+test('prepay vs invest: higher investment return favours investing, lower favours prepaying', () => {
+  const base = { balance: 3000000, loanRate: 8.5, months: 180, extra: 10000, gainsTax: 12.5 };
+  assert.equal(Fin.prepayVsInvest({ ...base, investReturn: 13 }).winner, 'invest');
+  assert.equal(Fin.prepayVsInvest({ ...base, investReturn: 6 }).winner, 'prepay');
+  const be = Fin.breakEvenReturn({ ...base });
+  assert.ok(be > 8.5 && be < 13, 'break-even ' + be);
+});
+
+test('prepay vs invest: loan balance always ends at zero in both plans', () => {
+  const r = Fin.prepayVsInvest({ balance: 2000000, loanRate: 9, months: 120, extra: 0, lumpsum: 500000, investReturn: 11, gainsTax: 0 });
+  const last = r.series[r.series.length - 1];
+  near(last.a, r.prepay.corpus, 1);
+  near(last.b, r.invest.corpus, 1);
+});
+
+test('rupees in words uses lakh and crore', () => {
+  assert.equal(Words.rupees(15000), 'Rupees Fifteen Thousand Only');
+  assert.equal(Words.rupees(1234567), 'Rupees Twelve Lakh Thirty Four Thousand Five Hundred Sixty Seven Only');
+  assert.equal(Words.rupees(25000000), 'Rupees Two Crore Fifty Lakh Only');
+  assert.equal(Words.rupees(101.5), 'Rupees One Hundred One and Fifty Paise Only');
+});

@@ -1,0 +1,72 @@
+<!--meta
+{
+  "title": "Income Tax Calendar 2026-27 – Due Dates with Reminders | LiveLifeTricks",
+  "description": "All income tax due dates for FY 2026-27 in one place: advance tax, ITR filing, belated and revised returns, Form 16, investment proofs and PPF. Add them to Google or Apple Calendar with reminders.",
+  "path": "/tax-calendar/",
+  "priority": "0.9",
+  "breadcrumb": "Tax Calendar",
+  "scripts": ["tax-calendar.js"]
+}
+-->
+<section class="hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › Tax Calendar</nav>
+    <h1>Income Tax Calendar 2026-27</h1>
+    <p class="lead">Every tax deadline that matters to you, with a countdown. Add them to your phone's calendar and get a reminder 3 days before each one.</p>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="card next-up">
+    <div>
+      <div class="k">Next deadline</div>
+      <div class="big" id="next-days">–</div>
+      <div><strong id="next-title"></strong> · <span class="muted" id="next-date"></span></div>
+    </div>
+    <button type="button" class="btn btn-primary" id="add-all">Add all to my calendar (.ics)</button>
+  </div>
+
+  <div class="field" style="margin-top:20px">
+    <span class="label" id="filter-label">Show deadlines for</span>
+    <div class="seg" role="group" aria-labelledby="filter-label" id="cal-filter">
+      <button type="button" data-value="all" aria-pressed="true">Everyone</button>
+      <button type="button" data-value="salaried" aria-pressed="false">Salaried</button>
+      <button type="button" data-value="business" aria-pressed="false">Business &amp; freelancers</button>
+      <button type="button" data-value="investors" aria-pressed="false">Investors</button>
+    </div>
+  </div>
+
+  <ol class="cal-list" id="cal-list" aria-live="polite"></ol>
+  <p class="small muted" id="past-count"></p>
+</section>
+
+<article class="wrap narrow content">
+  <p class="updated">Last updated: {{updated}} · Dates can be extended by the CBDT. Always confirm on <a href="https://www.incometax.gov.in" rel="nofollow">incometax.gov.in</a>.</p>
+
+  <h2>How "Add to calendar" works</h2>
+  <ul>
+    <li><strong>Google Calendar:</strong> opens Google Calendar with the deadline filled in. Tap Save.</li>
+    <li><strong>Apple / Outlook:</strong> downloads a calendar file. Open it and your phone adds the deadline, with an alert 3 days before.</li>
+    <li><strong>Add all:</strong> adds every upcoming deadline for your filter in one go.</li>
+  </ul>
+
+  <h2>Who has to pay advance tax?</h2>
+  <p>If your tax for the year, after TDS, is more than <strong>₹10,000</strong>, you must pay it in four instalments instead of all at once while filing. This usually affects freelancers, business owners, landlords and people with large capital gains or interest income. Salaried people whose employer deducts TDS usually don't need to. Senior citizens without business income are exempt.</p>
+  <table>
+    <thead><tr><th>Due date</th><th>Pay at least</th></tr></thead>
+    <tbody>
+      <tr><td>15 June</td><td>15% of yearly tax</td></tr>
+      <tr><td>15 September</td><td>45%</td></tr>
+      <tr><td>15 December</td><td>75%</td></tr>
+      <tr><td>15 March</td><td>100%</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-wrap">
+    <details class="faq"><summary>What is the last date to file ITR for FY 2026-27?</summary><p>31 July 2027 for salaried people and others who don't need an audit (ITR-1 and ITR-2). Business and professional taxpayers who don't need an audit have until 31 August 2027. Audit cases have until 31 October 2027.</p></details>
+    <details class="faq"><summary>I missed the ITR deadline for FY 2025-26. What now?</summary><p>You can still file a belated return until 31 December 2026, with a late fee of ₹5,000 (₹1,000 if your income is up to ₹5 lakh). You may also lose some benefits, like carrying forward certain losses.</p></details>
+    <details class="faq"><summary>What is the last date for tax-saving investments?</summary><p>31 March 2027 for FY 2026-27. Investments made after that count for the next year. These deductions only help in the old tax regime.</p></details>
+    <details class="faq"><summary>Will I get reminders?</summary><p>Yes, if you add the deadlines with the Apple / Outlook button or "Add all": each event has an alert 3 days before. For Google Calendar, your usual default reminder applies.</p></details>
+  </div>
+</article>

@@ -108,7 +108,74 @@
     return { base: base, gst: tax, total: base + tax, cgst: tax / 2, sgst: tax / 2, igst: tax };
   }
 
-  var api = { sip: sip, lumpsum: lumpsum, sipForGoal: sipForGoal, fd: fd, rd: rd, ppf: ppf, gst: gst };
+  /*
+   * Prepay a loan or invest the same money?
+   * Both plans spend exactly the same each month (EMI + extra) for the
+   * remaining tenure, so the one with more money at the end wins.
+   *  A (prepay): extra goes to the loan; once it's closed, the whole
+   *              EMI + extra is invested every month.
+   *  B (invest): pay the normal EMI and invest the extra every month.
+   * o: { balance, loanRate, months, extra, lumpsum, investReturn, gainsTax (%) }
+   */
+  function prepayVsInvest(o) {
+    var bal0 = n(o.balance), months = Math.round(n(o.months)), extra = n(o.extra), lump = n(o.lumpsum);
+    var li = n(o.loanRate) / 12 / 100, ii = n(o.investReturn) / 12 / 100, tax = n(o.gainsTax) / 100;
+    var emi = 0;
+    if (bal0 > 0 && months > 0) emi = li ? bal0 * li * Math.pow(1 + li, months) / (Math.pow(1 + li, months) - 1) : bal0 / months;
+
+    var a = { loan: Math.max(0, bal0 - lump), corpus: Math.max(0, lump - bal0), put: Math.max(0, lump - bal0), interest: 0, closedAt: null };
+    var b = { loan: bal0, corpus: lump, put: lump, interest: 0 };
+    var series = [{ m: 0, a: a.corpus - a.loan, b: b.corpus - b.loan }];
+    if (a.loan === 0) a.closedAt = 0;
+
+    for (var m = 1; m <= months; m++) {
+      // A: prepay
+      var budget = emi + extra;
+      a.corpus *= 1 + ii;
+      if (a.loan > 0) {
+        var intA = a.loan * li;
+        a.interest += intA;
+        var payA = Math.min(budget, a.loan + intA);
+        a.loan = a.loan + intA - payA;
+        if (a.loan < 0.005) { a.loan = 0; if (a.closedAt == null) a.closedAt = m; }
+        budget -= payA;
+      }
+      a.corpus += budget; a.put += budget;
+      // B: invest the extra
+      b.corpus *= 1 + ii;
+      if (b.loan > 0) {
+        var intB = b.loan * li;
+        b.interest += intB;
+        var payB = Math.min(emi, b.loan + intB);
+        b.loan = b.loan + intB - payB;
+        if (b.loan < 0.005) b.loan = 0;
+        b.corpus += emi - payB; b.put += emi - payB;
+      }
+      b.corpus += extra; b.put += extra;
+      if (m % 12 === 0 || m === months) series.push({ m: m, a: a.corpus - a.loan, b: b.corpus - b.loan });
+    }
+    var afterTax = function (x) { return x.corpus - Math.max(0, x.corpus - x.put) * tax; };
+    var finalA = afterTax(a), finalB = afterTax(b);
+    return {
+      emi: emi,
+      prepay: { interest: a.interest, closedAt: a.closedAt, corpus: a.corpus, final: finalA },
+      invest: { interest: b.interest, corpus: b.corpus, final: finalB },
+      winner: finalA >= finalB ? 'prepay' : 'invest',
+      difference: Math.abs(finalA - finalB),
+      series: series
+    };
+  }
+
+  // Investment return at which both plans end up equal.
+  function breakEvenReturn(o) {
+    var lo = 0, hi = 40;
+    var diff = function (r) { var q = {}; for (var k in o) q[k] = o[k]; q.investReturn = r; var x = prepayVsInvest(q); return x.invest.final - x.prepay.final; };
+    if (diff(hi) < 0) return null;
+    for (var i = 0; i < 50; i++) { var mid = (lo + hi) / 2; if (diff(mid) < 0) lo = mid; else hi = mid; }
+    return (lo + hi) / 2;
+  }
+
+  var api = { sip: sip, lumpsum: lumpsum, sipForGoal: sipForGoal, fd: fd, rd: rd, ppf: ppf, gst: gst, prepayVsInvest: prepayVsInvest, breakEvenReturn: breakEvenReturn };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Fin = api;
 })(this);

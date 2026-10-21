@@ -202,7 +202,7 @@ details.faq > p { padding: 0 16px 14px; margin: 0; color: var(--muted); }
 
 /* Footer */
 .site-footer { background: var(--surface); border-top: 1px solid var(--line); margin-top: 48px; padding: 32px 0 16px; }
-.footer-grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.footer-grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
 .footer-h { font-size: .85rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px; }
 .site-footer ul { list-style: none; padding: 0; margin: 0; }
 .site-footer li { margin: 6px 0; }
@@ -210,7 +210,68 @@ details.faq > p { padding: 0 16px 14px; margin: 0; color: var(--muted); }
 .site-footer a:hover { color: var(--brand); }
 .footer-bottom { border-top: 1px solid var(--line); margin-top: 24px; padding-top: 16px; }
 
+/* Embed mode (calculator shown inside another website) */
+.embed-credit { display: none; }
+.embed-code { width: 100%; font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); color: var(--text); resize: vertical; }
+html.embed body { background: var(--surface); }
+html.embed .site-header, html.embed .site-footer, html.embed article.content, html.embed .embed-box,
+html.embed .hero .lead, html.embed .hero .badges, html.embed .crumbs, html.embed .cta, html.embed [data-share] { display: none !important; }
+html.embed .hero { padding: 12px 0 8px; }
+html.embed .hero h1 { font-size: 1.4rem; }
+html.embed .calc .results { position: static; }
+html.embed .embed-credit { display: block; text-align: center; font-size: .85rem; margin: 16px 0; }
+
 @media print {
   .site-header, .site-footer, .actions, .nav-toggle, .content .faq-wrap { display: none !important; }
   body { background: #fff; }
+}
+
+/* Tax calendar */
+.next-up { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.next-up .k { font-size: .8rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.cal-list { list-style: none; padding: 0; margin: 16px 0; display: grid; gap: 12px; }
+.cal-item { display: flex; gap: 16px; align-items: flex-start; padding: 16px; }
+.cal-item.urgent { border-color: var(--accent); }
+.cal-date { flex: none; width: 76px; text-align: center; background: var(--brand-soft); color: var(--brand-strong); border-radius: 12px; padding: 8px 4px; font-size: .8rem; font-weight: 600; }
+.cal-date .cal-day { display: block; font-size: 1.6rem; font-weight: 800; line-height: 1.1; }
+.urgent .cal-date { background: var(--accent-soft); color: var(--accent); }
+.cal-body { min-width: 0; flex: 1; }
+.cal-body h3 { margin: 0 0 4px; }
+.cal-body p { margin: 0 0 10px; color: var(--muted); font-size: .92rem; }
+.cal-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.cal-left { font-weight: 700; font-size: .85rem; margin-right: 4px; }
+.urgent .cal-left { color: var(--accent); }
+@media (max-width: 480px) { .cal-item { flex-direction: column; } .cal-date { width: auto; display: flex; gap: 8px; align-items: baseline; padding: 6px 12px; } .cal-date .cal-day { display: inline; font-size: 1.2rem; } }
+
+/* Rent receipts */
+.receipts { display: grid; gap: 16px; }
+.receipt { background: #fff; color: #111; border: 1.5px dashed #999; border-radius: 8px; padding: 18px 20px; font-size: .95rem; line-height: 1.55; }
+.receipt-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #ddd; padding-bottom: 8px; margin-bottom: 10px; }
+.receipt-head strong { letter-spacing: .08em; }
+.receipt-head span { color: #555; font-size: .85rem; }
+.receipt p { margin: 0 0 14px; }
+.receipt-foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; }
+.stamp { width: 70px; height: 80px; border: 1px solid #999; display: grid; place-items: center; text-align: center; font-size: .7rem; color: #777; }
+.sign { text-align: right; font-size: .88rem; }
+.sign-line { width: 180px; border-bottom: 1px solid #333; margin: 28px 0 6px auto; }
+@media print {
+  html.print-receipts body * { visibility: hidden; }
+  html.print-receipts #receipts, html.print-receipts #receipts * { visibility: visible; }
+  html.print-receipts #receipts { position: absolute; left: 0; top: 0; width: 100%; display: block; }
+  html.print-receipts .receipt { break-inside: avoid; margin: 0 0 14px; border-color: #666; }
+  html.print-receipts .receipt:nth-child(3n) { break-after: page; }
+}
+
+/* Line chart */
+.chart-card { padding: 16px; }
+.line-chart { width: 100%; height: auto; display: block; }
+.legend-row { display: flex; gap: 18px; font-size: .9rem; margin-bottom: 8px; }
+.legend-row .dot { display: inline-block; vertical-align: middle; margin-right: 6px; }
+
+/* Article tables on small screens */
+.scroll-x { overflow-x: auto; margin: 0 0 1rem; }
+.scroll-x table { margin: 0; }
+@media (max-width: 480px) {
+  .content table:not(.data) { font-size: .85rem; }
+  .content table:not(.data) th, .content table:not(.data) td { padding: 6px 7px; }
 }

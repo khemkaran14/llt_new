@@ -6,6 +6,9 @@
  * Each file in src/pages starts with a meta block:
  *   <!--meta {"title": "...", "description": "...", "path": "/x/", ...} -->
  * The page body is placed inside src/layout.html.
+ *
+ * Pages can also be generated from code: every module in src/generators
+ * exports a function returning [{ meta, body }].
  */
 'use strict';
 const fs = require('fs');
@@ -45,25 +48,47 @@ copyDir(path.join(SRC, 'static'), DIST);
 const layout = fs.readFileSync(path.join(SRC, 'layout.html'), 'utf8');
 const pages = [];
 
+const sources = [];
 for (const file of fs.readdirSync(path.join(SRC, 'pages')).sort()) {
   if (!file.endsWith('.html')) continue;
   const raw = fs.readFileSync(path.join(SRC, 'pages', file), 'utf8');
   const m = raw.match(/^<!--meta\s*([\s\S]*?)-->\s*/);
   if (!m) throw new Error(file + ': missing <!--meta --> block');
-  const meta = JSON.parse(m[1]);
-  const body = raw.slice(m[0].length);
+  sources.push({ meta: JSON.parse(m[1]), body: raw.slice(m[0].length) });
+}
+const genDir = path.join(SRC, 'generators');
+if (fs.existsSync(genDir)) {
+  for (const file of fs.readdirSync(genDir).sort()) {
+    if (file.endsWith('.js')) sources.push(...require(path.join(genDir, file))({ config, today }));
+  }
+}
+
+// "Embed this calculator" box for pages that opt in with "embed": true
+function embedBox(meta) {
+  const src = config.siteUrl + meta.path + '?embed=1';
+  const code = '<iframe src="' + src + '" width="100%" height="900" style="border:0;max-width:760px" loading="lazy" title="' +
+    esc(meta.breadcrumb || meta.title) + '"></iframe>\n<p style="font-size:13px">' + esc(meta.breadcrumb || 'Calculator') +
+    ' by <a href="' + config.siteUrl + meta.path + '">LiveLifeTricks</a></p>';
+  return '\n<section class="wrap narrow content embed-box">\n  <details class="more">\n    <summary>Add this calculator to your website (free)</summary>\n' +
+    '    <p class="small muted">Copy this code into your blog or website. It always shows the latest tax rules.</p>\n' +
+    '    <textarea class="embed-code" readonly rows="5" onclick="this.select()">' + code.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</textarea>\n' +
+    '  </details>\n</section>\n';
+}
+
+for (const { meta, body: rawBody } of sources) {
+  const body = meta.embed ? rawBody + embedBox(meta) : rawBody;
   const url = config.siteUrl + meta.path;
 
   const schemas = [];
   if (meta.schema) schemas.push(...[].concat(meta.schema));
   if (meta.breadcrumb) {
+    const items = [{ name: 'Home', item: config.siteUrl + '/' }];
+    if (meta.breadcrumbParent) items.push({ name: meta.breadcrumbParent.name, item: config.siteUrl + meta.breadcrumbParent.path });
+    items.push({ name: meta.breadcrumb, item: url });
     schemas.push({
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: config.siteUrl + '/' },
-        { '@type': 'ListItem', position: 2, name: meta.breadcrumb, item: url }
-      ]
+      itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: it.item }))
     });
   }
   // FAQ schema is built from <details class="faq"> blocks so the page and schema never drift apart.

@@ -1,0 +1,144 @@
+<!--meta
+{
+  "title": "Prepay Home Loan or Invest? Calculator with Your Numbers | LiveLifeTricks",
+  "description": "Should you prepay your home loan or invest in SIP? Compare both with your loan rate, balance and expected return. See which leaves you richer, by how much, and the break-even return.",
+  "path": "/prepay-or-invest/",
+  "priority": "0.9",
+  "breadcrumb": "Prepay or Invest",
+  "embed": true,
+  "scripts": ["finance-engines.js", "prepay-ui.js"],
+  "schema": {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Prepay Loan or Invest Calculator",
+    "url": "https://livelifetricks.com/prepay-or-invest/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "en-IN",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+  }
+}
+-->
+<section class="hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › Prepay or Invest</nav>
+    <h1>Prepay Your Loan or Invest?</h1>
+    <p class="lead">You have some extra money every month. Should it go towards your home loan, or into a SIP? Enter your numbers to see which plan leaves you with more money, and by how much.</p>
+    <div class="badges">
+      <span class="badge">Your own numbers</span>
+      <span class="badge">Fair, same-money comparison</span>
+      <span class="badge">Break-even return</span>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="calc">
+    <form class="card" id="pi-form" autocomplete="off" onsubmit="return false">
+      <fieldset class="section">
+        <legend>Your loan</legend>
+        <div class="field">
+          <label for="balance">Loan amount still to repay</label>
+          <div class="money"><input id="balance" data-key="balance" data-money inputmode="numeric" type="text" value="3000000"></div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="loanRate">Loan interest rate</label>
+            <div class="suffix"><input id="loanRate" data-key="loanRate" type="number" inputmode="decimal" min="0" max="30" step="0.05" value="8.5"><span>% p.a.</span></div>
+          </div>
+          <div class="field">
+            <label for="years">Years left on the loan</label>
+            <div class="suffix"><input id="years" data-key="years" type="number" inputmode="numeric" min="1" max="30" step="1" value="15"><span>years</span></div>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="section">
+        <legend>Your extra money</legend>
+        <div class="row2">
+          <div class="field">
+            <label for="extra">Extra every month</label>
+            <div class="money"><input id="extra" data-key="extra" data-money inputmode="numeric" type="text" value="10000"></div>
+          </div>
+          <div class="field">
+            <label for="lumpsum">One-time amount now <span class="hint">Optional. e.g. a bonus.</span></label>
+            <div class="money"><input id="lumpsum" data-key="lumpsum" data-money inputmode="numeric" type="text"></div>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="section">
+        <legend>If you invest instead</legend>
+        <div class="row2">
+          <div class="field">
+            <label for="investReturn">Expected return</label>
+            <div class="suffix"><input id="investReturn" data-key="investReturn" type="number" inputmode="decimal" min="0" max="30" step="0.5" value="12"><span>% p.a.</span></div>
+            <span class="hint">Equity mutual funds: 10–12% is a common long-term planning figure.</span>
+          </div>
+          <div class="field">
+            <label for="gainsTax">Tax on investment gains</label>
+            <div class="suffix"><input id="gainsTax" data-key="gainsTax" type="number" inputmode="decimal" min="0" max="40" step="0.5" value="12.5"><span>%</span></div>
+            <span class="hint">12.5% for equity funds held over a year.</span>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+
+    <aside class="card results" aria-live="polite">
+      <h2>Which plan leaves you richer?</h2>
+      <div class="verdict" id="verdict"></div>
+      <div class="compare">
+        <div class="box" id="box-prepay"><div class="k">Prepay loan</div><div class="v" id="prepay-final">–</div><div class="s" id="prepay-sub"></div></div>
+        <div class="box" id="box-invest"><div class="k">Invest</div><div class="v" id="invest-final">–</div><div class="s" id="invest-sub"></div></div>
+      </div>
+      <table class="kv" id="pi-table"></table>
+      <div class="tip" id="pi-tip"></div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" data-share>Copy link to this result</button>
+      </div>
+    </aside>
+  </div>
+
+  <h2>Your wealth over time</h2>
+  <p class="muted small">Investments minus loan still owed, at the end of each year.</p>
+  <div class="card chart-card">
+    <div class="legend-row">
+      <span><span class="dot" style="background:var(--chart-1)"></span> Prepay loan</span>
+      <span><span class="dot" style="background:var(--chart-2)"></span> Invest</span>
+    </div>
+    <svg id="pi-chart" class="line-chart" viewBox="0 0 640 280" role="img" aria-label="Net worth over time for both plans"></svg>
+  </div>
+</section>
+
+<article class="wrap narrow content">
+  <p class="updated">Last updated: {{updated}}</p>
+
+  <h2>How this comparison works</h2>
+  <p>Both plans spend <strong>exactly the same money every month</strong> (your EMI plus the extra amount) until your loan's original end date. That's what makes it a fair comparison.</p>
+  <ul>
+    <li><strong>Prepay:</strong> the extra goes to your loan, so it closes early. After that, your whole EMI plus the extra goes into investments every month.</li>
+    <li><strong>Invest:</strong> you keep paying the normal EMI and invest the extra every month from day one.</li>
+  </ul>
+  <p>At the end, both loans are fully paid. Whichever plan has more money left, after tax on investment gains, is the winner.</p>
+
+  <h2>The simple rule, and why it's not enough</h2>
+  <p>The usual advice is "invest if your expected return is higher than your loan rate". But investment returns aren't guaranteed, they're taxed, and they go up and down. Prepaying gives a <strong>guaranteed</strong> return equal to your loan rate. That's why the calculator shows the <strong>break-even return</strong>: the return your investments must beat, after tax, for investing to win.</p>
+
+  <h2>Other things to consider</h2>
+  <ul>
+    <li><strong>Peace of mind:</strong> being debt-free sooner has real value, especially if your job isn't stable.</li>
+    <li><strong>Tax benefits (old regime):</strong> home loan interest up to ₹2 lakh a year is deductible under Section 24(b). If you use it, the loan effectively costs you less, which tilts the answer towards investing. This calculator doesn't include it.</li>
+    <li><strong>Emergency fund first:</strong> keep 6 months of expenses aside before doing either.</li>
+    <li><strong>Mix both:</strong> many people split the extra money half and half.</li>
+  </ul>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-wrap">
+    <details class="faq"><summary>Is it better to prepay a home loan or invest in mutual funds?</summary><p>It depends on your loan rate, the return you expect and how much risk you're comfortable with. If your investments reliably beat your loan rate after tax, investing usually wins over 10+ years. If not, or if you value certainty, prepaying is better. Use the calculator above with your own numbers.</p></details>
+    <details class="faq"><summary>Is there a penalty for prepaying a home loan?</summary><p>Not for floating-rate home loans taken by individuals: RBI rules don't allow banks to charge a prepayment penalty on them. Fixed-rate loans may have a charge, so check your loan agreement.</p></details>
+    <details class="faq"><summary>Should I reduce my EMI or the tenure after prepaying?</summary><p>Reducing the tenure saves more interest. This calculator assumes the EMI stays the same and the loan ends sooner.</p></details>
+  </div>
+
+  <div class="card cta" style="margin-top:28px">
+    <div><strong>See your loan in detail</strong><br><span class="muted">Full repayment schedule and prepayment savings.</span></div>
+    <a class="btn btn-primary" href="/emi-calculator/">Open EMI calculator →</a>
+  </div>
+</article>

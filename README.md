@@ -9,6 +9,9 @@ Website for **livelifetricks.com**:
 - **HRA** (`/hra-calculator/`): tax-free HRA with the FY 2026-27 8-city rule.
 - **PPF** (`/ppf-calculator/`), **FD** (`/fd-calculator/`) and **RD** (`/rd-calculator/`): maturity and interest.
 - **GST** (`/gst-calculator/`): add or remove GST at the GST 2.0 rates, with CGST/SGST/IGST split.
+- **Free tools:** Prepay Loan or Invest? (`/prepay-or-invest/`), Rent Receipt Generator (`/rent-receipt-generator/`), Tax Calendar with calendar reminders (`/tax-calendar/`).
+- **Income tax by salary:** 24 pages from ₹5 lakh to ₹50 lakh (`/income-tax-on-salary/…`), generated at build time by `src/generators/salary-pages.js` from the same tax engine. Add more amounts to `LAKHS` there.
+- **Embeddable calculators:** any page with `"embed": true` gets an "Add this calculator to your website" box. Opening a page with `?embed=1` shows only the calculator plus a credit link back to the site, which earns backlinks.
 - Home, About, Contact, Privacy policy, Disclaimer and 404 pages (needed for AdSense approval), plus an automatic `sitemap.xml` and `robots.txt`, SEO tags, FAQ structured data and dark mode.
 
 It's a plain static site with no database and no server code, so it's fast and cheap to host next to your other sites. See [docs/GROWTH-PLAN.md](docs/GROWTH-PLAN.md) for the plan to grow it towards a sale.
@@ -230,7 +233,7 @@ SITE_DIR=/var/www/livelifetricks.com bash /root/livelifetricks/deploy/update-fro
 
 Tax rules live in one file: `src/assets/js/tax-engine.js`.
 
-Other rates to check each year: the PPF default rate in `src/pages/ppf-calculator.html` (reviewed every quarter), and the GST slabs listed in `src/pages/gst-calculator.html`.
+Other things to update each year: the deadlines list at the top of `src/assets/js/tax-calendar.js`, the PPF default rate in `src/pages/ppf-calculator.html` (reviewed every quarter), and the GST slabs listed in `src/pages/gst-calculator.html`.
 
 - **Slabs and rates:** `NEW_SLABS`, `oldSlabs()` and `SURCHARGE`
 - **Year list and HRA metro cities:** `YEARS`

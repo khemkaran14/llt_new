@@ -13,10 +13,10 @@
     num: function (v) { return inr.format(Math.round(Number(v) || 0)); },
     // ₹12.3 L / ₹1.2 Cr
     short: function (v) {
-      var x = Number(v) || 0;
-      if (Math.abs(x) >= 1e7) return '₹' + (x / 1e7).toFixed(2).replace(/\.?0+$/, '') + ' Cr';
-      if (Math.abs(x) >= 1e5) return '₹' + (x / 1e5).toFixed(2).replace(/\.?0+$/, '') + ' L';
-      return '₹' + inr.format(Math.round(x));
+      var x = Number(v) || 0, sign = x < 0 ? '−' : '', a = Math.abs(x);
+      if (a >= 1e7) return sign + '₹' + (a / 1e7).toFixed(2).replace(/\.?0+$/, '') + ' Cr';
+      if (a >= 1e5) return sign + '₹' + (a / 1e5).toFixed(2).replace(/\.?0+$/, '') + ' L';
+      return sign + '₹' + inr.format(Math.round(a));
     },
     pct: function (v, d) { return ((Number(v) || 0) * 100).toFixed(d == null ? 1 : d) + '%'; },
     // Read a formatted money input ("12,00,000") as a number.
@@ -147,6 +147,11 @@
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
   }
+  // Inside another website: open our links in a new tab.
+  if (document.documentElement.classList.contains('embed')) {
+    document.querySelectorAll('a[href]').forEach(function (a) { a.target = '_blank'; a.rel = 'noopener'; });
+  }
+
   // Highlight current page
   var here = location.pathname;
   document.querySelectorAll('.site-nav a').forEach(function (a) {

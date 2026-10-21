@@ -1,0 +1,142 @@
+<!--meta
+{
+  "title": "Rent Receipt Generator – Free Printable Receipts for HRA | LiveLifeTricks",
+  "description": "Make rent receipts for HRA in seconds. Generate a receipt for every month of the year with the amount in words, landlord PAN and revenue stamp box, then print or save as PDF. Free and private.",
+  "path": "/rent-receipt-generator/",
+  "priority": "0.9",
+  "breadcrumb": "Rent Receipt Generator",
+  "scripts": ["words.js", "rent-receipt.js"],
+  "schema": {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Rent Receipt Generator",
+    "url": "https://livelifetricks.com/rent-receipt-generator/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "en-IN",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+  }
+}
+-->
+<section class="hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › Rent Receipt Generator</nav>
+    <h1>Rent Receipt Generator</h1>
+    <p class="lead">Make a rent receipt for every month in one go, ready to print or save as PDF for your HRA claim. Ask your landlord to sign each one.</p>
+    <div class="badges">
+      <span class="badge">Up to 24 months at once</span>
+      <span class="badge">Amount in words</span>
+      <span class="badge">Private: nothing is uploaded</span>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="calc">
+    <form class="card" id="rr-form" autocomplete="off" onsubmit="return false">
+      <div class="row2">
+        <div class="field">
+          <label for="tenant">Your name (tenant)</label>
+          <input id="tenant" name="tenant" data-key="tenant" type="text" maxlength="80">
+        </div>
+        <div class="field">
+          <label for="landlord">Landlord's name</label>
+          <input id="landlord" name="landlord" data-key="landlord" type="text" maxlength="80">
+        </div>
+      </div>
+      <div class="field">
+        <label for="address">Rented house address</label>
+        <input id="address" name="address" data-key="address" type="text" maxlength="200">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="rent">Monthly rent</label>
+          <div class="money"><input id="rent" name="rent" data-key="rent" data-money inputmode="numeric" type="text" value="15000"></div>
+        </div>
+        <div class="field">
+          <label for="mode">Paid by</label>
+          <select id="mode" data-key="mode">
+            <option>Bank transfer</option>
+            <option>UPI</option>
+            <option>Cheque</option>
+            <option>Cash</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="from">From month</label>
+          <input id="from" name="from" data-key="from" type="month">
+        </div>
+        <div class="field">
+          <label for="to">To month</label>
+          <input id="to" name="to" data-key="to" type="month">
+        </div>
+      </div>
+      <details class="more">
+        <summary>Landlord PAN and more</summary>
+        <div class="row2">
+          <div class="field">
+            <label for="pan">Landlord's PAN <span class="hint">Needed if rent is over ₹1 lakh a year.</span></label>
+            <input id="pan" data-key="pan" type="text" maxlength="10" style="text-transform:uppercase" placeholder="ABCDE1234F">
+          </div>
+          <div class="field">
+            <label for="day">Day of month rent is paid</label>
+            <input id="day" data-key="day" type="number" min="1" max="31" value="5">
+          </div>
+        </div>
+        <div class="field">
+          <label for="landlordAddress">Landlord's address <span class="hint">Optional.</span></label>
+          <input id="landlordAddress" data-key="landlordAddress" type="text" maxlength="200">
+        </div>
+      </details>
+      <div class="actions">
+        <button type="button" class="btn" id="rr-clear">Clear names &amp; address</button>
+      </div>
+    </form>
+
+    <aside class="card results" aria-live="polite">
+      <h2>Your receipts</h2>
+      <p class="big" style="font-size:1.4rem" id="rr-count"></p>
+      <div class="tip" id="rr-warn" hidden></div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="rr-print">Print / Save as PDF</button>
+      </div>
+      <p class="small muted" style="margin:12px 0 0">Tip: in the print window, choose "Save as PDF" as the printer. Receipts print 3 to a page.</p>
+    </aside>
+  </div>
+
+  <h2>Preview</h2>
+  <div id="receipts" class="receipts"></div>
+</section>
+
+<article class="wrap narrow content">
+  <p class="updated">Last updated: {{updated}}</p>
+
+  <h2>Why you need rent receipts</h2>
+  <p>To claim HRA exemption in the old tax regime, your employer asks for proof of rent, usually in January–February. Without it, they deduct extra tax from your salary. You can still claim HRA while filing your return, but you need receipts as proof if the tax department asks.</p>
+
+  <h2>What a valid rent receipt includes</h2>
+  <ul>
+    <li>Tenant's and landlord's names</li>
+    <li>Address of the rented house</li>
+    <li>Rent amount and the month it's for</li>
+    <li>How it was paid</li>
+    <li>Landlord's signature</li>
+    <li>Landlord's PAN, if yearly rent is over ₹1 lakh</li>
+    <li>A revenue stamp, if rent over ₹5,000 is paid in cash</li>
+  </ul>
+  <p>Paying by bank transfer or UPI is best, because the bank statement backs up your receipts.</p>
+  <p><strong>Important:</strong> only make receipts for rent you actually paid. Claiming HRA with false receipts is tax evasion and can lead to penalties.</p>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-wrap">
+    <details class="faq"><summary>Do I need a receipt for every month?</summary><p>Most employers want one receipt per month, or one for each quarter. This tool makes one for every month in the period you choose.</p></details>
+    <details class="faq"><summary>Is a revenue stamp required?</summary><p>Only when rent above ₹5,000 is paid in cash. The landlord signs across the stamp. For bank transfers, UPI and cheques, no stamp is needed.</p></details>
+    <details class="faq"><summary>My landlord doesn't have a PAN. What do I do?</summary><p>If yearly rent is over ₹1 lakh and the landlord has no PAN, they need to give you a signed declaration saying so, with their name and address.</p></details>
+    <details class="faq"><summary>Is my data stored anywhere?</summary><p>No. The receipts are made in your browser. Names and addresses are only saved on your own device so you don't have to retype them. Use "Clear names &amp; address" to remove them.</p></details>
+  </div>
+
+  <div class="card cta" style="margin-top:28px">
+    <div><strong>How much HRA is tax-free for you?</strong><br><span class="muted">Work it out in seconds, with the new 8-city rule.</span></div>
+    <a class="btn btn-primary" href="/hra-calculator/">Open HRA calculator →</a>
+  </div>
+</article>
