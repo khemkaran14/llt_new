@@ -39,7 +39,7 @@ npm run serve     # build and preview at http://localhost:8080
 
 # Deploying to the Hostinger VPS
 
-How it works: the VPS keeps a copy of this repo in `/opt/llt_new`. A script there pulls the latest code, runs the tests, builds the site and copies it into the folder nginx serves. GitHub Actions runs that script for you on every push to `main`.
+How it works: the VPS keeps a copy of this repo in `/root/livelifetricks`. A script there pulls the latest code, runs the tests, builds the site and copies it into the folder nginx serves. GitHub Actions runs that script for you on every push to `main`.
 
 In the commands below, replace:
 - `YOUR_VPS_IP` with your VPS IP address
@@ -77,7 +77,7 @@ apt install -y nodejs
 If the repo is **public**:
 
 ```bash
-git clone --depth 1 https://github.com/khemkaran14/llt_new.git /opt/llt_new
+git clone --depth 1 https://github.com/khemkaran14/llt_new.git /root/livelifetricks
 ```
 
 If the repo is **private**, give the VPS read-only access first:
@@ -96,13 +96,13 @@ Host github-llt
   User git
   IdentityFile ~/.ssh/llt_repo
 CFG
-git clone --depth 1 git@github-llt:khemkaran14/llt_new.git /opt/llt_new
+git clone --depth 1 git@github-llt:khemkaran14/llt_new.git /root/livelifetricks
 ```
 
 ### 2.4 Publish the site into your folder
 
 ```bash
-SITE_DIR=/var/www/livelifetricks.com bash /opt/llt_new/deploy/update-from-github.sh
+SITE_DIR=/var/www/livelifetricks.com bash /root/livelifetricks/deploy/update-from-github.sh
 ```
 
 It should end with `==> Done`.
@@ -119,7 +119,7 @@ systemctl is-active nginx apache2
 ### 2.6 Add the nginx config
 
 ```bash
-cp /opt/llt_new/deploy/nginx-livelifetricks.conf /etc/nginx/sites-available/livelifetricks.com
+cp /root/livelifetricks/deploy/nginx-livelifetricks.conf /etc/nginx/sites-available/livelifetricks.com
 nano /etc/nginx/sites-available/livelifetricks.com   # change the "root" line if your folder is different
 ln -s /etc/nginx/sites-available/livelifetricks.com /etc/nginx/sites-enabled/
 nginx -t                  # must say "test is successful"
@@ -185,7 +185,8 @@ Open the repo → **Settings → Secrets and variables → Actions → New repos
 | `VPS_HOST` | your VPS IP |
 | `VPS_USER` | `root` |
 | `VPS_SSH_KEY` | the private key from 5.1 |
-| `SITE_DIR` | your site folder, e.g. `/var/www/livelifetricks.com` |
+| `SITE_DIR` | the folder nginx serves, e.g. `/var/www/livelifetricks.com` |
+| `REPO_DIR` | only if the code isn't in `/root/livelifetricks` |
 | `VPS_PORT` | only if SSH isn't on port 22 |
 
 ### 5.3 Run it
@@ -210,7 +211,7 @@ If you ever need to deploy without GitHub Actions:
 
 ```bash
 ssh root@YOUR_VPS_IP
-SITE_DIR=/var/www/livelifetricks.com bash /opt/llt_new/deploy/update-from-github.sh
+SITE_DIR=/var/www/livelifetricks.com bash /root/livelifetricks/deploy/update-from-github.sh
 ```
 
 ## Using a panel or Apache instead

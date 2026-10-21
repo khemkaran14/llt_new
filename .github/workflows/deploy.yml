@@ -34,6 +34,7 @@ jobs:
           VPS_PORT: ${{ secrets.VPS_PORT }}
           VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
           SITE_DIR: ${{ secrets.SITE_DIR }}
+          REPO_DIR: ${{ secrets.REPO_DIR }}
         run: |
           if [ -z "$VPS_HOST" ] || [ -z "$VPS_SSH_KEY" ]; then
             echo "::error::Add the VPS_HOST and VPS_SSH_KEY secrets (Settings > Secrets and variables > Actions). See README.md."
@@ -45,4 +46,4 @@ jobs:
           ssh -i ~/.ssh/deploy_key -p "${VPS_PORT:-22}" \
             -o StrictHostKeyChecking=accept-new \
             "${VPS_USER:-root}@$VPS_HOST" \
-            "BRANCH='${{ github.ref_name }}' SITE_DIR='${SITE_DIR:-/var/www/livelifetricks.com}' bash /opt/llt_new/deploy/update-from-github.sh"
+            "BRANCH='${{ github.ref_name }}' SITE_DIR='${SITE_DIR:-/var/www/livelifetricks.com}' REPO_DIR='${REPO_DIR:-/root/livelifetricks}' bash '${REPO_DIR:-/root/livelifetricks}/deploy/update-from-github.sh'"

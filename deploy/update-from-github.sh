@@ -2,10 +2,10 @@
 # Runs ON THE VPS. Pulls the latest code from GitHub, tests it, builds it
 # and copies the finished site into the web folder.
 #
-#   bash /opt/llt_new/deploy/update-from-github.sh
+#   bash /root/livelifetricks/deploy/update-from-github.sh
 #
 # Optional settings:
-#   REPO_DIR  where the repo is cloned   (default /opt/llt_new)
+#   REPO_DIR  where the repo is cloned   (default /root/livelifetricks)
 #   SITE_DIR  the folder nginx serves    (default /var/www/livelifetricks.com)
 #   BRANCH    branch to deploy           (default main)
 set -euo pipefail
@@ -13,7 +13,7 @@ set -euo pipefail
 # Everything is inside main() so bash reads the whole script before git
 # updates this file.
 main() {
-  local repo_dir="${REPO_DIR:-/opt/llt_new}"
+  local repo_dir="${REPO_DIR:-/root/livelifetricks}"
   local site_dir="${SITE_DIR:-/var/www/livelifetricks.com}"
   local branch="${BRANCH:-main}"
 
