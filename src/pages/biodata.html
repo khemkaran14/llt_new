@@ -1,13 +1,13 @@
 <!--meta
 {
-  "title": "Marriage Biodata Maker – 25 Beautiful Templates, PDF & JPG | LiveLifeTricks",
-  "description": "Make a beautiful marriage biodata in minutes. Choose from 25 designs (10 free), fill in your details with a photo, and download as PDF or JPG. Private: your details stay on your device.",
+  "title": "Marriage Biodata Maker – 45 Beautiful Templates, PDF & JPG | LiveLifeTricks",
+  "description": "Make a beautiful marriage biodata in minutes. Choose from 45 designs (15 free), add a god icon for any religion, fill in your details with a photo, and download as PDF or JPG. Private: your details stay on your device.",
   "path": "/biodata/",
   "priority": "0.9",
   "breadcrumb": "Biodata Maker",
   "styles": ["biodata.css"],
-  "externalStyles": ["https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:wght@500;700&family=Great+Vibes&family=Lora:wght@400;600&family=Marcellus&family=Playfair+Display:wght@500;700&family=Poppins:wght@400;600&display=swap"],
-  "scripts": ["biodata-templates.js", "biodata-ui.js"],
+  "externalStyles": ["https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:wght@500;700&family=Great+Vibes&family=Lora:wght@400;600&family=Marcellus&family=Playfair+Display:wght@500;700&family=Poppins:wght@400;600&family=Noto+Sans+Devanagari:wght@500&family=Noto+Sans+Gurmukhi:wght@500&family=Noto+Naskh+Arabic:wght@500&display=swap"],
+  "scripts": ["biodata-icons.js", "biodata-templates.js", "biodata-ui.js"],
   "schema": {
     "@context": "https://schema.org",
     "@type": "WebApplication",
@@ -29,8 +29,9 @@
     <h1>Marriage Biodata Maker</h1>
     <p class="lead">Pick a design, fill in your details and download a beautiful biodata as PDF or JPG, ready to share on WhatsApp or print.</p>
     <div class="badges">
-      <span class="badge">10 free designs</span>
-      <span class="badge">15 premium designs, ₹20 each</span>
+      <span class="badge">15 free designs</span>
+      <span class="badge">30 premium designs, ₹20 each</span>
+      <span class="badge">God icons for every religion</span>
       <span class="badge">PDF + JPG</span>
       <span class="badge">Your details stay on your device</span>
     </div>
@@ -42,7 +43,7 @@
   <div class="cta" style="margin-bottom:14px">
     <h2 style="margin:0">Choose a design</h2>
     <div class="seg" role="group" aria-label="Filter designs" id="bd-filter">
-      <button type="button" data-value="all" aria-pressed="true">All 25</button>
+      <button type="button" data-value="all" aria-pressed="true">All 45</button>
       <button type="button" data-value="free" aria-pressed="false">Free</button>
       <button type="button" data-value="premium" aria-pressed="false">Premium ₹20</button>
     </div>
@@ -58,11 +59,16 @@
       <p class="small muted" style="margin-top:0">Only fill in what you want to show. Empty fields are left out of the biodata automatically.</p>
 
       <div class="row2">
-        <div class="field"><label for="b-symbol">Symbol at the top</label>
-          <select id="b-symbol" data-key="symbol"><option value="">None</option><option value="om">ॐ Om</option><option value="khanda">☬ Khanda</option><option value="cross">✝ Cross</option><option value="crescent">☪ Crescent</option><option value="flower">❁ Flower</option></select></div>
-        <div class="field"><label for="b-invocation">Top line <span class="hint">Optional.</span></label><input id="b-invocation" data-key="invocation" type="text" maxlength="60" placeholder="|| Shree Ganeshay Namah ||"></div>
+        <div class="field"><label for="b-deity">God / religious icon</label>
+          <select id="b-deity" data-key="deity"><option value="">None</option></select></div>
+        <div class="field"><label for="b-invocation">Top line <span class="hint">Pick one or type your own.</span></label><input id="b-invocation" data-key="invocation" type="text" maxlength="60" list="b-inv-list" placeholder="|| Shree Ganeshay Namah ||"><datalist id="b-inv-list"></datalist></div>
         <div class="field"><label for="b-title">Heading</label><input id="b-title" data-key="title" type="text" maxlength="30" value="BIODATA"></div>
         <div class="field"><label for="b-name">Full name</label><input id="b-name" data-key="name" type="text" maxlength="60"></div>
+      </div>
+      <div class="field">
+        <label for="b-deity-img">Or use your own god picture <span class="hint">Optional. e.g. your family's Ganesha, Sai Baba or Guru Nanak picture. Shown in a circle at the top.</span></label>
+        <input id="b-deity-img" type="file" accept="image/*">
+        <button type="button" class="btn" id="b-deity-img-remove" hidden style="margin-top:8px">Remove god picture</button>
       </div>
       <div class="field">
         <label for="b-photo">Photo <span class="hint">Optional. A clear, recent photo works best.</span></label>
@@ -192,10 +198,11 @@
   </ul>
   <h2>Frequently asked questions</h2>
   <div class="faq-wrap">
-    <details class="faq"><summary>Is the biodata maker free?</summary><p>Yes, 10 designs are completely free: enter your email and download your biodata as PDF and JPG. The 15 premium designs cost ₹20 each.</p></details>
+    <details class="faq"><summary>Is the biodata maker free?</summary><p>Yes, 15 designs are completely free: enter your email and download your biodata as PDF and JPG. The 30 premium designs cost ₹20 each.</p></details>
     <details class="faq"><summary>What do I get for ₹20?</summary><p>Your biodata in the premium design you chose, without the preview watermark, as both PDF and JPG. Download them as often as you like for 48 hours. The paid version is final: to change details later, start a new edit for ₹20.</p></details>
     <details class="faq"><summary>Are my details safe?</summary><p>Your biodata details and photo stay in your own browser and are never uploaded to our server. We only store your email, the name you enter, the design you chose and whether you paid.</p></details>
     <details class="faq"><summary>How do I pay?</summary><p>Through Razorpay with UPI, cards, net banking or wallets. The payment page is Razorpay's, so we never see your card or bank details.</p></details>
+    <details class="faq"><summary>Can I add Ganesha or another god at the top?</summary><p>Yes. Choose from icons for Hindu (Ganesha, Om, Kalash, Diya, Lotus, Swastik), Sikh (Khanda, Ik Onkar), Muslim (Crescent &amp; Star), Christian (Cross), Jain (Ahimsa hand), Buddhist (Dharma Wheel), Jewish (Star of David) and Parsi (sacred fire) faiths, or upload your own family god picture. Add a top line like "|| Shree Ganeshay Namah ||" or "Bismillah" from the list.</p></details>
     <details class="faq"><summary>Can I print it?</summary><p>Yes. The PDF is A4 size and prints well on any printer.</p></details>
   </div>
 </article>

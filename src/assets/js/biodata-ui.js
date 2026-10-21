@@ -1,7 +1,7 @@
 /* Biodata maker page. Depends on common.js and biodata-templates.js. */
 (function () {
   'use strict';
-  var L = window.LLT, B = window.Biodata;
+  var L = window.LLT, B = window.Biodata, I = window.BiodataIcons;
   if (!B || !document.getElementById('bd-gallery')) return;
 
   var $ = function (id) { return document.getElementById(id); };
@@ -18,10 +18,15 @@
   };
 
   // ---------- rendering ----------
+  function overflowing(el) {
+    if (el.scrollHeight > PAGE_H + 1) return true;
+    var panel = el.querySelector('.bd-panel');
+    return !!(panel && panel.scrollHeight > panel.clientHeight + 1);
+  }
   function fit(el) {
     var fs = 1;
     el.style.setProperty('--bd-fs', fs);
-    while (el.scrollHeight > PAGE_H + 1 && fs > 0.62) {
+    while (overflowing(el) && fs > 0.62) {
       fs = Math.round((fs - 0.02) * 100) / 100;
       el.style.setProperty('--bd-fs', fs);
     }
@@ -75,6 +80,43 @@
   }
   $('pv-change').addEventListener('click', function () { $('step-designs').scrollIntoView({ behavior: 'smooth' }); });
 
+  // ---------- god icons ----------
+  (function () {
+    var sel = $('b-deity'), groups = {};
+    Object.keys(I.ICONS).forEach(function (id) {
+      var ic = I.ICONS[id];
+      (groups[ic.group] = groups[ic.group] || []).push('<option value="' + id + '">' + (ic.glyph ? ic.glyph + ' ' : '') + ic.label + '</option>');
+    });
+    Object.keys(groups).forEach(function (g) { sel.insertAdjacentHTML('beforeend', '<optgroup label="' + g + '">' + groups[g].join('') + '</optgroup>'); });
+    $('b-inv-list').innerHTML = I.INVOCATIONS.map(function (t) { return '<option value="' + t.replace(/"/g, '&quot;') + '">'; }).join('');
+  })();
+  state.deityImg = null;
+  $('b-deity-img').addEventListener('change', function () {
+    readImage(this.files[0], 400, function (url) {
+      state.deityImg = url; store.set('deityImg', url); $('b-deity-img-remove').hidden = false; changed();
+    });
+  });
+  $('b-deity-img-remove').addEventListener('click', function () {
+    state.deityImg = null; store.del('deityImg'); $('b-deity-img').value = ''; this.hidden = true; changed();
+  });
+  // Shrink an uploaded image so it stays light and can be saved on the device.
+  function readImage(file, max, done) {
+    if (!file) return;
+    var img = new Image(), url = URL.createObjectURL(file);
+    img.onload = function () {
+      var s = Math.min(1, max / Math.max(img.width, img.height));
+      var c = document.createElement('canvas');
+      c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+      var ctx = c.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      done(c.toDataURL('image/jpeg', 0.85));
+    };
+    img.onerror = function () { alert('Sorry, that image could not be opened. Please try a JPG or PNG.'); };
+    img.src = url;
+  }
+
   // ---------- form data ----------
   function readData() {
     var d = {};
@@ -83,10 +125,12 @@
       return { label: row.querySelector('[data-c="label"]').value.trim(), value: row.querySelector('[data-c="value"]').value.trim() };
     }).filter(function (c) { return c.label && c.value; });
     if (state.photo) d.photo = state.photo;
+    if (state.deityImg) d.deityImg = state.deityImg;
     return d;
   }
   function writeData(d) {
     if (!d) return;
+    if (!d.deity && d.symbol) d.deity = d.symbol; // older saved drafts
     form.querySelectorAll('[data-key]').forEach(function (el) { if (d[el.dataset.key] != null) el.value = d[el.dataset.key]; });
     $('b-custom').innerHTML = '';
     (d.custom || []).forEach(addCustom);
@@ -105,22 +149,9 @@
 
   // Photo: shrink to max 700 px so it stays light and saves on the device.
   $('b-photo').addEventListener('change', function () {
-    var f = this.files[0];
-    if (!f) return;
-    var img = new Image(), url = URL.createObjectURL(f);
-    img.onload = function () {
-      var s = Math.min(1, 700 / Math.max(img.width, img.height));
-      var c = document.createElement('canvas');
-      c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
-      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-      state.photo = c.toDataURL('image/jpeg', 0.85);
-      URL.revokeObjectURL(url);
-      store.set('photo', state.photo);
-      $('b-photo-remove').hidden = false;
-      changed();
-    };
-    img.onerror = function () { alert('Sorry, that image could not be opened. Please try a JPG or PNG.'); };
-    img.src = url;
+    readImage(this.files[0], 700, function (url) {
+      state.photo = url; store.set('photo', url); $('b-photo-remove').hidden = false; changed();
+    });
   });
   $('b-photo-remove').addEventListener('click', function () {
     state.photo = null; store.del('photo'); $('b-photo').value = ''; this.hidden = true; changed();
@@ -132,6 +163,7 @@
     $('b-title').value = 'BIODATA';
     $('b-custom').innerHTML = '';
     state.photo = null; store.del('photo'); $('b-photo-remove').hidden = true;
+    state.deityImg = null; store.del('deityImg'); $('b-deity-img-remove').hidden = true;
     changed();
   });
 
@@ -179,7 +211,7 @@
   function changed() {
     preview();
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(function () { var d = readData(); delete d.photo; store.set('data', d); }, 300);
+    saveTimer = setTimeout(function () { var d = readData(); delete d.photo; delete d.deityImg; store.set('data', d); }, 300);
   }
   form.addEventListener('input', L.debounce(changed, 120));
   form.addEventListener('change', changed);
@@ -283,6 +315,7 @@
     fit(el);
     var fileName = 'biodata-' + (d.name || 'my').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.' + kind;
     return Promise.all([loadScript('/assets/js/vendor/html2canvas.min.js'), kind === 'pdf' ? loadScript('/assets/js/vendor/jspdf.umd.min.js') : null, document.fonts ? document.fonts.ready : null])
+      .then(function () { return B.prepareExport(el); })
       .then(function () { return window.html2canvas(el, { scale: 2, backgroundColor: null, logging: false, useCORS: true }); })
       .then(function (canvas) {
         var jpg = canvas.toDataURL('image/jpeg', 0.92);
@@ -327,6 +360,8 @@
   writeData(store.get('data'));
   state.photo = store.get('photo');
   $('b-photo-remove').hidden = !state.photo;
+  state.deityImg = store.get('deityImg');
+  $('b-deity-img-remove').hidden = !state.deityImg;
   state.order = store.get('order');
   var q = new URLSearchParams(location.search).get('design');
   var startTpl = B.byId(q) ? q : store.get('tpl');

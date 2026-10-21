@@ -19,10 +19,11 @@
 .bd-c { opacity: .6; }
 .bd-v { overflow-wrap: anywhere; }
 .bd-about p { white-space: pre-line; }
-.bd-photo { position: relative; z-index: 3; background-size: cover; background-position: center top; background-color: var(--bd-soft); border: 4px solid #fff; box-shadow: 0 0 0 2px var(--bd-accent2); }
+/* Plain border only: the PDF/JPG export paints box-shadow rings over the photo. */
+.bd-photo { position: relative; z-index: 3; background-size: cover; background-position: center top; background-color: var(--bd-soft); border: 4px solid var(--bd-accent2); }
 .bd-photo-round { border-radius: 50%; }
 .bd-photo-rounded { border-radius: 18px; }
-.bd-photo-arch { border-radius: 999px 999px 14px 14px; border: 3px solid var(--bd-accent2); box-shadow: none; }
+.bd-photo-arch { border-radius: 999px 999px 14px 14px; border-width: 3px; }
 .bd-credit { position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; font: 10px/1 Arial, sans-serif; color: var(--bd-ink); opacity: .45; letter-spacing: .04em; }
 
 /* ornaments */
@@ -56,7 +57,7 @@
 .bd-sidebar .bd-scale { display: flex; }
 .bd-side { width: 268px; flex: none; background-color: var(--bd-side); color: var(--bd-side-ink); padding: 54px 26px 40px; position: relative; z-index: 2; }
 .bd-side > *:not(.bd-side-mandala) { position: relative; }
-.bd-side .bd-photo { width: 176px; height: 176px; margin: 0 auto 1em; border-color: var(--bd-side-ink); box-shadow: none; }
+.bd-side .bd-photo { width: 176px; height: 176px; margin: 0 auto 1em; border-color: var(--bd-side-ink); }
 .bd-side .bd-photo-arch { height: 210px; }
 .bd-side .bd-photo-rounded { height: 200px; }
 .bd-side .bd-name { color: var(--bd-side-ink); font-size: 2.1em; }
@@ -79,7 +80,7 @@
 .bd-band .bd-top { display: flex; gap: .6em; align-items: center; }
 .bd-band .bd-sym { font-size: 1.4em; }
 .bd-band .bd-name { font-size: 2.7em; }
-.bd-band .bd-photo { width: 168px; height: 168px; flex: none; border-color: var(--bd-side-ink); box-shadow: none; margin-top: 8px; }
+.bd-band .bd-photo { width: 168px; height: 168px; flex: none; border-color: var(--bd-side-ink); margin-top: 8px; }
 .bd-band .bd-photo-arch, .bd-band .bd-photo-rounded { height: 196px; }
 .bd-band .bd-content { padding: 30px 62px 40px; position: relative; z-index: 2; }
 .bd-two { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 40px; align-content: start; }
@@ -102,6 +103,56 @@
 .bd-grid .bd-h::before { display: none; }
 .bd-grid .bd-row { grid-template-columns: 8.5em 1em 1fr; }
 .bd-grid .bd-sec-personal .bd-row { display: inline-grid; width: calc(50% - 10px); margin-right: 8px; vertical-align: top; }
+
+/* religious icon / deity picture */
+.bd-icon { width: 4.4em; height: 4.4em; margin: 0 auto .25em; }
+.bd-icon svg { display: block; width: 100%; height: 100%; }
+.bd-icon-glyph { width: auto; height: auto; font-size: 3.2em; line-height: 1.15; text-align: center; }
+.bd-icon-img { width: 5.4em; height: 5.4em; border-radius: 50%; background-size: cover; background-position: center; border: 3px solid var(--bd-accent2); }
+.bd-inv { font-family: var(--bd-head), 'Noto Sans Devanagari', 'Noto Sans Gurmukhi', 'Noto Naskh Arabic', serif; }
+.bd-band .bd-icon { margin: 0; width: 3.2em; height: 3.2em; }
+.bd-band .bd-icon-glyph { font-size: 2.2em; width: auto; height: auto; }
+
+/* full-page layers */
+.bd-fill { position: absolute; inset: 0; pointer-events: none; }
+.bd-fill svg { display: block; width: 100%; height: 100%; }
+.bd-over { z-index: 1; }
+
+/* gold foil stripes and frames */
+.bd-foil { position: absolute; z-index: 1; pointer-events: none; background: linear-gradient(90deg, #8a5a1c 0%, #e9c46a 16%, #fff3bd 30%, #c8902e 46%, #f7de8c 60%, #a8741f 78%, #e5bf5c 100%); }
+.bd-foil-l1 { left: 34px; top: 0; bottom: 0; width: 26px; }
+.bd-foil-l2 { left: 70px; top: 0; bottom: 0; width: 11px; }
+.bd-foil-r1 { right: 34px; top: 0; bottom: 0; width: 26px; }
+.bd-foil-r2 { right: 70px; top: 0; bottom: 0; width: 11px; }
+.bd-has-foil .bd-content { padding-left: 124px; padding-right: 124px; }
+.bd-ff-t, .bd-ff-b { left: 24px; right: 24px; height: 16px; background: linear-gradient(180deg, #8a5a1c 0%, #e9c46a 20%, #fff3bd 40%, #c8902e 60%, #f7de8c 80%, #a8741f 100%); }
+.bd-ff-t { top: 24px; }
+.bd-ff-b { bottom: 24px; }
+.bd-ff-l, .bd-ff-r { top: 24px; bottom: 24px; width: 16px; }
+.bd-ff-l { left: 24px; }
+.bd-ff-r { right: 24px; }
+
+/* rangoli and paisley */
+.bd-rangoli { position: absolute; width: 300px; height: 300px; pointer-events: none; }
+.bd-rangoli svg, .bd-paisley svg { display: block; width: 100%; height: 100%; }
+.bd-rangoli-tl { left: -150px; top: -150px; }
+.bd-rangoli-br { right: -150px; bottom: -150px; }
+.bd-paisley { position: absolute; width: 150px; height: 150px; z-index: 1; pointer-events: none; }
+.bd-paisley.bd-corner-tl { left: 6px; top: 6px; }
+.bd-paisley.bd-corner-tr { right: 6px; top: 6px; }
+.bd-paisley.bd-corner-bl { left: 6px; bottom: 6px; }
+.bd-paisley.bd-corner-br { right: 6px; bottom: 6px; }
+
+/* panel layout: content on a light card over a colourful page */
+.bd-panel { position: absolute; inset: 56px; z-index: 2; overflow: hidden; background: var(--bd-bg); color: var(--bd-ink); }
+.bd-panel-rect { border: 2px solid var(--bd-accent2); }
+.bd-panel-round { border-radius: 30px; border: 3px solid var(--bd-accent2); }
+.bd-panel-arch { inset: 0; background: transparent; }
+.bd-panel .bd-content { padding: 44px 58px 34px; }
+.bd-panel-arch .bd-content { padding: 128px 112px 70px; }
+.bd-panel .bd-photo { width: 140px; height: 160px; margin: .5em auto .35em; }
+.bd-panel .bd-photo-round { width: 150px; height: 150px; }
+.bd-panel .bd-garland { margin: -8px -20px 0; }
 
 /* preview watermark (premium designs before payment) */
 .bd-watermark { position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; justify-content: space-around; align-items: center; pointer-events: none; }
@@ -135,3 +186,16 @@
 .bd-status { font-size: .9rem; margin-top: 10px; min-height: 1.2em; }
 .bd-status.err { color: #b42318; }
 .bd-hidden-render { position: fixed; left: -10000px; top: 0; }
+
+/* Short fields in two columns on wide layouts, so text can stay larger */
+.bd-panel .bd-sec-personal .bd-row, .bd-panel .bd-sec-horoscope .bd-row, .bd-panel .bd-sec-career .bd-row,
+.bd-classic:not(.bd-has-foil) .bd-sec-personal .bd-row, .bd-classic:not(.bd-has-foil) .bd-sec-horoscope .bd-row, .bd-classic:not(.bd-has-foil) .bd-sec-career .bd-row,
+.bd-frame .bd-sec-horoscope .bd-row, .bd-frame .bd-sec-career .bd-row {
+  display: inline-grid; width: calc(50% - 12px); margin-right: 10px; vertical-align: top; grid-template-columns: 8.6em .9em 1fr;
+}
+.bd-panel .bd-content .bd-photo { width: 128px; height: 148px; }
+.bd-panel .bd-content .bd-photo-round { width: 138px; height: 138px; }
+.bd-panel .bd-name { font-size: 2.3em; }
+
+/* keep decorations that hang off the page from counting as overflow */
+.bd-clip { overflow: hidden; }
