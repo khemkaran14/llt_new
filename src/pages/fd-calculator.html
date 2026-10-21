@@ -1,0 +1,137 @@
+<!--meta
+{
+  "title": "FD Calculator – Fixed Deposit Maturity & Interest | LiveLifeTricks",
+  "description": "Free FD calculator: find the maturity amount and interest earned on a bank fixed deposit with quarterly compounding. Compare tenures and rates, with a year-by-year table.",
+  "path": "/fd-calculator/",
+  "priority": "0.8",
+  "breadcrumb": "FD Calculator",
+  "scripts": ["finance-engines.js", "deposit-ui.js"],
+  "schema": {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FD Calculator (Fixed Deposit)",
+    "url": "https://livelifetricks.com/fd-calculator/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "en-IN",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+  }
+}
+-->
+<section class="hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › FD Calculator</nav>
+    <h1>FD Calculator</h1>
+    <p class="lead">See how much your fixed deposit will be worth at maturity and how much interest you'll earn.</p>
+    <div class="badges">
+      <span class="badge">Quarterly compounding</span>
+      <span class="badge">Any tenure</span>
+      <span class="badge">Year-by-year table</span>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="calc">
+    <form class="card" id="fd-form" autocomplete="off" onsubmit="return false">
+      <div class="field">
+        <label for="principal">Deposit amount</label>
+        <div class="money"><input id="principal" data-key="principal" data-money inputmode="numeric" type="text" value="100000"></div>
+        <input type="range" data-for="principal" min="1000" max="10000000" step="1000" value="100000" aria-label="Deposit amount slider">
+      </div>
+      <div class="field">
+        <label for="rate">Interest rate (yearly)</label>
+        <div class="suffix"><input id="rate" data-key="rate" type="number" inputmode="decimal" min="0" max="15" step="0.05" value="7"><span>% p.a.</span></div>
+        <input type="range" data-for="rate" min="2" max="10" step="0.05" value="7" aria-label="Interest rate slider">
+        <span class="hint">Senior citizens usually get 0.25–0.75% extra.</span>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="years">Years</label>
+          <input id="years" data-key="years" type="number" inputmode="numeric" min="0" max="10" step="1" value="5">
+        </div>
+        <div class="field">
+          <label for="months">Months</label>
+          <input id="months" data-key="months" type="number" inputmode="numeric" min="0" max="11" step="1" value="0">
+        </div>
+      </div>
+      <div class="field">
+        <label for="compounding">Interest compounded</label>
+        <select id="compounding" data-key="compounding">
+          <option value="4">Quarterly (most banks)</option>
+          <option value="12">Monthly</option>
+          <option value="2">Half-yearly</option>
+          <option value="1">Yearly</option>
+        </select>
+      </div>
+    </form>
+
+    <aside class="card results" aria-live="polite">
+      <h2>Maturity amount</h2>
+      <div class="big" id="maturity-out">–</div>
+      <div class="stats">
+        <div class="stat"><div class="k">You deposit</div><div class="v" id="invested-out">–</div></div>
+        <div class="stat"><div class="k">Interest earned</div><div class="v" id="interest-out">–</div></div>
+        <div class="stat"><div class="k">Effective yearly yield</div><div class="v" id="yield-out">–</div></div>
+      </div>
+      <div class="donut-row">
+        <svg class="donut" viewBox="0 0 42 42" role="img" aria-label="Deposit and interest share">
+          <circle cx="21" cy="21" r="15.915" fill="none" stroke="var(--chart-1)" stroke-width="6"></circle>
+          <circle id="donut-2" cx="21" cy="21" r="15.915" fill="none" stroke="var(--chart-2)" stroke-width="6" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+        </svg>
+        <ul class="legend">
+          <li><span class="dot" style="background:var(--chart-1)"></span> Deposit <strong id="share-1"></strong></li>
+          <li><span class="dot" style="background:var(--chart-2)"></span> Interest <strong id="share-2"></strong></li>
+        </ul>
+      </div>
+      <div class="tip" id="tds-out" hidden></div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" data-share>Copy link to this result</button>
+      </div>
+    </aside>
+  </div>
+
+  <h2>Year-by-year value</h2>
+  <div class="table-wrap">
+    <table class="data" id="growth">
+      <thead><tr><th>Year</th><th>Value at year end</th><th>Interest so far</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<article class="wrap narrow content">
+  <p class="updated">Last updated: {{updated}}</p>
+
+  <h2>How FD interest is calculated</h2>
+  <p>Most Indian banks compound fixed deposit interest every quarter:</p>
+  <p class="formula">A = P × (1 + r ÷ n)<sup>n × t</sup></p>
+  <ul>
+    <li><strong>P</strong> = deposit amount</li>
+    <li><strong>r</strong> = yearly interest rate (as a decimal)</li>
+    <li><strong>n</strong> = times compounded a year (4 for quarterly)</li>
+    <li><strong>t</strong> = years</li>
+  </ul>
+  <p><strong>Example:</strong> ₹1 lakh at 7% for 5 years, compounded quarterly, becomes about <strong>₹1,41,478</strong>. That's ₹41,478 in interest.</p>
+
+  <h2>Tax on FD interest</h2>
+  <ul>
+    <li>FD interest is added to your income and taxed at your slab rate.</li>
+    <li>Banks deduct <strong>10% TDS</strong> if your interest from one bank is over <strong>₹50,000 a year</strong> (<strong>₹1 lakh</strong> for senior citizens). Without a PAN, TDS is 20%.</li>
+    <li>If your total income is below the taxable limit, submit <strong>Form 15G</strong> (or <strong>15H</strong> if you're 60+) to stop TDS.</li>
+    <li>A <strong>5-year tax-saver FD</strong> qualifies for 80C in the old regime, but you can't withdraw early.</li>
+  </ul>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-wrap">
+    <details class="faq"><summary>Is FD interest compounded monthly or quarterly?</summary><p>Most banks compound cumulative FDs quarterly. Some small finance banks and NBFCs compound monthly. Check with your bank and pick the matching option above.</p></details>
+    <details class="faq"><summary>Can I break my FD early?</summary><p>Yes, for most FDs (except tax-saver FDs). Banks usually charge a penalty of 0.5–1% on the interest rate for the time the deposit actually stayed.</p></details>
+    <details class="faq"><summary>Is my FD safe?</summary><p>Deposits in a bank are insured by DICGC up to ₹5 lakh per person per bank, including interest. Company FDs aren't covered.</p></details>
+    <details class="faq"><summary>FD or debt mutual fund?</summary><p>FDs give a fixed, known return. Debt funds can earn a little more but aren't guaranteed. Since April 2023, debt fund gains are also taxed at your slab rate, so FDs are often simpler.</p></details>
+  </div>
+
+  <div class="card cta" style="margin-top:28px">
+    <div><strong>Saving a fixed amount every month?</strong><br><span class="muted">Try the recurring deposit calculator.</span></div>
+    <a class="btn btn-primary" href="/rd-calculator/">Open RD calculator →</a>
+  </div>
+</article>

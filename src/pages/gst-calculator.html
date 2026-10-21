@@ -1,0 +1,118 @@
+<!--meta
+{
+  "title": "GST Calculator – Add or Remove GST (5%, 18%, 40%) | LiveLifeTricks",
+  "description": "Free GST calculator with the new GST 2.0 rates (5%, 18%, 40%). Add GST to a price or remove GST from an inclusive price, with CGST, SGST and IGST split.",
+  "path": "/gst-calculator/",
+  "priority": "0.8",
+  "breadcrumb": "GST Calculator",
+  "scripts": ["finance-engines.js", "gst-ui.js"],
+  "schema": {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "GST Calculator (Add or Remove GST)",
+    "url": "https://livelifetricks.com/gst-calculator/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "en-IN",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+  }
+}
+-->
+<section class="hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › GST Calculator</nav>
+    <h1>GST Calculator</h1>
+    <p class="lead">Add GST to a price, or find the GST hidden inside a price that already includes it. Works with the new GST 2.0 rates.</p>
+    <div class="badges">
+      <span class="badge">5%, 18%, 40% slabs</span>
+      <span class="badge">CGST / SGST / IGST</span>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="calc">
+    <form class="card" id="gst-form" autocomplete="off" onsubmit="return false">
+      <div class="field">
+        <span class="label" id="mode-label">What do you have?</span>
+        <div class="seg" role="group" aria-labelledby="mode-label" data-key="mode" data-value="add">
+          <button type="button" data-value="add" aria-pressed="true">Price before GST (add GST)</button>
+          <button type="button" data-value="remove" aria-pressed="false">Price with GST (remove GST)</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="amount" id="amount-label">Amount</label>
+        <div class="money"><input id="amount" data-key="amount" data-money inputmode="numeric" type="text" value="10000"></div>
+      </div>
+      <div class="field">
+        <span class="label" id="rate-label">GST rate</span>
+        <div class="seg" role="group" aria-labelledby="rate-label" data-key="rate" data-value="18">
+          <button type="button" data-value="0.25" aria-pressed="false">0.25%</button>
+          <button type="button" data-value="3" aria-pressed="false">3%</button>
+          <button type="button" data-value="5" aria-pressed="false">5%</button>
+          <button type="button" data-value="18" aria-pressed="true">18%</button>
+          <button type="button" data-value="40" aria-pressed="false">40%</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="custom">Or enter another rate <span class="hint">Optional. Overrides the buttons above.</span></label>
+        <div class="suffix"><input id="custom" data-key="custom" type="number" inputmode="decimal" min="0" max="100" step="0.01" placeholder="e.g. 12"><span>%</span></div>
+      </div>
+      <div class="field">
+        <span class="label" id="supply-label">Type of sale</span>
+        <div class="seg" role="group" aria-labelledby="supply-label" data-key="supply" data-value="intra">
+          <button type="button" data-value="intra" aria-pressed="true">Same state (CGST + SGST)</button>
+          <button type="button" data-value="inter" aria-pressed="false">Other state (IGST)</button>
+        </div>
+      </div>
+    </form>
+
+    <aside class="card results" aria-live="polite">
+      <h2 id="result-title">Total price with GST</h2>
+      <div class="big" id="total-out">–</div>
+      <table class="kv" id="breakdown" style="margin-top:12px"></table>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" data-share>Copy link to this result</button>
+        <button type="button" class="btn" id="copy">Copy breakdown</button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<article class="wrap narrow content">
+  <p class="updated">Last updated: {{updated}}</p>
+
+  <h2>GST rates after GST 2.0 (from 22 September 2025)</h2>
+  <p>GST was simplified into two main slabs, 5% and 18%, plus a special 40% rate for luxury and "sin" goods. The old 12% and 28% slabs were removed.</p>
+  <table>
+    <thead><tr><th>Rate</th><th>Examples</th></tr></thead>
+    <tbody>
+      <tr><td>0%</td><td>Fresh milk, paneer, bread, most fresh food, health and life insurance premiums</td></tr>
+      <tr><td>5%</td><td>Packaged food, soaps and shampoo, many medicines, small hotels, restaurants</td></tr>
+      <tr><td>18%</td><td>Most goods and services: electronics, ACs, small cars, two-wheelers up to 350cc, professional services</td></tr>
+      <tr><td>40%</td><td>Large cars, motorcycles over 350cc, aerated and sugary drinks, tobacco products</td></tr>
+      <tr><td>3% / 0.25%</td><td>Gold and silver jewellery / rough diamonds</td></tr>
+    </tbody>
+  </table>
+  <p class="small muted">Rates are set item by item. Check the exact rate for your HSN/SAC code on the CBIC website before invoicing.</p>
+
+  <h2>GST formulas</h2>
+  <p><strong>Adding GST:</strong></p>
+  <p class="formula">GST = Price × Rate ÷ 100<br>Total = Price + GST</p>
+  <p><strong>Removing GST from an inclusive price:</strong></p>
+  <p class="formula">Price before GST = Total × 100 ÷ (100 + Rate)<br>GST = Total − Price before GST</p>
+  <p><strong>Example:</strong> a ₹1,180 bill with 18% GST included has a base price of ₹1,180 × 100 ÷ 118 = <strong>₹1,000</strong>, and ₹180 GST.</p>
+
+  <h2>CGST, SGST and IGST</h2>
+  <ul>
+    <li><strong>Selling within your state:</strong> GST is split equally into CGST (central) and SGST (state). 18% becomes 9% + 9%.</li>
+    <li><strong>Selling to another state:</strong> the full amount is IGST.</li>
+  </ul>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-wrap">
+    <details class="faq"><summary>Is there still a 12% or 28% GST slab?</summary><p>No. From 22 September 2025, most items in the 12% slab moved to 5%, and most items in the 28% slab moved to 18%. Luxury and sin goods now attract 40%. Use the custom rate box for any old invoice.</p></details>
+    <details class="faq"><summary>How do I calculate GST from the total amount?</summary><p>Choose "Price with GST" above and enter the total. The calculator divides it by (1 + rate) to find the base price, and the difference is the GST.</p></details>
+    <details class="faq"><summary>Who needs to register for GST?</summary><p>Businesses selling goods with yearly turnover above ₹40 lakh (₹20 lakh in some states), or services above ₹20 lakh (₹10 lakh in some states), must register. Some businesses, like online sellers, must register regardless of turnover.</p></details>
+  </div>
+</article>

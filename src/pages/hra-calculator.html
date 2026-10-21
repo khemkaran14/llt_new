@@ -1,0 +1,142 @@
+<!--meta
+{
+  "title": "HRA Calculator FY 2026-27 – HRA Exemption (8 Metro Cities) | LiveLifeTricks",
+  "description": "Free HRA exemption calculator for FY 2026-27 and FY 2025-26. Includes the new rule giving Bengaluru, Hyderabad, Pune and Ahmedabad the 50% limit. See tax-free and taxable HRA.",
+  "path": "/hra-calculator/",
+  "priority": "0.8",
+  "breadcrumb": "HRA Calculator",
+  "scripts": ["tax-engine.js", "hra-ui.js"],
+  "schema": {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "HRA Exemption Calculator",
+    "url": "https://livelifetricks.com/hra-calculator/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "en-IN",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+  }
+}
+-->
+<section class="hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › HRA Calculator</nav>
+    <h1>HRA Exemption Calculator</h1>
+    <p class="lead">Find out how much of your House Rent Allowance is tax-free, including the new 8-city rule from FY 2026-27.</p>
+    <div class="badges">
+      <span class="badge">8 metro cities from FY 2026-27</span>
+      <span class="badge">Old regime</span>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="calc">
+    <form class="card" id="hra-form" autocomplete="off" onsubmit="return false">
+      <div class="row2">
+        <div class="field">
+          <label for="fy">Financial year</label>
+          <select id="fy" data-key="fy">
+            <option value="2026-27">FY 2026-27</option>
+            <option value="2025-26">FY 2025-26</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="city">City you live in</label>
+          <select id="city" data-key="city">
+            <option value="other">Other city</option>
+            <option value="delhi">Delhi</option>
+            <option value="mumbai">Mumbai</option>
+            <option value="kolkata">Kolkata</option>
+            <option value="chennai">Chennai</option>
+            <option value="bengaluru">Bengaluru</option>
+            <option value="hyderabad">Hyderabad</option>
+            <option value="pune">Pune</option>
+            <option value="ahmedabad">Ahmedabad</option>
+          </select>
+        </div>
+      </div>
+      <p class="small muted" style="margin-top:-6px">Enter monthly amounts.</p>
+      <div class="field">
+        <label for="basic">Basic salary + DA (monthly)</label>
+        <div class="money"><input id="basic" data-key="basic" data-money inputmode="numeric" type="text" value="50000"></div>
+      </div>
+      <div class="field">
+        <label for="hra">HRA received (monthly)</label>
+        <div class="money"><input id="hra" data-key="hra" data-money inputmode="numeric" type="text" value="20000"></div>
+      </div>
+      <div class="field">
+        <label for="rent">Rent paid (monthly)</label>
+        <div class="money"><input id="rent" data-key="rent" data-money inputmode="numeric" type="text" value="25000"></div>
+      </div>
+    </form>
+
+    <aside class="card results" aria-live="polite">
+      <h2>Tax-free HRA (yearly)</h2>
+      <div class="big" id="exempt-out">–</div>
+      <div class="stats">
+        <div class="stat"><div class="k">Taxable HRA (yearly)</div><div class="v" id="taxable-out">–</div></div>
+        <div class="stat"><div class="k">Tax-free per month</div><div class="v" id="monthly-out">–</div></div>
+      </div>
+      <h3 style="margin-top:8px">Your exemption is the lowest of these three</h3>
+      <table class="kv" id="parts"></table>
+      <div class="tip" id="tip-out" hidden></div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" data-share>Copy link to this result</button>
+      </div>
+      <p class="small muted" style="margin:12px 0 0">HRA exemption is only available in the old tax regime.</p>
+    </aside>
+  </div>
+</section>
+
+<article class="wrap narrow content">
+  <p class="updated">Last updated: {{updated}}</p>
+
+  <h2>How HRA exemption is calculated</h2>
+  <p>The tax-free part of your HRA is the <strong>lowest</strong> of:</p>
+  <ol>
+    <li>The HRA you actually receive</li>
+    <li>Rent paid minus 10% of your basic salary + DA</li>
+    <li>50% of basic + DA if you live in one of the listed cities, or 40% elsewhere</li>
+  </ol>
+  <p>The rest of your HRA is taxable.</p>
+
+  <h2>New for FY 2026-27: 8 cities get the 50% limit</h2>
+  <table>
+    <thead><tr><th>Year</th><th>Cities with the 50% limit</th></tr></thead>
+    <tbody>
+      <tr><td>FY 2025-26</td><td>Delhi, Mumbai, Kolkata, Chennai</td></tr>
+      <tr><td>FY 2026-27 onwards</td><td>Delhi, Mumbai, Kolkata, Chennai, <strong>Bengaluru, Hyderabad, Pune, Ahmedabad</strong></td></tr>
+    </tbody>
+  </table>
+  <p>If you live in one of the four new cities and pay high rent, your tax-free HRA can go up noticeably.</p>
+
+  <h2>Example</h2>
+  <p>Basic ₹50,000 a month, HRA ₹20,000, rent ₹25,000, living in Pune in FY 2026-27:</p>
+  <ul>
+    <li>HRA received: ₹2,40,000 a year</li>
+    <li>Rent minus 10% of basic: ₹3,00,000 − ₹60,000 = ₹2,40,000</li>
+    <li>50% of basic: ₹3,00,000</li>
+  </ul>
+  <p>The lowest is ₹2,40,000, so <strong>all of your HRA is tax-free</strong>.</p>
+
+  <h2>Documents you need</h2>
+  <ul>
+    <li>Rent receipts, or a rent agreement plus bank transfer proof</li>
+    <li>Your landlord's <strong>PAN</strong> if rent is over ₹1 lakh a year</li>
+    <li>If your employer didn't count your HRA, you can still claim it when filing your return</li>
+  </ul>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-wrap">
+    <details class="faq"><summary>Can I claim HRA in the new tax regime?</summary><p>No. HRA exemption is only available in the old regime. Use our income tax calculator to check whether the old regime with HRA works out cheaper for you.</p></details>
+    <details class="faq"><summary>Can I claim HRA if I pay rent to my parents?</summary><p>Yes, if you actually pay the rent (ideally by bank transfer), have a rent agreement, and your parent declares the rent as income in their tax return. You can't claim HRA for rent paid to your spouse.</p></details>
+    <details class="faq"><summary>Can I claim HRA and a home loan together?</summary><p>Yes, if you live in a rented house in a different city from the one you own, or if there's a genuine reason you don't live in your own house.</p></details>
+    <details class="faq"><summary>I don't get HRA from my employer. Can I still save tax on rent?</summary><p>Yes. Self-employed people and employees who don't get HRA can claim up to ₹60,000 a year under Section 80GG in the old regime, subject to conditions.</p></details>
+  </div>
+
+  <div class="card cta" style="margin-top:28px">
+    <div><strong>Does HRA make the old regime cheaper for you?</strong><br><span class="muted">Compare both regimes with all your deductions.</span></div>
+    <a class="btn btn-primary" href="/income-tax-calculator/">Open income tax calculator →</a>
+  </div>
+</article>

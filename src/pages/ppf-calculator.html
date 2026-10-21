@@ -1,0 +1,124 @@
+<!--meta
+{
+  "title": "PPF Calculator 2026 – Maturity at 7.1% Interest | LiveLifeTricks",
+  "description": "Free PPF calculator with the current 7.1% rate. See your Public Provident Fund maturity amount, tax-free interest and yearly balance for 15 years or extended 20, 25 or 30-year periods.",
+  "path": "/ppf-calculator/",
+  "priority": "0.8",
+  "breadcrumb": "PPF Calculator",
+  "scripts": ["finance-engines.js", "ppf-ui.js"],
+  "schema": {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "PPF Calculator (Public Provident Fund)",
+    "url": "https://livelifetricks.com/ppf-calculator/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "en-IN",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+  }
+}
+-->
+<section class="hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › PPF Calculator</nav>
+    <h1>PPF Calculator</h1>
+    <p class="lead">See how much your Public Provident Fund account will grow to. Interest and maturity are completely tax-free.</p>
+    <div class="badges">
+      <span class="badge">Current rate 7.1%</span>
+      <span class="badge">15-year &amp; extended</span>
+      <span class="badge">Tax-free</span>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="calc">
+    <form class="card" id="ppf-form" autocomplete="off" onsubmit="return false">
+      <div class="field">
+        <label for="yearly">Yearly deposit</label>
+        <div class="money"><input id="yearly" data-key="yearly" data-money inputmode="numeric" type="text" value="150000"></div>
+        <input type="range" data-for="yearly" min="500" max="150000" step="500" value="150000" aria-label="Yearly deposit slider">
+        <span class="hint">₹500 to ₹1,50,000 a year. Deposit before 5 April to earn interest for the whole year.</span>
+      </div>
+      <div class="field">
+        <label for="rate">Interest rate</label>
+        <div class="suffix"><input id="rate" data-key="rate" type="number" inputmode="decimal" min="1" max="15" step="0.1" value="7.1"><span>% p.a.</span></div>
+        <span class="hint">7.1% for October–December 2026. The government reviews it every quarter.</span>
+      </div>
+      <div class="field">
+        <label for="years">Period</label>
+        <select id="years" data-key="years">
+          <option value="15">15 years (standard)</option>
+          <option value="20">20 years (extended once)</option>
+          <option value="25">25 years (extended twice)</option>
+          <option value="30">30 years (extended three times)</option>
+        </select>
+      </div>
+    </form>
+
+    <aside class="card results" aria-live="polite">
+      <h2>Maturity amount</h2>
+      <div class="big" id="maturity-out">–</div>
+      <div class="stats">
+        <div class="stat"><div class="k">Total deposited</div><div class="v" id="invested-out">–</div></div>
+        <div class="stat"><div class="k">Tax-free interest</div><div class="v" id="interest-out">–</div></div>
+      </div>
+      <div class="donut-row">
+        <svg class="donut" viewBox="0 0 42 42" role="img" aria-label="Deposits and interest share">
+          <circle cx="21" cy="21" r="15.915" fill="none" stroke="var(--chart-1)" stroke-width="6"></circle>
+          <circle id="donut-2" cx="21" cy="21" r="15.915" fill="none" stroke="var(--chart-2)" stroke-width="6" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+        </svg>
+        <ul class="legend">
+          <li><span class="dot" style="background:var(--chart-1)"></span> Deposits <strong id="share-1"></strong></li>
+          <li><span class="dot" style="background:var(--chart-2)"></span> Interest <strong id="share-2"></strong></li>
+        </ul>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" data-share>Copy link to this result</button>
+      </div>
+      <p class="small muted" style="margin:12px 0 0">Assumes the rate stays the same for the whole period.</p>
+    </aside>
+  </div>
+
+  <h2>Year-by-year balance</h2>
+  <div class="table-wrap">
+    <table class="data" id="growth">
+      <thead><tr><th>Year</th><th>Opening balance</th><th>Deposit</th><th>Interest</th><th>Closing balance</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<article class="wrap narrow content">
+  <p class="updated">Last updated: {{updated}}</p>
+
+  <h2>PPF at a glance</h2>
+  <table>
+    <tbody>
+      <tr><th>Interest rate</th><td>7.1% a year (October–December 2026), compounded yearly</td></tr>
+      <tr><th>Deposit</th><td>₹500 to ₹1,50,000 a year, in one go or in parts</td></tr>
+      <tr><th>Lock-in</th><td>15 years, then extendable in blocks of 5 years</td></tr>
+      <tr><th>Tax</th><td>Deposits count for 80C (old regime). Interest and maturity are tax-free.</td></tr>
+      <tr><th>Partial withdrawal</th><td>From year 7, once a year</td></tr>
+      <tr><th>Loan</th><td>From year 3 to year 6</td></tr>
+      <tr><th>Safety</th><td>Backed by the Government of India</td></tr>
+    </tbody>
+  </table>
+
+  <h2>How PPF interest is calculated</h2>
+  <p>Interest is worked out on the lowest balance between the 5th and the last day of each month, and added once a year on 31 March. That's why depositing before <strong>5 April</strong> earns you a full year's interest on that money.</p>
+  <p><strong>Example:</strong> ₹1.5 lakh a year for 15 years at 7.1% grows to about <strong>₹40.68 lakh</strong>. You deposit ₹22.5 lakh and earn about ₹18.18 lakh in tax-free interest.</p>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-wrap">
+    <details class="faq"><summary>What is the PPF interest rate now?</summary><p>7.1% a year for October–December 2026. The government reviews it every quarter, and it has stayed at 7.1% since April 2020.</p></details>
+    <details class="faq"><summary>Is PPF better than an FD?</summary><p>For long-term saving, usually yes. PPF interest is completely tax-free, while FD interest is taxed at your slab rate. A 7.1% tax-free return is worth more than a 9% taxable FD for someone in the 30% bracket. The trade-off is the 15-year lock-in.</p></details>
+    <details class="faq"><summary>Can I get the 80C benefit in the new regime?</summary><p>No. 80C deductions only apply in the old regime. PPF interest and maturity stay tax-free in both regimes, though.</p></details>
+    <details class="faq"><summary>What happens after 15 years?</summary><p>You can withdraw everything, or extend the account in blocks of 5 years, with or without new deposits. Apply for extension within a year of maturity.</p></details>
+  </div>
+
+  <div class="card cta" style="margin-top:28px">
+    <div><strong>Want potentially higher returns?</strong><br><span class="muted">See how a monthly SIP could grow over the same period.</span></div>
+    <a class="btn btn-primary" href="/sip-calculator/">Open SIP calculator →</a>
+  </div>
+</article>

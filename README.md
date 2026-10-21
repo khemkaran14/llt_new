@@ -4,6 +4,11 @@ Website for **livelifetricks.com**:
 
 - **Income Tax Calculator** (`/income-tax-calculator/`): new vs old regime for FY 2026-27 and FY 2025-26, with HRA (including the new 8-city list), 80C, 80D, NPS, home loan interest, 87A rebate, marginal relief, surcharge and cess. It shows which regime is cheaper and how many extra deductions the old regime would need to match.
 - **EMI Calculator** (`/emi-calculator/`): home, car, personal and education loans, with a year-by-year schedule (tap a year to see its months), extra-payment savings, a CSV download and a shareable link.
+- **In-Hand Salary** (`/salary-calculator/`): CTC to monthly take-home after PF, gratuity, professional tax and income tax.
+- **SIP** (`/sip-calculator/`): monthly SIP, yearly step-up, lumpsum and a goal planner.
+- **HRA** (`/hra-calculator/`): tax-free HRA with the FY 2026-27 8-city rule.
+- **PPF** (`/ppf-calculator/`), **FD** (`/fd-calculator/`) and **RD** (`/rd-calculator/`): maturity and interest.
+- **GST** (`/gst-calculator/`): add or remove GST at the GST 2.0 rates, with CGST/SGST/IGST split.
 - Home, About, Contact, Privacy policy, Disclaimer and 404 pages (needed for AdSense approval), plus an automatic `sitemap.xml` and `robots.txt`, SEO tags, FAQ structured data and dark mode.
 
 It's a plain static site with no database and no server code, so it's fast and cheap to host next to your other sites. See [docs/GROWTH-PLAN.md](docs/GROWTH-PLAN.md) for the plan to grow it towards a sale.
@@ -224,6 +229,8 @@ SITE_DIR=/var/www/livelifetricks.com bash /root/livelifetricks/deploy/update-fro
 ## Keeping the tax calculator accurate
 
 Tax rules live in one file: `src/assets/js/tax-engine.js`.
+
+Other rates to check each year: the PPF default rate in `src/pages/ppf-calculator.html` (reviewed every quarter), and the GST slabs listed in `src/pages/gst-calculator.html`.
 
 - **Slabs and rates:** `NEW_SLABS`, `oldSlabs()` and `SURCHARGE`
 - **Year list and HRA metro cities:** `YEARS`

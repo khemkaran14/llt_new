@@ -33,14 +33,14 @@ Add **2–3 calculators a month**. Each needs a strong explanation section, a wo
 
 | Priority | Calculator | Why |
 |---|---|---|
-| 1 | Salary in-hand (CTC to take-home) | Huge search volume; reuses the tax engine |
-| 2 | SIP calculator (plus step-up SIP) | Very high volume; mutual fund affiliate potential |
-| 3 | HRA calculator | Reuses the tax engine; new 8-city rule is fresh news |
-| 4 | FD and RD calculators | Steady volume, also popular with seniors |
-| 5 | PPF calculator | Peaks every March |
+| 1 | ✅ Salary in-hand (CTC to take-home) | Huge search volume; reuses the tax engine |
+| 2 | ✅ SIP calculator (plus step-up SIP) | Very high volume; mutual fund affiliate potential |
+| 3 | ✅ HRA calculator | Reuses the tax engine; new 8-city rule is fresh news |
+| 4 | ✅ FD and RD calculators | Steady volume, also popular with seniors |
+| 5 | ✅ PPF calculator | Peaks every March |
 | 6 | Home loan eligibility | Leads to home loan affiliate offers |
 | 7 | Home loan prepayment / balance transfer | High-intent visitors |
-| 8 | GST calculator | Very high volume from small businesses |
+| 8 | ✅ GST calculator | Very high volume from small businesses |
 | 9 | Gratuity, EPF and NPS calculators | Salaried audience |
 | 10 | Capital gains tax (shares and mutual funds) | High-value audience |
 | 11 | Advance tax and TDS on salary | Peaks around tax deadlines |

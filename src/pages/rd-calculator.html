@@ -1,0 +1,105 @@
+<!--meta
+{
+  "title": "RD Calculator – Recurring Deposit Maturity Amount | LiveLifeTricks",
+  "description": "Free RD calculator: find the maturity amount and interest on a bank or post office recurring deposit, using the quarterly compounding formula banks use.",
+  "path": "/rd-calculator/",
+  "priority": "0.7",
+  "breadcrumb": "RD Calculator",
+  "scripts": ["finance-engines.js", "deposit-ui.js"],
+  "schema": {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "RD Calculator (Recurring Deposit)",
+    "url": "https://livelifetricks.com/rd-calculator/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "en-IN",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+  }
+}
+-->
+<section class="hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › RD Calculator</nav>
+    <h1>RD Calculator</h1>
+    <p class="lead">Save a fixed amount every month and see what your recurring deposit will be worth at maturity.</p>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="calc">
+    <form class="card" id="rd-form" autocomplete="off" onsubmit="return false">
+      <div class="field">
+        <label for="monthly">Monthly deposit</label>
+        <div class="money"><input id="monthly" data-key="monthly" data-money inputmode="numeric" type="text" value="5000"></div>
+        <input type="range" data-for="monthly" min="100" max="200000" step="100" value="5000" aria-label="Monthly deposit slider">
+      </div>
+      <div class="field">
+        <label for="rate">Interest rate (yearly)</label>
+        <div class="suffix"><input id="rate" data-key="rate" type="number" inputmode="decimal" min="0" max="15" step="0.05" value="6.7"><span>% p.a.</span></div>
+        <input type="range" data-for="rate" min="2" max="10" step="0.05" value="6.7" aria-label="Interest rate slider">
+        <span class="hint">Post office 5-year RD currently pays 6.7%.</span>
+      </div>
+      <div class="field">
+        <label for="tenure">Tenure</label>
+        <div class="suffix"><input id="tenure" data-key="tenure" type="number" inputmode="numeric" min="6" max="120" step="1" value="60"><span>months</span></div>
+        <input type="range" data-for="tenure" min="6" max="120" step="1" value="60" aria-label="Tenure slider">
+      </div>
+    </form>
+
+    <aside class="card results" aria-live="polite">
+      <h2>Maturity amount</h2>
+      <div class="big" id="maturity-out">–</div>
+      <div class="stats">
+        <div class="stat"><div class="k">Total deposited</div><div class="v" id="invested-out">–</div></div>
+        <div class="stat"><div class="k">Interest earned</div><div class="v" id="interest-out">–</div></div>
+      </div>
+      <div class="donut-row">
+        <svg class="donut" viewBox="0 0 42 42" role="img" aria-label="Deposits and interest share">
+          <circle cx="21" cy="21" r="15.915" fill="none" stroke="var(--chart-1)" stroke-width="6"></circle>
+          <circle id="donut-2" cx="21" cy="21" r="15.915" fill="none" stroke="var(--chart-2)" stroke-width="6" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+        </svg>
+        <ul class="legend">
+          <li><span class="dot" style="background:var(--chart-1)"></span> Deposits <strong id="share-1"></strong></li>
+          <li><span class="dot" style="background:var(--chart-2)"></span> Interest <strong id="share-2"></strong></li>
+        </ul>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" data-share>Copy link to this result</button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<article class="wrap narrow content">
+  <p class="updated">Last updated: {{updated}}</p>
+
+  <h2>How RD maturity is calculated</h2>
+  <p>Banks compound RD interest quarterly. Each monthly instalment earns interest for the time it stays in the account, so your first deposit earns the most. The standard formula is:</p>
+  <p class="formula">M = R × [(1 + i)<sup>n</sup> − 1] ÷ [1 − (1 + i)<sup>−1/3</sup>]</p>
+  <ul>
+    <li><strong>R</strong> = monthly deposit</li>
+    <li><strong>i</strong> = quarterly rate (yearly rate ÷ 400)</li>
+    <li><strong>n</strong> = number of quarters</li>
+  </ul>
+  <p><strong>Example:</strong> ₹5,000 a month for 12 months at 7% gives about <strong>₹62,311</strong>. You deposit ₹60,000 and earn ₹2,311.</p>
+
+  <h2>Things to know</h2>
+  <ul>
+    <li>RD interest is taxable at your slab rate, and TDS applies like an FD.</li>
+    <li>Missing an instalment usually means a small penalty. Several missed payments can close the account.</li>
+    <li>RDs suit short goals (1–3 years) like a holiday or a gadget. For 5+ years, a SIP or PPF usually grows more.</li>
+  </ul>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-wrap">
+    <details class="faq"><summary>RD or SIP: which is better?</summary><p>An RD gives a guaranteed return and suits short goals. A SIP in an equity fund can grow much more over 5+ years, but its value goes up and down.</p></details>
+    <details class="faq"><summary>Can I withdraw an RD early?</summary><p>Most banks allow premature closure with a lower interest rate. Post office RDs can be closed after 3 years.</p></details>
+    <details class="faq"><summary>Is RD interest compounded monthly?</summary><p>No. Most banks and the post office compound RD interest quarterly, which is what this calculator uses.</p></details>
+  </div>
+
+  <div class="card cta" style="margin-top:28px">
+    <div><strong>Investing for 5+ years?</strong><br><span class="muted">See how a SIP compares.</span></div>
+    <a class="btn btn-primary" href="/sip-calculator/">Open SIP calculator →</a>
+  </div>
+</article>

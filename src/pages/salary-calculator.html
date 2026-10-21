@@ -1,0 +1,169 @@
+<!--meta
+{
+  "title": "In-Hand Salary Calculator FY 2026-27 – CTC to Take-Home | LiveLifeTricks",
+  "description": "Free in-hand salary calculator for FY 2026-27. Turn your CTC into monthly take-home pay after PF, professional tax and income tax (new or old regime). See the full salary breakdown.",
+  "path": "/salary-calculator/",
+  "priority": "0.9",
+  "breadcrumb": "Salary Calculator",
+  "scripts": ["tax-engine.js", "salary-engine.js", "salary-ui.js"],
+  "schema": {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "In-Hand Salary Calculator (CTC to Take-Home)",
+    "url": "https://livelifetricks.com/salary-calculator/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "en-IN",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+  }
+}
+-->
+<section class="hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › Salary Calculator</nav>
+    <h1>In-Hand Salary Calculator</h1>
+    <p class="lead">Enter your CTC to see how much actually reaches your bank account each month after PF, professional tax and income tax.</p>
+    <div class="badges">
+      <span class="badge">FY 2026-27 tax rules</span>
+      <span class="badge">New vs old regime</span>
+      <span class="badge">PF &amp; gratuity</span>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="calc">
+    <form class="card" id="salary-form" autocomplete="off" onsubmit="return false">
+      <div class="field">
+        <label for="ctc">Annual CTC</label>
+        <div class="money"><input id="ctc" data-key="ctc" data-money inputmode="numeric" type="text" value="1200000"></div>
+        <input type="range" data-for="ctc" min="300000" max="10000000" step="50000" value="1200000" aria-label="CTC slider">
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label for="variable">Bonus / variable pay in CTC</label>
+          <div class="money"><input id="variable" data-key="variable" data-money inputmode="numeric" type="text"></div>
+          <span class="hint">Yearly. Paid separately, so it's left out of monthly pay.</span>
+        </div>
+        <div class="field">
+          <label for="basicPct">Basic salary as % of CTC</label>
+          <div class="suffix"><input id="basicPct" data-key="basicPct" type="number" inputmode="decimal" min="10" max="100" step="1" value="50"><span>%</span></div>
+          <span class="hint">Usually 40–50%. Check your offer letter.</span>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label for="pfMode">Provident Fund (PF)</label>
+          <select id="pfMode" data-key="pfMode">
+            <option value="capped">12%, max ₹1,800/month</option>
+            <option value="full">12% of full basic</option>
+            <option value="none">No PF</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="professionalTax">Professional tax (yearly)</label>
+          <div class="money"><input id="professionalTax" data-key="professionalTax" data-money inputmode="numeric" type="text" value="2400"></div>
+          <span class="hint">₹2,400–2,500 in most states. ₹0 in Delhi, UP, Haryana, Rajasthan.</span>
+        </div>
+      </div>
+      <label class="check"><input type="checkbox" data-key="gratuityInCtc" checked> Gratuity is included in my CTC</label>
+
+      <div class="field">
+        <span class="label" id="regime-label">Tax regime</span>
+        <div class="seg" role="group" aria-labelledby="regime-label" data-key="regime" data-value="best">
+          <button type="button" data-value="best" aria-pressed="true">Whichever is lower</button>
+          <button type="button" data-value="new" aria-pressed="false">New</button>
+          <button type="button" data-value="old" aria-pressed="false">Old</button>
+        </div>
+      </div>
+
+      <details class="more">
+        <summary>Old regime deductions (optional)</summary>
+        <div class="row2">
+          <div class="field">
+            <label for="extra80C">80C apart from PF</label>
+            <div class="money"><input id="extra80C" data-key="extra80C" data-money inputmode="numeric" type="text"></div>
+            <span class="hint">PPF, ELSS, LIC… PF is added automatically. Max ₹1.5 lakh in total.</span>
+          </div>
+          <div class="field">
+            <label for="health">Health insurance (80D)</label>
+            <div class="money"><input id="health" data-key="health" data-money inputmode="numeric" type="text"></div>
+          </div>
+          <div class="field">
+            <label for="homeLoan">Home loan interest</label>
+            <div class="money"><input id="homeLoan" data-key="homeLoan" data-money inputmode="numeric" type="text"></div>
+          </div>
+        </div>
+        <p class="small muted">For HRA and other deductions, use the <a href="/income-tax-calculator/">income tax calculator</a>.</p>
+      </details>
+    </form>
+
+    <aside class="card results" aria-live="polite">
+      <h2>Monthly in-hand salary</h2>
+      <div class="big" id="monthly-out">–</div>
+      <p class="muted small" id="regime-out" style="margin:6px 0 0"></p>
+      <div class="stats">
+        <div class="stat"><div class="k">Yearly in-hand</div><div class="v" id="yearly-out">–</div></div>
+        <div class="stat"><div class="k">Income tax (yearly)</div><div class="v" id="tax-out">–</div></div>
+      </div>
+      <table class="kv" id="breakdown"></table>
+      <div class="tip" id="bonus-out" hidden></div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" data-share>Copy link to this result</button>
+      </div>
+      <p class="small muted" style="margin:12px 0 0">Estimate. Your payslip may differ slightly, depending on allowances and how your employer spreads tax over the year.</p>
+    </aside>
+  </div>
+</section>
+
+<article class="wrap narrow content">
+  <p class="updated">Last updated: {{updated}}</p>
+
+  <h2>Why is in-hand salary less than CTC?</h2>
+  <p>CTC (Cost to Company) is everything your employer spends on you in a year, not what you receive. These parts come out before your salary reaches you:</p>
+  <ul>
+    <li><strong>Employer's PF:</strong> 12% of basic (often capped at ₹1,800 a month) goes to your PF account. It's your money, but you can't spend it now.</li>
+    <li><strong>Gratuity:</strong> about 4.81% of basic, paid only if you stay 5+ years.</li>
+    <li><strong>Your own PF:</strong> another 12% of basic is deducted from your salary.</li>
+    <li><strong>Professional tax:</strong> up to ₹2,500 a year, depending on your state.</li>
+    <li><strong>Income tax (TDS):</strong> your yearly tax, spread over 12 months.</li>
+    <li><strong>Variable pay:</strong> bonuses are part of CTC but are paid once or twice a year.</li>
+  </ul>
+
+  <h2>In-hand salary for common CTCs (FY 2026-27, new regime)</h2>
+  <p>Assuming basic at 50% of CTC, PF capped at ₹1,800 a month, gratuity in CTC, ₹2,400 professional tax and no variable pay:</p>
+  <table id="ctc-table">
+    <thead><tr><th>CTC</th><th>Monthly in-hand</th><th>Yearly tax</th></tr></thead>
+    <tbody>
+      <tr><td>₹6 lakh</td><td>≈ ₹45,000</td><td>₹0</td></tr>
+      <tr><td>₹10 lakh</td><td>≈ ₹77,500</td><td>₹0</td></tr>
+      <tr><td>₹12 lakh</td><td>≈ ₹93,800</td><td>₹0</td></tr>
+      <tr><td>₹15 lakh</td><td>≈ ₹1,10,800</td><td>≈ ₹88,500</td></tr>
+      <tr><td>₹20 lakh</td><td>≈ ₹1,44,000</td><td>≈ ₹1,77,900</td></tr>
+      <tr><td>₹25 lakh</td><td>≈ ₹1,74,800</td><td>≈ ₹2,97,300</td></tr>
+    </tbody>
+  </table>
+
+  <h2>How to increase your take-home pay</h2>
+  <ul>
+    <li><strong>Ask for employer NPS (80CCD(2)).</strong> Up to 14% of basic is tax-free even in the new regime.</li>
+    <li><strong>Check which regime is cheaper.</strong> This calculator picks the lower one automatically.</li>
+    <li><strong>Use the capped PF option</strong> if your employer offers it, to get more cash each month. Your retirement savings will grow more slowly.</li>
+    <li><strong>Claim HRA in the old regime</strong> if you pay high rent in a big city.</li>
+  </ul>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-wrap">
+    <details class="faq"><summary>What is the in-hand salary for ₹12 lakh CTC?</summary><p>About ₹93,800 a month under the new regime, with basic at 50% of CTC, PF capped at ₹1,800 a month and gratuity included in CTC. There's no income tax at this level in FY 2026-27, because taxable income stays under ₹12 lakh after the ₹75,000 standard deduction.</p></details>
+    <details class="faq"><summary>Is employer PF part of my CTC?</summary><p>Usually yes. Most companies include their 12% PF share in CTC, which is why your gross salary is lower than CTC. Check your offer letter's salary structure.</p></details>
+    <details class="faq"><summary>What is the difference between gross salary and in-hand salary?</summary><p>Gross salary is CTC minus employer PF and gratuity. In-hand salary is gross salary minus your own PF, professional tax and income tax.</p></details>
+    <details class="faq"><summary>Why does my in-hand pay change in some months?</summary><p>Employers adjust TDS during the year, for example after you submit investment proofs in January–March, or when a bonus is paid. Your total tax for the year stays the same.</p></details>
+  </div>
+
+  <div class="card cta" style="margin-top:28px">
+    <div><strong>Want the full tax picture?</strong><br><span class="muted">Add HRA, 80C, 80D and more to see which regime saves you most.</span></div>
+    <a class="btn btn-primary" href="/income-tax-calculator/">Open income tax calculator →</a>
+  </div>
+</article>
