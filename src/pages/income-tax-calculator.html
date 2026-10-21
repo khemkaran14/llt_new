@@ -1,0 +1,308 @@
+<!--meta
+{
+  "title": "Income Tax Calculator FY 2026-27 – New vs Old Regime | LiveLifeTricks",
+  "description": "Free income tax calculator for FY 2026-27 (AY 2027-28) and FY 2025-26. Compare new vs old regime with HRA, 80C, 80D, home loan, 87A rebate, surcharge and cess. See which regime saves you more.",
+  "path": "/income-tax-calculator/",
+  "priority": "1.0",
+  "breadcrumb": "Income Tax Calculator",
+  "scripts": ["tax-engine.js", "tax-ui.js"],
+  "schema": {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Income Tax Calculator FY 2026-27 (New vs Old Regime)",
+    "url": "https://livelifetricks.com/income-tax-calculator/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "en-IN",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+  }
+}
+-->
+<section class="hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › Income Tax Calculator</nav>
+    <h1>Income Tax Calculator FY 2026-27</h1>
+    <p class="lead">Enter your salary and other income to see your tax under the <strong>new</strong> and <strong>old</strong> regime, which one is cheaper, and how much you'll pay each month.</p>
+    <div class="badges">
+      <span class="badge">Budget 2026 rules</span>
+      <span class="badge">New vs old regime</span>
+      <span class="badge">HRA, 80C, 80D, home loan</span>
+      <span class="badge">Private: nothing leaves your device</span>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="calc">
+    <form class="card" id="tax-form" autocomplete="off" onsubmit="return false">
+      <div class="section">
+        <div class="row2">
+          <div class="field">
+            <label for="fy">Financial year</label>
+            <select id="fy" data-key="fy">
+              <option value="2026-27">FY 2026-27 (AY 2027-28)</option>
+              <option value="2025-26">FY 2025-26 (AY 2026-27)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="age">Your age</label>
+            <select id="age" data-key="age">
+              <option value="&lt;60">Below 60</option>
+              <option value="60-80">60 to 79 (senior)</option>
+              <option value="80+">80 or above (super senior)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <fieldset class="section">
+        <legend>Your income (yearly)</legend>
+        <div class="field">
+          <label for="salary">Gross salary <span class="hint">Total yearly salary before tax, including HRA and bonus. Leave out your employer's PF share.</span></label>
+          <div class="money"><input id="salary" data-key="salary" data-money inputmode="numeric" type="text" value="1500000"></div>
+        </div>
+        <details class="more" id="other-income">
+          <summary>Add interest, rent and other income</summary>
+          <div class="row2">
+            <div class="field">
+              <label for="savingsInterest">Savings account interest</label>
+              <div class="money"><input id="savingsInterest" data-key="savingsInterest" data-money inputmode="numeric" type="text"></div>
+            </div>
+            <div class="field">
+              <label for="otherInterest">FD / RD / bond interest</label>
+              <div class="money"><input id="otherInterest" data-key="otherInterest" data-money inputmode="numeric" type="text"></div>
+            </div>
+            <div class="field">
+              <label for="rentalIncome">Rent received from a property</label>
+              <div class="money"><input id="rentalIncome" data-key="rentalIncome" data-money inputmode="numeric" type="text"></div>
+              <span class="hint">30% is deducted automatically.</span>
+            </div>
+            <div class="field">
+              <label for="otherIncome">Other income</label>
+              <div class="money"><input id="otherIncome" data-key="otherIncome" data-money inputmode="numeric" type="text"></div>
+              <span class="hint">Freelance profit, pension, etc. Not capital gains.</span>
+            </div>
+          </div>
+        </details>
+      </fieldset>
+
+      <fieldset class="section">
+        <legend>Allowed in both regimes</legend>
+        <div class="row2">
+          <div class="field">
+            <label for="basicDA">Basic salary + DA (yearly)</label>
+            <div class="money"><input id="basicDA" data-key="basicDA" data-money inputmode="numeric" type="text"></div>
+            <span class="hint">Needed for HRA and employer NPS limits.</span>
+          </div>
+          <div class="field">
+            <label for="employerNPS">Employer's NPS contribution</label>
+            <div class="money"><input id="employerNPS" data-key="employerNPS" data-money inputmode="numeric" type="text"></div>
+            <span class="hint">80CCD(2). Up to 14% of basic in new regime.</span>
+          </div>
+        </div>
+        <label class="check"><input type="checkbox" data-key="isGovtEmployee"> I'm a government employee</label>
+      </fieldset>
+
+      <fieldset class="section only-old">
+        <legend>Deductions &amp; exemptions</legend>
+        <p class="only-old-note">These only lower tax in the old regime.</p>
+
+        <div class="row2">
+          <div class="field">
+            <label for="d80C">80C investments</label>
+            <div class="money"><input id="d80C" data-key="d80C" data-money inputmode="numeric" type="text"></div>
+            <span class="hint">EPF, PPF, ELSS, LIC, tuition fees, home loan principal. Max ₹1,50,000.</span>
+          </div>
+          <div class="field">
+            <label for="homeLoanInterest">Home loan interest (self-occupied)</label>
+            <div class="money"><input id="homeLoanInterest" data-key="homeLoanInterest" data-money inputmode="numeric" type="text"></div>
+            <span class="hint">Section 24(b). Max ₹2,00,000.</span>
+          </div>
+          <div class="field">
+            <label for="d80DSelf">Health insurance – self &amp; family</label>
+            <div class="money"><input id="d80DSelf" data-key="d80DSelf" data-money inputmode="numeric" type="text"></div>
+            <span class="hint">80D. Max ₹25,000 (₹50,000 if you're 60+).</span>
+          </div>
+          <div class="field">
+            <label for="d80DParents">Health insurance – parents</label>
+            <div class="money"><input id="d80DParents" data-key="d80DParents" data-money inputmode="numeric" type="text"></div>
+            <label class="check" style="margin:8px 0 0"><input type="checkbox" data-key="parentsSenior"> Parents are 60+ (limit ₹50,000)</label>
+          </div>
+        </div>
+
+        <details class="more">
+          <summary>HRA – I live in a rented house</summary>
+          <div class="row2">
+            <div class="field">
+              <label for="hraReceived">HRA received (yearly)</label>
+              <div class="money"><input id="hraReceived" data-key="hraReceived" data-money inputmode="numeric" type="text"></div>
+            </div>
+            <div class="field">
+              <label for="rentPaid">Rent paid (yearly)</label>
+              <div class="money"><input id="rentPaid" data-key="rentPaid" data-money inputmode="numeric" type="text"></div>
+            </div>
+            <div class="field">
+              <label for="city">City you live in</label>
+              <select id="city" data-key="city">
+                <option value="other">Other city</option>
+                <option value="delhi">Delhi</option>
+                <option value="mumbai">Mumbai</option>
+                <option value="kolkata">Kolkata</option>
+                <option value="chennai">Chennai</option>
+                <option value="bengaluru">Bengaluru</option>
+                <option value="hyderabad">Hyderabad</option>
+                <option value="pune">Pune</option>
+                <option value="ahmedabad">Ahmedabad</option>
+              </select>
+              <span class="hint" id="metro-hint"></span>
+            </div>
+          </div>
+          <p class="small muted">Also fill in "Basic salary + DA" above. <span id="hra-out"></span></p>
+        </details>
+
+        <details class="more">
+          <summary>More deductions (NPS, education loan, donations…)</summary>
+          <div class="row2">
+            <div class="field">
+              <label for="d80CCD1B">Your own NPS – 80CCD(1B)</label>
+              <div class="money"><input id="d80CCD1B" data-key="d80CCD1B" data-money inputmode="numeric" type="text"></div>
+              <span class="hint">Extra, over 80C. Max ₹50,000.</span>
+            </div>
+            <div class="field">
+              <label for="d80E">Education loan interest – 80E</label>
+              <div class="money"><input id="d80E" data-key="d80E" data-money inputmode="numeric" type="text"></div>
+            </div>
+            <div class="field">
+              <label for="d80G">Donations – 80G (eligible amount)</label>
+              <div class="money"><input id="d80G" data-key="d80G" data-money inputmode="numeric" type="text"></div>
+            </div>
+            <div class="field">
+              <label for="otherExempt">LTA &amp; other exempt allowances</label>
+              <div class="money"><input id="otherExempt" data-key="otherExempt" data-money inputmode="numeric" type="text"></div>
+            </div>
+            <div class="field">
+              <label for="professionalTax">Professional tax paid</label>
+              <div class="money"><input id="professionalTax" data-key="professionalTax" data-money inputmode="numeric" type="text"></div>
+              <span class="hint">Usually ₹2,400–2,500 a year.</span>
+            </div>
+            <div class="field">
+              <label for="otherDeductions">Any other deductions</label>
+              <div class="money"><input id="otherDeductions" data-key="otherDeductions" data-money inputmode="numeric" type="text"></div>
+              <span class="hint">80DD, 80U, 80EEB, etc.</span>
+            </div>
+          </div>
+          <p class="small muted">Savings interest deduction (80TTA ₹10,000, or 80TTB ₹50,000 for seniors) is applied automatically.</p>
+        </details>
+      </fieldset>
+
+      <div class="actions">
+        <button type="button" class="btn" id="reset">Reset</button>
+      </div>
+    </form>
+
+    <aside class="card results" aria-live="polite" id="tax-results">
+      <h2>Your tax estimate</h2>
+      <div class="verdict" id="verdict"></div>
+      <div class="compare">
+        <div class="box" id="box-new"><div class="k">New regime</div><div class="v" id="new-total">–</div><div class="s" id="new-month"></div></div>
+        <div class="box" id="box-old"><div class="k">Old regime</div><div class="v" id="old-total">–</div><div class="s" id="old-month"></div></div>
+      </div>
+
+      <div class="seg" role="group" aria-label="Show breakdown for">
+        <button type="button" data-show="new" aria-pressed="true">New regime breakdown</button>
+        <button type="button" data-show="old" aria-pressed="false">Old regime breakdown</button>
+      </div>
+      <table class="kv" id="breakdown" style="margin-top:12px"></table>
+      <div class="tip" id="tip" hidden></div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="share">Copy link to this result</button>
+        <button type="button" class="btn" onclick="window.print()">Print</button>
+      </div>
+      <p class="small muted" style="margin:12px 0 0">Estimate for resident individuals, using rates that were current when this page was last updated. Not tax advice.</p>
+    </aside>
+  </div>
+
+  <h2>How your tax is worked out, slab by slab</h2>
+  <div class="table-wrap">
+    <table class="data" id="slab-table">
+      <thead><tr><th>Income slab</th><th>Rate</th><th>Income in slab</th><th>Tax</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<article class="wrap narrow content">
+  <p class="updated">Last updated: {{updated}} · Rules for FY 2026-27 and FY 2025-26</p>
+
+  <h2>Income tax slabs for FY 2026-27 (new regime)</h2>
+  <p>The new regime is the default. Budget 2026 kept the same slabs as FY 2025-26. Salaried people get a <strong>₹75,000 standard deduction</strong>, and a rebate makes tax zero if your taxable income is up to <strong>₹12 lakh</strong>. That means a salary of up to <strong>₹12.75 lakh pays no tax</strong>.</p>
+  <table>
+    <thead><tr><th>Taxable income</th><th>Tax rate</th></tr></thead>
+    <tbody>
+      <tr><td>Up to ₹4,00,000</td><td>Nil</td></tr>
+      <tr><td>₹4,00,001 – ₹8,00,000</td><td>5%</td></tr>
+      <tr><td>₹8,00,001 – ₹12,00,000</td><td>10%</td></tr>
+      <tr><td>₹12,00,001 – ₹16,00,000</td><td>15%</td></tr>
+      <tr><td>₹16,00,001 – ₹20,00,000</td><td>20%</td></tr>
+      <tr><td>₹20,00,001 – ₹24,00,000</td><td>25%</td></tr>
+      <tr><td>Above ₹24,00,000</td><td>30%</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Income tax slabs under the old regime</h2>
+  <table>
+    <thead><tr><th>Taxable income</th><th>Below 60</th><th>60 to 79</th><th>80 and above</th></tr></thead>
+    <tbody>
+      <tr><td>Up to ₹2,50,000</td><td>Nil</td><td>Nil</td><td>Nil</td></tr>
+      <tr><td>₹2,50,001 – ₹3,00,000</td><td>5%</td><td>Nil</td><td>Nil</td></tr>
+      <tr><td>₹3,00,001 – ₹5,00,000</td><td>5%</td><td>5%</td><td>Nil</td></tr>
+      <tr><td>₹5,00,001 – ₹10,00,000</td><td>20%</td><td>20%</td><td>20%</td></tr>
+      <tr><td>Above ₹10,00,000</td><td>30%</td><td>30%</td><td>30%</td></tr>
+    </tbody>
+  </table>
+  <p>The old regime gives a ₹50,000 standard deduction and a rebate of up to ₹12,500 if taxable income is ₹5 lakh or less.</p>
+
+  <h2>Surcharge and cess</h2>
+  <p>A <strong>4% health and education cess</strong> is added to your tax in both regimes. If your taxable income is above ₹50 lakh, a surcharge also applies:</p>
+  <table>
+    <thead><tr><th>Taxable income</th><th>New regime</th><th>Old regime</th></tr></thead>
+    <tbody>
+      <tr><td>₹50 lakh – ₹1 crore</td><td>10%</td><td>10%</td></tr>
+      <tr><td>₹1 crore – ₹2 crore</td><td>15%</td><td>15%</td></tr>
+      <tr><td>₹2 crore – ₹5 crore</td><td>25%</td><td>25%</td></tr>
+      <tr><td>Above ₹5 crore</td><td>25%</td><td>37%</td></tr>
+    </tbody>
+  </table>
+  <p>The calculator also applies <strong>marginal relief</strong>, so earning slightly more than a limit never makes you pay more in extra tax than the extra income itself.</p>
+
+  <h2>Old vs new regime: which should you pick?</h2>
+  <ul>
+    <li><strong>Pick the new regime</strong> if you don't have big deductions. For most people earning up to about ₹15–20 lakh, it's cheaper.</li>
+    <li><strong>The old regime can win</strong> if you claim a lot together: full 80C, HRA in a big city, home loan interest, health insurance and NPS.</li>
+    <li>The calculator tells you the <strong>exact amount of extra deductions</strong> you'd need for the old regime to match the new one.</li>
+    <li>Salaried people can switch regimes every year when filing the return. People with business income can switch back only once.</li>
+  </ul>
+
+  <h2>Example: ₹15 lakh salary</h2>
+  <p>New regime: ₹15,00,000 − ₹75,000 standard deduction = ₹14,25,000 taxable. Tax = ₹0 + ₹20,000 + ₹40,000 + ₹33,750 = ₹93,750, plus 4% cess = <strong>₹97,500</strong> a year (about ₹8,125 a month).</p>
+  <p>Old regime with ₹1.5 lakh 80C and ₹25,000 80D: ₹15,00,000 − ₹50,000 − ₹1,75,000 = ₹12,75,000 taxable. Tax = ₹12,500 + ₹1,00,000 + ₹82,500 = ₹1,95,000, plus cess = <strong>₹2,02,800</strong>. Here the new regime saves over ₹1 lakh.</p>
+
+  <h2>HRA exemption: the 8 cities that now get 50%</h2>
+  <p>In the old regime, the HRA you can claim is the <em>lowest</em> of: (1) HRA received, (2) rent paid minus 10% of basic + DA, (3) 50% of basic + DA in a listed city, or 40% elsewhere. From <strong>FY 2026-27</strong>, Bengaluru, Hyderabad, Pune and Ahmedabad join Delhi, Mumbai, Kolkata and Chennai in the 50% group. The calculator uses the right list for the year you pick.</p>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-wrap">
+    <details class="faq"><summary>Is income up to ₹12 lakh tax-free in FY 2026-27?</summary><p>Yes, under the new regime. If your taxable income is ₹12 lakh or less, the Section 87A rebate (up to ₹60,000) cancels your tax. For salaried people, the ₹75,000 standard deduction means a salary of up to ₹12.75 lakh pays zero tax. The rebate does not cover special-rate income such as capital gains on shares.</p></details>
+    <details class="faq"><summary>Did Budget 2026 change the income tax slabs?</summary><p>No. The slabs, standard deduction, rebate, surcharge and cess for FY 2026-27 are the same as FY 2025-26. The new Income-tax Act, 2025 came into force from 1 April 2026, but the rates were carried over.</p></details>
+    <details class="faq"><summary>Which deductions are allowed in the new regime?</summary><p>Only a few: the ₹75,000 standard deduction for salaried people, employer's NPS contribution under 80CCD(2) up to 14% of basic + DA, the 30% standard deduction on rent from a let-out property, and some others such as Agniveer corpus contributions. 80C, 80D, HRA and home loan interest on a self-occupied house are not allowed.</p></details>
+    <details class="faq"><summary>What is marginal relief in the new regime?</summary><p>If your taxable income is just above ₹12 lakh, you lose the rebate. Marginal relief makes sure the tax you pay is never more than the income above ₹12 lakh. For example, at ₹12,25,000 taxable income, tax is limited to ₹25,000 (plus cess) instead of ₹63,750.</p></details>
+    <details class="faq"><summary>How much tax will be deducted from my salary each month?</summary><p>Your employer usually spreads your yearly tax evenly across the months, so it's roughly the yearly tax divided by 12. The calculator shows this monthly figure for both regimes.</p></details>
+    <details class="faq"><summary>Is my data safe?</summary><p>Yes. The calculator runs entirely in your browser. Nothing you type is sent to our server.</p></details>
+  </div>
+
+  <div class="card cta" style="margin-top:28px">
+    <div><strong>Planning a loan too?</strong><br><span class="muted">Check your EMI, total interest and how much a small extra payment saves.</span></div>
+    <a class="btn btn-primary" href="/emi-calculator/">Open EMI calculator →</a>
+  </div>
+</article>

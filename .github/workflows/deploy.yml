@@ -1,0 +1,48 @@
+name: Deploy to VPS
+
+# Deploys livelifetricks.com on every push to main.
+# Can also be started by hand from the Actions tab.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-livelifetricks
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Test and build
+        run: |
+          npm test
+          npm run build
+
+      - name: Deploy to VPS
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_PORT: ${{ secrets.VPS_PORT }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          SITE_DIR: ${{ secrets.SITE_DIR }}
+        run: |
+          if [ -z "$VPS_HOST" ] || [ -z "$VPS_SSH_KEY" ]; then
+            echo "::error::Add the VPS_HOST and VPS_SSH_KEY secrets (Settings > Secrets and variables > Actions). See README.md."
+            exit 1
+          fi
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh -i ~/.ssh/deploy_key -p "${VPS_PORT:-22}" \
+            -o StrictHostKeyChecking=accept-new \
+            "${VPS_USER:-root}@$VPS_HOST" \
+            "BRANCH='${{ github.ref_name }}' SITE_DIR='${SITE_DIR:-/var/www/livelifetricks.com}' bash /opt/llt_new/deploy/update-from-github.sh"

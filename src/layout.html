@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}}</title>
+<meta name="description" content="{{description}}">
+<link rel="canonical" href="{{canonical}}">
+<meta property="og:type" content="{{ogType}}">
+<meta property="og:site_name" content="{{siteName}}">
+<meta property="og:title" content="{{title}}">
+<meta property="og:description" content="{{description}}">
+<meta property="og:url" content="{{canonical}}">
+<meta property="og:image" content="{{siteUrl}}/og-image.png">
+<meta property="og:locale" content="en_IN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0f766e">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="stylesheet" href="{{css}}">
+{{head}}
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="/" aria-label="{{siteName}} home">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M9 22V10h3v9.5h6V22zm11-12h3v12h-3z" fill="#fff"/></svg>
+      <span>Live<b>Life</b>Tricks</span>
+    </a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <nav id="site-nav" class="site-nav" aria-label="Main">
+      <a href="/income-tax-calculator/">Income Tax</a>
+      <a href="/emi-calculator/">EMI</a>
+      <a href="/#calculators">All calculators</a>
+      <a href="/about/">About</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+{{content}}
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
+      <a class="brand" href="/"><span>Live<b>Life</b>Tricks</span></a>
+      <p class="muted">Free, private calculators for Indian taxpayers and borrowers. Your numbers never leave your device.</p>
+    </div>
+    <div>
+      <h2 class="footer-h">Calculators</h2>
+      <ul>
+        <li><a href="/income-tax-calculator/">Income Tax Calculator</a></li>
+        <li><a href="/emi-calculator/">EMI Calculator</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2 class="footer-h">Company</h2>
+      <ul>
+        <li><a href="/about/">About us</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li><a href="/privacy-policy/">Privacy policy</a></li>
+        <li><a href="/disclaimer/">Disclaimer</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <p class="muted small">© {{year}} {{siteName}}. Results are estimates for planning only and are not tax, legal or financial advice. <a href="/disclaimer/">Read the disclaimer</a>.</p>
+  </div>
+</footer>
+{{scripts}}
+</body>
+</html>

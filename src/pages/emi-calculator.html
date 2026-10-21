@@ -1,0 +1,170 @@
+<!--meta
+{
+  "title": "EMI Calculator – Home, Car & Personal Loan EMI with Schedule | LiveLifeTricks",
+  "description": "Free EMI calculator for home, car, personal and education loans. See your monthly EMI, total interest, full year-by-year repayment schedule, and how much an extra monthly payment saves.",
+  "path": "/emi-calculator/",
+  "priority": "1.0",
+  "breadcrumb": "EMI Calculator",
+  "scripts": ["emi-engine.js", "emi-ui.js"],
+  "schema": {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "EMI Calculator for Home, Car and Personal Loans",
+    "url": "https://livelifetricks.com/emi-calculator/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "en-IN",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+  }
+}
+-->
+<section class="hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › EMI Calculator</nav>
+    <h1>EMI Calculator</h1>
+    <p class="lead">Find your monthly EMI for a home, car, personal or education loan. See the total interest, a full repayment schedule, and how much you save by paying a little extra each month.</p>
+    <div class="badges">
+      <span class="badge">Year-by-year schedule</span>
+      <span class="badge">Prepayment savings</span>
+      <span class="badge">Download as CSV</span>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="calc">
+    <form class="card" id="emi-form" autocomplete="off" onsubmit="return false">
+      <div class="field">
+        <span class="label" id="type-label">Loan type</span>
+        <div class="seg" role="group" aria-labelledby="type-label" id="loan-type">
+          <button type="button" data-type="home" aria-pressed="true">Home</button>
+          <button type="button" data-type="car" aria-pressed="false">Car</button>
+          <button type="button" data-type="personal" aria-pressed="false">Personal</button>
+          <button type="button" data-type="education" aria-pressed="false">Education</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="amount">Loan amount <span class="hint" id="amount-short"></span></label>
+        <div class="money"><input id="amount" data-money inputmode="numeric" type="text" value="5000000"></div>
+        <input type="range" id="amount-range" min="50000" max="20000000" step="50000" value="5000000" aria-label="Loan amount slider">
+      </div>
+
+      <div class="field">
+        <label for="rate">Interest rate (yearly)</label>
+        <div class="suffix"><input id="rate" type="number" inputmode="decimal" min="0" max="40" step="0.05" value="8.5"><span>% p.a.</span></div>
+        <input type="range" id="rate-range" min="1" max="30" step="0.05" value="8.5" aria-label="Interest rate slider">
+      </div>
+
+      <div class="field">
+        <label for="tenure">Loan tenure</label>
+        <div class="row2" style="grid-template-columns: 1fr auto; gap: 10px">
+          <input id="tenure" type="number" inputmode="numeric" min="1" max="480" step="1" value="20">
+          <div class="seg" role="group" aria-label="Tenure unit" id="tenure-unit">
+            <button type="button" data-unit="years" aria-pressed="true">Years</button>
+            <button type="button" data-unit="months" aria-pressed="false">Months</button>
+          </div>
+        </div>
+        <input type="range" id="tenure-range" min="1" max="30" step="1" value="20" aria-label="Tenure slider">
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label for="start">First EMI month</label>
+          <input id="start" type="month">
+        </div>
+        <div class="field">
+          <label for="extra">Extra payment every month <span class="hint">Optional. Goes straight to principal.</span></label>
+          <div class="money"><input id="extra" data-money inputmode="numeric" type="text" placeholder="0"></div>
+        </div>
+      </div>
+    </form>
+
+    <aside class="card results" aria-live="polite">
+      <h2>Your monthly EMI</h2>
+      <div class="big" id="emi-out">–</div>
+      <div class="stats">
+        <div class="stat"><div class="k">Principal</div><div class="v" id="principal-out">–</div></div>
+        <div class="stat"><div class="k">Total interest</div><div class="v" id="interest-out">–</div></div>
+        <div class="stat"><div class="k">Total payment</div><div class="v" id="total-out">–</div></div>
+      </div>
+      <div class="donut-row">
+        <svg class="donut" viewBox="0 0 42 42" role="img" aria-labelledby="donut-title">
+          <title id="donut-title">Principal and interest share of total payment</title>
+          <circle cx="21" cy="21" r="15.915" fill="none" stroke="var(--chart-1)" stroke-width="6"></circle>
+          <circle id="donut-interest" cx="21" cy="21" r="15.915" fill="none" stroke="var(--chart-2)" stroke-width="6" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+        </svg>
+        <ul class="legend">
+          <li><span class="dot" style="background:var(--chart-1)"></span> Principal <strong id="p-share"></strong></li>
+          <li><span class="dot" style="background:var(--chart-2)"></span> Interest <strong id="i-share"></strong></li>
+          <li class="muted small" id="payoff"></li>
+        </ul>
+      </div>
+      <div class="tip" id="extra-out" hidden></div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="share">Copy link to this result</button>
+        <button type="button" class="btn" id="csv">Download schedule (CSV)</button>
+      </div>
+    </aside>
+  </div>
+
+  <h2>Repayment schedule</h2>
+  <p class="muted small">Tap a year to see each month.</p>
+  <div class="table-wrap">
+    <table class="data" id="schedule">
+      <thead><tr><th>Year</th><th>Principal paid</th><th>Interest paid</th><th>Total paid</th><th>Balance left</th><th>Loan paid</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<article class="wrap narrow content">
+  <p class="updated">Last updated: {{updated}}</p>
+
+  <h2>What is an EMI?</h2>
+  <p>An EMI (Equated Monthly Instalment) is the fixed amount you pay your bank every month until the loan is repaid. Each EMI has two parts: <strong>interest</strong> on the balance still owed, and <strong>principal</strong>, which reduces the loan. In the early years, most of your EMI goes to interest. Over time, more of it goes towards the principal.</p>
+
+  <h2>EMI formula</h2>
+  <p class="formula">EMI = P × r × (1 + r)<sup>n</sup> ÷ ((1 + r)<sup>n</sup> − 1)</p>
+  <ul>
+    <li><strong>P</strong> = loan amount</li>
+    <li><strong>r</strong> = monthly interest rate (yearly rate ÷ 12 ÷ 100)</li>
+    <li><strong>n</strong> = number of monthly instalments</li>
+  </ul>
+  <p><strong>Example:</strong> a ₹50 lakh home loan at 8.5% for 20 years. r = 8.5 ÷ 12 ÷ 100 = 0.007083 and n = 240. EMI ≈ <strong>₹43,391</strong>. Over 20 years you pay about ₹54.1 lakh in interest, more than the loan itself.</p>
+
+  <h2>How to lower your EMI or total interest</h2>
+  <ul>
+    <li><strong>Pay a little extra each month.</strong> On the loan above, just ₹5,000 extra a month clears it about 4½ years earlier and saves about ₹13.9 lakh in interest. Try it in the calculator.</li>
+    <li><strong>Make a bigger down payment</strong> so you borrow less.</li>
+    <li><strong>Compare rates and ask for a better one.</strong> Even 0.5% lower makes a big difference on a long loan. A good credit score (750+) helps.</li>
+    <li><strong>Choose a shorter tenure</strong> if you can afford a higher EMI. You'll pay much less interest overall.</li>
+    <li><strong>Switch lenders (balance transfer)</strong> if another bank offers a clearly lower rate. Check the processing fee first.</li>
+  </ul>
+
+  <h2>Typical interest rates</h2>
+  <table>
+    <thead><tr><th>Loan type</th><th>Usual range (yearly)</th><th>Usual tenure</th></tr></thead>
+    <tbody>
+      <tr><td>Home loan</td><td>7.5% – 10%</td><td>Up to 30 years</td></tr>
+      <tr><td>Car loan</td><td>8.5% – 12%</td><td>Up to 7 years</td></tr>
+      <tr><td>Education loan</td><td>8% – 13%</td><td>Up to 15 years</td></tr>
+      <tr><td>Personal loan</td><td>10.5% – 24%</td><td>Up to 5 years</td></tr>
+    </tbody>
+  </table>
+  <p class="small muted">Rates vary by lender, your credit score and the RBI repo rate. Check the latest rate with your bank.</p>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-wrap">
+    <details class="faq"><summary>Does paying extra really reduce my loan?</summary><p>Yes. Extra payments go straight to the principal, so the balance falls faster and less interest is charged every month after that. Most banks don't charge a fee for prepaying a floating-rate home loan taken by an individual.</p></details>
+    <details class="faq"><summary>Is it better to reduce EMI or tenure after a prepayment?</summary><p>Reducing the tenure usually saves more interest. Reducing the EMI is better if you want more room in your monthly budget. This calculator keeps the EMI the same and shows how much sooner you finish.</p></details>
+    <details class="faq"><summary>Why is most of my early EMI going to interest?</summary><p>Interest is charged on the balance you still owe. At the start, the balance is highest, so the interest part is largest. As you repay, the interest part shrinks and the principal part grows.</p></details>
+    <details class="faq"><summary>Can I claim tax benefits on my home loan?</summary><p>In the old tax regime, you can claim up to ₹2 lakh a year of interest on a self-occupied home under Section 24(b), and principal repayment under 80C (within the ₹1.5 lakh limit). Use our income tax calculator to see if the old regime then saves you more.</p></details>
+    <details class="faq"><summary>Does this calculator include processing fees or insurance?</summary><p>No. It shows the EMI on the loan amount alone. Add any fees or insurance premium you're financing to the loan amount if you want them included.</p></details>
+  </div>
+
+  <div class="card cta" style="margin-top:28px">
+    <div><strong>Have a home loan?</strong><br><span class="muted">See whether its interest and principal make the old tax regime cheaper for you.</span></div>
+    <a class="btn btn-primary" href="/income-tax-calculator/">Open income tax calculator →</a>
+  </div>
+</article>
