@@ -1,0 +1,336 @@
+/* Biodata maker page. Depends on common.js and biodata-templates.js. */
+(function () {
+  'use strict';
+  var L = window.LLT, B = window.Biodata;
+  if (!B || !document.getElementById('bd-gallery')) return;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var form = $('bd-form');
+  var API = '/api/biodata';
+  var PAGE_W = 794, PAGE_H = 1123;
+  var state = { tplId: null, filter: 'all', photo: null, order: null, config: null };
+
+  // ---------- storage ----------
+  var store = {
+    get: function (k) { try { return JSON.parse(localStorage.getItem('llt:bd:' + k)); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem('llt:bd:' + k, JSON.stringify(v)); return true; } catch (e) { return false; } },
+    del: function (k) { try { localStorage.removeItem('llt:bd:' + k); } catch (e) { /* ignore */ } }
+  };
+
+  // ---------- rendering ----------
+  function fit(el) {
+    var fs = 1;
+    el.style.setProperty('--bd-fs', fs);
+    while (el.scrollHeight > PAGE_H + 1 && fs > 0.62) {
+      fs = Math.round((fs - 0.02) * 100) / 100;
+      el.style.setProperty('--bd-fs', fs);
+    }
+    return fs;
+  }
+  function scaleInto(box) {
+    var bd = box.querySelector('.bd');
+    if (bd) bd.style.transform = 'scale(' + (box.clientWidth / PAGE_W) + ')';
+  }
+  var resize = window.ResizeObserver ? new ResizeObserver(function (entries) { entries.forEach(function (e) { scaleInto(e.target); }); }) : null;
+
+  // ---------- gallery ----------
+  function gallery() {
+    var g = $('bd-gallery');
+    g.innerHTML = '';
+    B.TEMPLATES.forEach(function (tpl) {
+      if (state.filter !== 'all' && tpl.tier !== state.filter) return;
+      var card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'bd-card';
+      card.setAttribute('aria-pressed', tpl.id === state.tplId ? 'true' : 'false');
+      card.innerHTML = '<div class="bd-thumbbox">' + B.render(B.SAMPLE, tpl, { thumb: true }) + '</div>' +
+        '<div class="bd-card-meta"><span>' + tpl.name + '</span><span class="bd-pill' + (tpl.tier === 'premium' ? ' paid' : '') + '">' + (tpl.tier === 'premium' ? '₹20' : 'FREE') + '</span></div>';
+      card.addEventListener('click', function () { choose(tpl.id); });
+      g.appendChild(card);
+      var box = card.querySelector('.bd-thumbbox');
+      fit(box.querySelector('.bd'));
+      scaleInto(box);
+      if (resize) resize.observe(box);
+    });
+  }
+  $('bd-filter').addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    state.filter = b.dataset.value;
+    this.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+    gallery();
+  });
+
+  function choose(id) {
+    if (state.order && state.order.locked && state.order.tplId !== id) {
+      if (!confirm('Your paid biodata is final. Switching design starts a new biodata. Continue?')) return;
+      state.order = null; store.del('order');
+    }
+    state.tplId = id;
+    store.set('tpl', id);
+    $('step-editor').hidden = false;
+    gallery();
+    preview();
+    $('step-editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  $('pv-change').addEventListener('click', function () { $('step-designs').scrollIntoView({ behavior: 'smooth' }); });
+
+  // ---------- form data ----------
+  function readData() {
+    var d = {};
+    form.querySelectorAll('[data-key]').forEach(function (el) { d[el.dataset.key] = el.value.trim(); });
+    d.custom = [].map.call($('b-custom').querySelectorAll('.bd-custom-row'), function (row) {
+      return { label: row.querySelector('[data-c="label"]').value.trim(), value: row.querySelector('[data-c="value"]').value.trim() };
+    }).filter(function (c) { return c.label && c.value; });
+    if (state.photo) d.photo = state.photo;
+    return d;
+  }
+  function writeData(d) {
+    if (!d) return;
+    form.querySelectorAll('[data-key]').forEach(function (el) { if (d[el.dataset.key] != null) el.value = d[el.dataset.key]; });
+    $('b-custom').innerHTML = '';
+    (d.custom || []).forEach(addCustom);
+  }
+  function addCustom(c) {
+    c = c || {};
+    var row = document.createElement('div');
+    row.className = 'bd-custom-row';
+    row.innerHTML = '<input type="text" data-c="label" maxlength="30" placeholder="Label, e.g. Blood group"><input type="text" data-c="value" maxlength="80" placeholder="Value"><button type="button" class="btn" aria-label="Remove field">✕</button>';
+    row.querySelector('[data-c="label"]').value = c.label || '';
+    row.querySelector('[data-c="value"]').value = c.value || '';
+    row.querySelector('button').addEventListener('click', function () { row.remove(); changed(); });
+    $('b-custom').appendChild(row);
+  }
+  $('b-custom-add').addEventListener('click', function () { addCustom(); });
+
+  // Photo: shrink to max 700 px so it stays light and saves on the device.
+  $('b-photo').addEventListener('change', function () {
+    var f = this.files[0];
+    if (!f) return;
+    var img = new Image(), url = URL.createObjectURL(f);
+    img.onload = function () {
+      var s = Math.min(1, 700 / Math.max(img.width, img.height));
+      var c = document.createElement('canvas');
+      c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      state.photo = c.toDataURL('image/jpeg', 0.85);
+      URL.revokeObjectURL(url);
+      store.set('photo', state.photo);
+      $('b-photo-remove').hidden = false;
+      changed();
+    };
+    img.onerror = function () { alert('Sorry, that image could not be opened. Please try a JPG or PNG.'); };
+    img.src = url;
+  });
+  $('b-photo-remove').addEventListener('click', function () {
+    state.photo = null; store.del('photo'); $('b-photo').value = ''; this.hidden = true; changed();
+  });
+
+  $('b-clear').addEventListener('click', function () {
+    if (!confirm('Clear all the details you entered?')) return;
+    form.querySelectorAll('[data-key]').forEach(function (el) { el.value = el.tagName === 'SELECT' ? '' : ''; });
+    $('b-title').value = 'BIODATA';
+    $('b-custom').innerHTML = '';
+    state.photo = null; store.del('photo'); $('b-photo-remove').hidden = true;
+    changed();
+  });
+
+  // ---------- preview ----------
+  function tpl() { return B.byId(state.tplId) || B.TEMPLATES[0]; }
+  function isPaid() { return state.order && state.order.tplId === state.tplId && state.order.token && state.order.tier === 'premium'; }
+
+  function preview() {
+    var t = tpl(), d = readData();
+    var box = $('bd-preview');
+    box.innerHTML = B.render(d, t, { watermark: t.tier === 'premium' && !isPaid() });
+    fit(box.querySelector('.bd'));
+    scaleInto(box);
+    if (resize) resize.observe(box);
+    $('pv-name').textContent = t.name;
+    var pill = $('pv-pill');
+    pill.textContent = t.tier === 'premium' ? (isPaid() ? 'PAID' : '₹20') : 'FREE';
+    pill.className = 'bd-pill' + (t.tier === 'premium' && !isPaid() ? ' paid' : '');
+    $('pv-note').textContent = t.tier === 'premium'
+      ? (isPaid() ? 'Paid. Download your PDF and JPG. Downloads stay available for 48 hours.' : 'Premium design: pay ₹20 to download without the watermark, as PDF and JPG.')
+      : 'Free design: enter your email to download as PDF and JPG.';
+    document.querySelectorAll('[data-dl]').forEach(function (b) {
+      b.textContent = (t.tier === 'premium' && !isPaid() ? 'Pay ₹20 & download ' : 'Download ') + b.dataset.dl.toUpperCase();
+    });
+    lockUi();
+  }
+
+  function lockUi() {
+    var locked = !!(isPaid() && state.order.locked);
+    form.querySelectorAll('input, select, textarea, button').forEach(function (el) { el.disabled = locked; });
+    var banner = $('bd-locked');
+    banner.hidden = !locked;
+    if (locked) {
+      banner.innerHTML = '<strong>Your paid biodata is final.</strong> To change any detail, start a new edit for ₹20. ' +
+        '<button type="button" class="btn" id="bd-newedit" style="margin-top:8px">Start a new edit (₹20)</button>';
+      $('bd-newedit').disabled = false;
+      $('bd-newedit').addEventListener('click', function () {
+        if (!confirm('Start a new edit? You\'ll need to pay ₹20 again to download the changed biodata.')) return;
+        state.order = null; store.del('order'); preview();
+      });
+    }
+  }
+
+  var saveTimer;
+  function changed() {
+    preview();
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () { var d = readData(); delete d.photo; store.set('data', d); }, 300);
+  }
+  form.addEventListener('input', L.debounce(changed, 120));
+  form.addEventListener('change', changed);
+
+  // ---------- server ----------
+  function api(path, body) {
+    return fetch(API + path, { method: body ? 'POST' : 'GET', headers: { 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) { var e = new Error(j.error || 'Server error (' + r.status + ')'); e.code = j.code; throw e; } return j; }); },
+        function () { throw new Error('Could not reach the server. Check your internet connection and try again.'); });
+  }
+  function sha256(text) {
+    var bytes = new TextEncoder().encode(text);
+    return crypto.subtle.digest('SHA-256', bytes).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+    });
+  }
+  function fingerprint() { return sha256(JSON.stringify({ t: state.tplId, d: readData() })); }
+  function status(msg, err) { var s = $('pv-status'); s.textContent = msg || ''; s.className = 'bd-status' + (err ? ' err' : ''); }
+
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      if (document.querySelector('script[src="' + src + '"]')) return resolve();
+      var s = document.createElement('script');
+      s.src = src; s.onload = resolve; s.onerror = function () { reject(new Error('Could not load ' + src)); };
+      document.head.appendChild(s);
+    });
+  }
+
+  // Ask for email once per biodata (free) or per payment (premium).
+  function askEmail() {
+    return new Promise(function (resolve) {
+      var m = $('bd-modal');
+      var t = tpl();
+      $('m-text').textContent = t.tier === 'premium' ? 'Enter your email, then pay ₹20 securely with UPI, card or net banking.' : 'Enter your email to download your biodata for free.';
+      $('m-submit').textContent = t.tier === 'premium' ? 'Continue to pay ₹20' : 'Continue';
+      $('m-email').value = store.get('email') || $('b-email').value || '';
+      $('m-status').textContent = '';
+      m.hidden = false;
+      $('m-email').focus();
+      function done(v) { m.hidden = true; $('m-form').removeEventListener('submit', submit); $('m-cancel').removeEventListener('click', cancel); resolve(v); }
+      function submit(e) { e.preventDefault(); store.set('email', $('m-email').value.trim()); done({ email: $('m-email').value.trim(), consent: $('m-consent').checked }); }
+      function cancel() { done(null); }
+      $('m-form').addEventListener('submit', submit);
+      $('m-cancel').addEventListener('click', cancel);
+    });
+  }
+
+  function pay(start, who) {
+    if (start.dev) {
+      return new Promise(function (resolve, reject) {
+        if (!confirm('TEST MODE: payments aren\'t set up yet. Simulate a successful ₹20 payment?')) return reject(new Error('Payment cancelled.'));
+        api('/verify', { orderId: start.orderId, dev: true }).then(resolve, reject);
+      });
+    }
+    return loadScript('https://checkout.razorpay.com/v1/checkout.js').then(function () {
+      return new Promise(function (resolve, reject) {
+        var rz = new window.Razorpay({
+          key: start.keyId, amount: start.amount, currency: 'INR', order_id: start.razorpayOrderId,
+          name: 'LiveLifeTricks', description: 'Biodata design: ' + tpl().name,
+          prefill: { email: who.email, name: $('b-name').value },
+          theme: { color: '#0f766e' },
+          handler: function (resp) {
+            api('/verify', { orderId: start.orderId, razorpay_order_id: resp.razorpay_order_id, razorpay_payment_id: resp.razorpay_payment_id, razorpay_signature: resp.razorpay_signature }).then(resolve, reject);
+          },
+          modal: { ondismiss: function () { reject(new Error('Payment cancelled.')); } }
+        });
+        rz.on('payment.failed', function (r) { reject(new Error('Payment failed: ' + (r.error && r.error.description || 'please try again.'))); });
+        rz.open();
+      });
+    });
+  }
+
+  // Make sure we have a valid order for the current design, paying if needed.
+  function ensureOrder() {
+    var t = tpl();
+    var o = state.order;
+    if (o && o.tplId === t.id && o.token) return Promise.resolve(o);
+    return askEmail().then(function (who) {
+      if (!who) throw new Error('');
+      status(t.tier === 'premium' ? 'Opening secure payment…' : 'Preparing your download…');
+      return fingerprint().then(function (hash) {
+        return api('/start', { email: who.email, name: $('b-name').value, templateId: t.id, dataHash: hash, consent: who.consent }).then(function (start) {
+          if (start.free) return { orderId: start.orderId, token: start.token, tplId: t.id, tier: 'free' };
+          return pay(start, who).then(function (v) { return { orderId: start.orderId, token: v.token, tplId: t.id, tier: 'premium', hash: hash, locked: true }; });
+        });
+      });
+    }).then(function (order) {
+      state.order = order;
+      store.set('order', order);
+      preview();
+      return order;
+    });
+  }
+
+  // Render the final page off-screen at full size and export it.
+  function exportFile(kind) {
+    var t = tpl(), d = readData();
+    var holder = $('bd-render');
+    holder.innerHTML = B.render(d, t, {});
+    var el = holder.querySelector('.bd');
+    fit(el);
+    var fileName = 'biodata-' + (d.name || 'my').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.' + kind;
+    return Promise.all([loadScript('/assets/js/vendor/html2canvas.min.js'), kind === 'pdf' ? loadScript('/assets/js/vendor/jspdf.umd.min.js') : null, document.fonts ? document.fonts.ready : null])
+      .then(function () { return window.html2canvas(el, { scale: 2, backgroundColor: null, logging: false, useCORS: true }); })
+      .then(function (canvas) {
+        var jpg = canvas.toDataURL('image/jpeg', 0.92);
+        if (kind === 'jpg') { saveUrl(jpg, fileName); }
+        else {
+          var pdf = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
+          pdf.addImage(jpg, 'JPEG', 0, 0, 210, 297);
+          pdf.save(fileName);
+        }
+        holder.innerHTML = '';
+      });
+  }
+  function saveUrl(url, name) {
+    var a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  var busy = false;
+  document.querySelectorAll('[data-dl]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (busy) return;
+      if (!$('b-name').value.trim()) { status('Please enter your full name first.', true); $('b-name').focus(); return; }
+      busy = true;
+      var kind = btn.dataset.dl;
+      ensureOrder()
+        .then(function (order) {
+          status('Creating your ' + kind.toUpperCase() + '…');
+          return fingerprint().then(function (hash) { return api('/download', { orderId: order.orderId, token: order.token, kind: kind, dataHash: hash }); });
+        })
+        .then(function () { return exportFile(kind); })
+        .then(function () { status('Downloaded ✓ Check your downloads folder.'); })
+        .catch(function (e) {
+          if (e.code === 'expired' || e.code === 'changed' || e.code === 'limit') { state.order = null; store.del('order'); preview(); }
+          status(e.message, !!e.message);
+        })
+        .then(function () { busy = false; });
+    });
+  });
+
+  // ---------- start ----------
+  writeData(store.get('data'));
+  state.photo = store.get('photo');
+  $('b-photo-remove').hidden = !state.photo;
+  state.order = store.get('order');
+  var q = new URLSearchParams(location.search).get('design');
+  var startTpl = B.byId(q) ? q : store.get('tpl');
+  gallery();
+  if (B.byId(startTpl)) { state.tplId = startTpl; $('step-editor').hidden = false; gallery(); preview(); }
+  api('/config').then(function (c) { state.config = c; }, function () { /* offline: downloads will show the error */ });
+})();

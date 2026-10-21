@@ -109,6 +109,8 @@ for (const { meta, body: rawBody } of sources) {
   let head = '';
   for (const s of schemas) head += '<script type="application/ld+json">' + JSON.stringify(s) + '</script>\n';
   if (meta.noindex) head += '<meta name="robots" content="noindex">\n';
+  for (const href of meta.externalStyles || []) head += '<link rel="stylesheet" href="' + href + '">\n';
+  for (const css of meta.styles || []) head += '<link rel="stylesheet" href="' + asset('css/' + css) + '">\n';
   if (config.ga4Id) {
     head += '<script async src="https://www.googletagmanager.com/gtag/js?id=' + config.ga4Id + '"></script>\n' +
       '<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("config","' + config.ga4Id + '");</script>\n';

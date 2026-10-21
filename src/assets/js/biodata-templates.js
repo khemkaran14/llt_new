@@ -1,0 +1,258 @@
+/*
+ * Marriage biodata templates.
+ * 25 designs built from 5 layouts, colour palettes, fonts and SVG ornaments.
+ * The tier ('free' | 'premium') here is also what the server uses to decide
+ * whether payment is needed, so it can't be changed from the browser.
+ *
+ * Browser: window.Biodata. Node: module.exports.
+ */
+(function (root) {
+  'use strict';
+
+  var FONTS = {
+    cinzel: "'Cinzel', 'Times New Roman', serif",
+    playfair: "'Playfair Display', Georgia, serif",
+    cormorant: "'Cormorant Garamond', Georgia, serif",
+    lora: "'Lora', Georgia, serif",
+    marcellus: "'Marcellus', Georgia, serif",
+    poppins: "'Poppins', 'Segoe UI', Arial, sans-serif",
+    vibes: "'Great Vibes', 'Brush Script MT', cursive",
+    sans: "'Poppins', 'Segoe UI', Arial, sans-serif"
+  };
+
+  // Palette: bg, ink (text), accent (headings/lines), accent2 (ornaments), soft (panels), side (sidebar/band), sideInk
+  var P = {
+    maroon: { bg: '#fffaf3', ink: '#3a1d1d', accent: '#7a1f2b', accent2: '#c9a24a', soft: '#f6ead8', side: '#7a1f2b', sideInk: '#fff6e6' },
+    navy: { bg: '#ffffff', ink: '#1d2433', accent: '#1f3a68', accent2: '#8aa2c8', soft: '#eef2f8', side: '#1f3a68', sideInk: '#ffffff' },
+    teal: { bg: '#ffffff', ink: '#16302d', accent: '#0f766e', accent2: '#5eb8ad', soft: '#e7f4f2', side: '#0f766e', sideInk: '#ffffff' },
+    rose: { bg: '#fffafb', ink: '#3b2229', accent: '#b4436c', accent2: '#e8a0b8', soft: '#fbe9ef', side: '#b4436c', sideInk: '#ffffff' },
+    saffron: { bg: '#fffcf5', ink: '#3a2a12', accent: '#d9730d', accent2: '#f2b84b', soft: '#fdf0dc', side: '#d9730d', sideInk: '#ffffff' },
+    mono: { bg: '#ffffff', ink: '#1a1a1a', accent: '#1a1a1a', accent2: '#9a9a9a', soft: '#f3f3f3', side: '#1a1a1a', sideInk: '#ffffff' },
+    emerald: { bg: '#fbfdf9', ink: '#17301f', accent: '#1e6b3a', accent2: '#b89b4a', soft: '#e9f3ea', side: '#1e6b3a', sideInk: '#fdf8e8' },
+    purple: { bg: '#fdfbff', ink: '#2a1f3a', accent: '#5b3a8f', accent2: '#b49ad8', soft: '#f1ebf9', side: '#5b3a8f', sideInk: '#ffffff' },
+    sky: { bg: '#f7fbff', ink: '#1b2a3a', accent: '#2b74b8', accent2: '#8cc0ea', soft: '#e6f1fb', side: '#2b74b8', sideInk: '#ffffff' },
+    coral: { bg: '#fffaf8', ink: '#3a2420', accent: '#d45d45', accent2: '#f0a693', soft: '#fcebe6', side: '#d45d45', sideInk: '#ffffff' },
+    gold: { bg: '#fffdf6', ink: '#3b2f1a', accent: '#8a6a1f', accent2: '#c9a24a', soft: '#f7efda', side: '#8a6a1f', sideInk: '#fffaf0' },
+    peacock: { bg: '#fbfeff', ink: '#13303a', accent: '#0e5f76', accent2: '#2bb3a6', soft: '#e3f3f6', side: '#0e5f76', sideInk: '#ffffff' },
+    rosegold: { bg: '#fffaf7', ink: '#3d2a26', accent: '#a45a4a', accent2: '#d9a48f', soft: '#f8ebe5', side: '#a45a4a', sideInk: '#ffffff' },
+    night: { bg: '#141a2b', ink: '#ece6d6', accent: '#d8b45c', accent2: '#d8b45c', soft: '#1e2740', side: '#0d1220', sideInk: '#ece6d6' },
+    marigold: { bg: '#fffcf2', ink: '#3a2a0e', accent: '#c75f00', accent2: '#f5b301', soft: '#fff1cf', side: '#c75f00', sideInk: '#ffffff' },
+    sindoor: { bg: '#fffaf6', ink: '#3a1512', accent: '#b3201a', accent2: '#d9a441', soft: '#f9e6df', side: '#b3201a', sideInk: '#fff5e6' },
+    mint: { bg: '#f8fdfb', ink: '#1d3329', accent: '#2f8a6a', accent2: '#9fd8c2', soft: '#e6f6ef', side: '#2f8a6a', sideInk: '#ffffff' },
+    heritage: { bg: '#fdf8f0', ink: '#33261a', accent: '#6b4423', accent2: '#c08a4a', soft: '#f2e6d4', side: '#6b4423', sideInk: '#fdf3e3' },
+    twilight: { bg: '#fcfaff', ink: '#2a2140', accent: '#4a2f7a', accent2: '#c9a24a', soft: '#efe9f8', side: '#4a2f7a', sideInk: '#fff8e8' },
+    lavender: { bg: '#fcfbff', ink: '#2d2640', accent: '#6c5bb3', accent2: '#c3b6ef', soft: '#efecfb', side: '#6c5bb3', sideInk: '#ffffff' }
+  };
+
+  function t(id, name, tier, layout, palette, o) {
+    o = o || {};
+    return { id: id, name: name, tier: tier, layout: layout, palette: palette, ornaments: o.orn || [], head: o.head || 'playfair', body: o.body || 'lora', nameFont: o.nameFont || o.head || 'playfair', photo: o.photo || 'round' };
+  }
+
+  var TEMPLATES = [
+    // Free
+    t('classic-maroon', 'Classic Maroon', 'free', 'classic', 'maroon', { orn: ['border'], head: 'cinzel' }),
+    t('simple-navy', 'Simple Navy', 'free', 'classic', 'navy', { head: 'playfair', body: 'sans' }),
+    t('sidebar-teal', 'Teal Sidebar', 'free', 'sidebar', 'teal', { head: 'poppins', body: 'sans', photo: 'rounded' }),
+    t('modern-rose', 'Modern Rose', 'free', 'cards', 'rose', { head: 'playfair', body: 'sans' }),
+    t('header-saffron', 'Saffron Band', 'free', 'band', 'saffron', { head: 'marcellus', body: 'lora' }),
+    t('minimal-mono', 'Minimal Black', 'free', 'classic', 'mono', { head: 'poppins', body: 'sans', photo: 'rounded' }),
+    t('frame-emerald', 'Emerald Frame', 'free', 'frame', 'emerald', { orn: ['border'], head: 'cormorant', body: 'lora' }),
+    t('sidebar-purple', 'Purple Sidebar', 'free', 'sidebar', 'purple', { head: 'playfair', body: 'sans' }),
+    t('cards-sky', 'Sky Cards', 'free', 'cards', 'sky', { head: 'poppins', body: 'sans', photo: 'rounded' }),
+    t('band-coral', 'Coral Band', 'free', 'band', 'coral', { head: 'playfair', body: 'sans' }),
+    // Premium
+    t('royal-maroon', 'Royal Maroon & Gold', 'premium', 'frame', 'maroon', { orn: ['border', 'corners', 'mandala'], head: 'cinzel', nameFont: 'vibes', photo: 'arch' }),
+    t('regal-navy', 'Regal Navy & Gold', 'premium', 'frame', 'navy', { orn: ['border', 'corners'], head: 'cinzel', nameFont: 'vibes', photo: 'arch' }),
+    t('mandala-saffron', 'Saffron Mandala', 'premium', 'classic', 'saffron', { orn: ['mandala', 'garland'], head: 'marcellus', nameFont: 'vibes' }),
+    t('blush-floral', 'Blush Floral', 'premium', 'classic', 'rose', { orn: ['garland', 'corners'], head: 'cormorant', nameFont: 'vibes', photo: 'arch' }),
+    t('emerald-palace', 'Emerald Palace', 'premium', 'sidebar', 'emerald', { orn: ['sidemandala'], head: 'cinzel', nameFont: 'vibes', photo: 'arch' }),
+    t('lotus-lavender', 'Lotus Lavender', 'premium', 'frame', 'lavender', { orn: ['border', 'mandala'], head: 'cormorant', nameFont: 'vibes' }),
+    t('golden-ivory', 'Golden Ivory', 'premium', 'classic', 'gold', { orn: ['corners', 'border'], head: 'cinzel', nameFont: 'vibes', photo: 'arch' }),
+    t('peacock-band', 'Peacock', 'premium', 'band', 'peacock', { orn: ['corners'], head: 'marcellus', nameFont: 'vibes' }),
+    t('rose-gold-cards', 'Rose Gold', 'premium', 'cards', 'rosegold', { orn: ['corners'], head: 'cormorant', nameFont: 'vibes', photo: 'arch' }),
+    t('midnight-gold', 'Midnight Gold', 'premium', 'frame', 'night', { orn: ['border', 'corners', 'mandala'], head: 'cinzel', nameFont: 'vibes', photo: 'arch' }),
+    t('marigold-band', 'Marigold', 'premium', 'band', 'marigold', { orn: ['garland'], head: 'marcellus', nameFont: 'vibes' }),
+    t('sindoor-red', 'Sindoor Red', 'premium', 'classic', 'sindoor', { orn: ['corners', 'mandala'], head: 'cinzel', nameFont: 'vibes', photo: 'arch' }),
+    t('mint-garden', 'Mint Garden', 'premium', 'cards', 'mint', { orn: ['garland'], head: 'cormorant', nameFont: 'vibes' }),
+    t('heritage-brown', 'Heritage', 'premium', 'sidebar', 'heritage', { orn: ['border', 'sidemandala'], head: 'cinzel', nameFont: 'vibes', photo: 'arch' }),
+    t('twilight-gold', 'Twilight Purple & Gold', 'premium', 'frame', 'twilight', { orn: ['border', 'corners', 'mandala'], head: 'cinzel', nameFont: 'vibes', photo: 'arch' })
+  ];
+
+  function byId(id) { for (var i = 0; i < TEMPLATES.length; i++) if (TEMPLATES[i].id === id) return TEMPLATES[i]; return null; }
+
+  // ---------- helpers ----------
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  function niceDate(d) {
+    if (!d) return '';
+    var p = String(d).split('-');
+    if (p.length !== 3) return d;
+    return Number(p[2]) + ' ' + MONTHS[Number(p[1]) - 1] + ' ' + p[0];
+  }
+  function niceTime(tm) {
+    if (!tm) return '';
+    var p = String(tm).split(':'), h = Number(p[0]);
+    if (isNaN(h)) return tm;
+    return ((h % 12) || 12) + ':' + (p[1] || '00') + ' ' + (h < 12 ? 'AM' : 'PM');
+  }
+
+  var SYMBOLS = { om: 'ॐ', khanda: '☬', cross: '✝', crescent: '☪', flower: '❁' };
+
+  // Sections and their rows. Empty values are skipped, and empty sections are dropped.
+  function sections(d) {
+    var dob = niceDate(d.dob);
+    return [
+      { key: 'personal', title: 'Personal Details', rows: [
+        ['Date of Birth', dob], ['Height', d.height], ['Religion', d.religion], ['Caste / Community', d.caste],
+        ['Marital Status', d.marital], ['Diet', d.diet], ['Languages', d.languages], ['Hobbies', d.hobbies]] },
+      { key: 'horoscope', title: 'Horoscope', rows: [
+        ['Time of Birth', niceTime(d.tob)], ['Place of Birth', d.pob], ['Rashi', d.rashi], ['Nakshatra', d.nakshatra],
+        ['Gotra', d.gotra], ['Manglik', d.manglik]] },
+      { key: 'career', title: 'Education & Career', rows: [
+        ['Education', d.education], ['Occupation', d.occupation], ['Organisation', d.company], ['Annual Income', d.income]] },
+      { key: 'family', title: 'Family Details', rows: [
+        ['Father', [d.father, d.fatherOcc].filter(Boolean).join(', ')], ['Mother', [d.mother, d.motherOcc].filter(Boolean).join(', ')],
+        ['Siblings', d.siblings], ['Family Type', d.familyType], ['Native Place', d.native]] },
+      { key: 'contact', title: 'Contact Details', rows: [
+        ['Contact Person', d.contactPerson], ['Phone', d.phone], ['Email', d.email], ['Address', d.address]] },
+      { key: 'extra', title: 'Other Details', rows: (d.custom || []).map(function (c) { return [c.label, c.value]; }) }
+    ].map(function (s) {
+      s.rows = s.rows.filter(function (r) { return r[0] && String(r[1] || '').trim(); });
+      return s;
+    }).filter(function (s) { return s.rows.length; });
+  }
+
+  // ---------- SVG ornaments ----------
+  function petalRing(cx, cy, r, count, len, wid, color, opacity) {
+    var out = '';
+    for (var i = 0; i < count; i++) {
+      var a = 360 / count * i;
+      out += '<path transform="rotate(' + a + ' ' + cx + ' ' + cy + ')" d="M' + cx + ' ' + (cy - r) + ' q' + wid + ' ' + (-len / 2) + ' 0 ' + (-len) + ' q' + (-wid) + ' ' + (len / 2) + ' 0 ' + len + 'z" fill="' + color + '" fill-opacity="' + opacity + '"/>';
+    }
+    return out;
+  }
+  function mandala(size, color, opacity) {
+    var c = size / 2, o = opacity;
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" aria-hidden="true">' +
+      '<g fill="none" stroke="' + color + '" stroke-opacity="' + o + '" stroke-width="1.2">' +
+      '<circle cx="' + c + '" cy="' + c + '" r="' + (c * 0.96) + '"/><circle cx="' + c + '" cy="' + c + '" r="' + (c * 0.62) + '"/><circle cx="' + c + '" cy="' + c + '" r="' + (c * 0.3) + '"/></g>' +
+      petalRing(c, c, c * 0.62, 24, c * 0.3, c * 0.07, color, o * 0.9) +
+      petalRing(c, c, c * 0.3, 16, c * 0.28, c * 0.06, color, o * 0.8) +
+      petalRing(c, c, c * 0.96, 36, c * 0.04, c * 0.04, color, o) +
+      petalRing(c, c, c * 0.12, 8, c * 0.16, c * 0.05, color, o * 0.9) +
+      '</svg>';
+  }
+  function corner(color) {
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><g fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round">' +
+      '<path d="M8 112 V40 Q8 8 40 8 H112"/><path d="M18 112 V48 Q18 18 48 18 H112" stroke-width="1"/>' +
+      '<path d="M40 8 q10 18 -4 30 q-14 -8 4 -30z" fill="' + color + '" fill-opacity=".25"/>' +
+      '<path d="M8 40 q18 10 30 -4 q-8 -14 -30 4z" fill="' + color + '" fill-opacity=".25"/>' +
+      '<circle cx="34" cy="34" r="6" fill="' + color + '" fill-opacity=".5"/><circle cx="34" cy="34" r="12"/>' +
+      '<path d="M60 8 q6 -6 12 0 M8 60 q-6 6 0 12" /></g></svg>';
+  }
+  function garland(color, color2) {
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" width="700" height="70" viewBox="0 0 700 70" preserveAspectRatio="none" aria-hidden="true"><path d="M10 10 Q350 90 690 10" fill="none" stroke="' + color + '" stroke-width="1.5"/>';
+    for (var i = 0; i <= 14; i++) {
+      var x = 10 + i * 48.5, y = 10 + 80 * (x - 10) / 680 * (1 - (x - 10) / 680) * 1.0 * 2;
+      s += '<g transform="translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ')">' + petalRing(0, 0, 0, 6, 9, 4, i % 2 ? color2 : color, .85) + '<circle r="2.4" fill="' + color2 + '"/></g>';
+      if (i % 2 === 0) s += '<path d="M' + x.toFixed(1) + ' ' + (y + 6).toFixed(1) + ' v' + (8 + (i % 4) * 2) + '" stroke="' + color + '" stroke-width="1"/><circle cx="' + x.toFixed(1) + '" cy="' + (y + 16 + (i % 4) * 2).toFixed(1) + '" r="3" fill="' + color2 + '"/>';
+    }
+    return s + '</svg>';
+  }
+
+  // ---------- rendering ----------
+  function rowsHtml(rows) {
+    return rows.map(function (r) { return '<div class="bd-row"><span class="bd-k">' + esc(r[0]) + '</span><span class="bd-c">:</span><span class="bd-v">' + esc(r[1]) + '</span></div>'; }).join('');
+  }
+  function sectionHtml(s) {
+    return '<section class="bd-sec bd-sec-' + s.key + '"><h3 class="bd-h"><span>' + esc(s.title) + '</span></h3>' + rowsHtml(s.rows) + '</section>';
+  }
+  function photoHtml(d, tpl) {
+    if (!d.photo) return '';
+    // Background image (not <img>) so photos crop correctly in the PDF/JPG export.
+    return '<div class="bd-photo bd-photo-' + tpl.photo + '" style="background-image:url(&quot;' + esc(d.photo) + '&quot;)"></div>';
+  }
+  function topLine(d) {
+    var sym = SYMBOLS[d.symbol] || '';
+    if (!sym && !d.invocation) return '';
+    return '<div class="bd-top">' + (sym ? '<div class="bd-sym">' + sym + '</div>' : '') + (d.invocation ? '<div class="bd-inv">' + esc(d.invocation) + '</div>' : '') + '</div>';
+  }
+  function aboutHtml(d) {
+    var h = '';
+    if (d.about) h += '<section class="bd-sec bd-about"><h3 class="bd-h"><span>About Me</span></h3><p>' + esc(d.about) + '</p></section>';
+    if (d.expectations) h += '<section class="bd-sec bd-about"><h3 class="bd-h"><span>Partner Expectations</span></h3><p>' + esc(d.expectations) + '</p></section>';
+    return h;
+  }
+  function tagline(d) {
+    return [d.education, d.occupation].filter(Boolean).map(esc).join(' &middot; ');
+  }
+
+  function render(d, tplOrId, opts) {
+    d = d || {};
+    opts = opts || {};
+    var tpl = typeof tplOrId === 'string' ? byId(tplOrId) : tplOrId;
+    if (!tpl) tpl = TEMPLATES[0];
+    var p = P[tpl.palette];
+    var secs = sections(d);
+    var name = esc(d.name || 'Your Name');
+    var title = esc(d.title || 'BIODATA');
+    var style = '--bd-bg:' + p.bg + ';--bd-ink:' + p.ink + ';--bd-accent:' + p.accent + ';--bd-accent2:' + p.accent2 + ';--bd-soft:' + p.soft +
+      ';--bd-side:' + p.side + ';--bd-side-ink:' + p.sideInk + ';--bd-head:' + FONTS[tpl.head] + ';--bd-body:' + FONTS[tpl.body] + ';--bd-name:' + FONTS[tpl.nameFont] + ';';
+
+    // Ornaments are inline SVG (not CSS background images) so they also appear in the PDF/JPG export.
+    var orn = '';
+    if (tpl.ornaments.indexOf('mandala') !== -1) orn += '<div class="bd-mandala">' + mandala(520, p.accent2, 0.24) + '</div>';
+    if (tpl.ornaments.indexOf('corners') !== -1) {
+      var cs = corner(p.accent2);
+      orn += ['tl', 'tr', 'bl', 'br'].map(function (k) { return '<div class="bd-corner bd-corner-' + k + '">' + cs + '</div>'; }).join('');
+    }
+    if (tpl.ornaments.indexOf('border') !== -1) orn += '<div class="bd-border"></div>';
+    var garl = tpl.ornaments.indexOf('garland') !== -1 ? '<div class="bd-garland">' + garland(p.accent, p.accent2) + '</div>' : '';
+
+    var body;
+    var all = secs.map(sectionHtml).join('') + aboutHtml(d);
+    if (tpl.layout === 'sidebar') {
+      var sideSecs = secs.filter(function (s) { return s.key === 'contact'; });
+      var mainSecs = secs.filter(function (s) { return s.key !== 'contact'; });
+      var sm = tpl.ornaments.indexOf('sidemandala') !== -1 ? '<div class="bd-side-mandala">' + mandala(260, p.sideInk, 0.18) + '</div>' : '';
+      body = '<div class="bd-side">' + sm + photoHtml(d, tpl) + '<div class="bd-name">' + name + '</div>' +
+        (tagline(d) ? '<div class="bd-tag">' + tagline(d) + '</div>' : '') + sideSecs.map(sectionHtml).join('') + '</div>' +
+        '<div class="bd-main">' + topLine(d) + '<div class="bd-title">' + title + '</div>' + mainSecs.map(sectionHtml).join('') + aboutHtml(d) + '</div>';
+    } else if (tpl.layout === 'band') {
+      body = '<div class="bd-band">' + garl + '<div class="bd-band-text">' + topLine(d) + '<div class="bd-title">' + title + '</div><div class="bd-name">' + name + '</div>' +
+        (tagline(d) ? '<div class="bd-tag">' + tagline(d) + '</div>' : '') + '</div>' + photoHtml(d, tpl) + '</div>' +
+        '<div class="bd-content bd-two">' + all + '</div>';
+    } else if (tpl.layout === 'cards') {
+      body = garl + topLine(d) + '<div class="bd-cardhead">' + photoHtml(d, tpl) + '<div><div class="bd-title">' + title + '</div><div class="bd-name">' + name + '</div>' +
+        (tagline(d) ? '<div class="bd-tag">' + tagline(d) + '</div>' : '') + '</div></div><div class="bd-content bd-grid">' + all + '</div>';
+    } else if (tpl.layout === 'frame') {
+      body = '<div class="bd-content">' + topLine(d) + '<div class="bd-title">' + title + '</div><div class="bd-name">' + name + '</div>' +
+        '<div class="bd-divider"></div>' +
+        '<div class="bd-frame-top">' + (secs[0] ? sectionHtml(secs[0]) : '') + photoHtml(d, tpl) + '</div>' +
+        secs.slice(1).map(sectionHtml).join('') + aboutHtml(d) + '</div>';
+    } else { // classic
+      body = garl + '<div class="bd-content">' + topLine(d) + '<div class="bd-title">' + title + '</div>' + photoHtml(d, tpl) +
+        '<div class="bd-name">' + name + '</div>' + (tagline(d) ? '<div class="bd-tag">' + tagline(d) + '</div>' : '') +
+        '<div class="bd-divider"></div>' + all + '</div>';
+    }
+
+    var credit = tpl.tier === 'free' && !opts.noCredit ? '<div class="bd-credit">Made free at livelifetricks.com/biodata</div>' : '';
+    var mark = opts.watermark ? '<div class="bd-watermark"><span>PREVIEW</span><span>PREVIEW</span><span>PREVIEW</span></div>' : '';
+    return '<div class="bd bd-' + tpl.layout + (opts.thumb ? ' bd-thumb' : '') + '" style="' + style + '"><div class="bd-scale">' + orn + body + credit + '</div>' + mark + '</div>';
+  }
+
+  var SAMPLE = {
+    symbol: 'om', invocation: '|| Shree Ganeshay Namah ||', title: 'BIODATA', name: 'Priya Sharma',
+    dob: '1998-03-14', tob: '06:45', pob: 'Jaipur', height: "5' 4\"", religion: 'Hindu', caste: 'Brahmin', marital: 'Never married', diet: 'Vegetarian',
+    rashi: 'Mithun', nakshatra: 'Ardra', gotra: 'Bharadwaj', manglik: 'No', languages: 'Hindi, English',
+    education: 'MBA (Finance)', occupation: 'Senior Analyst', company: 'Infosys, Pune', income: '₹14 LPA',
+    father: 'Rajesh Sharma', fatherOcc: 'Retired Bank Manager', mother: 'Sunita Sharma', motherOcc: 'Homemaker', siblings: '1 younger brother (studying)', familyType: 'Nuclear', native: 'Jaipur, Rajasthan',
+    contactPerson: 'Rajesh Sharma (Father)', phone: '+91 98765 43210', address: 'Malviya Nagar, Jaipur',
+    hobbies: 'Reading, classical dance, travel'
+  };
+
+  var api = { TEMPLATES: TEMPLATES, PALETTES: P, byId: byId, render: render, sections: sections, SAMPLE: SAMPLE, SYMBOLS: SYMBOLS };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.Biodata = api;
+})(this);

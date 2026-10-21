@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Biodata Admin</title>
+<style>
+  :root { --bg: #f6f7f7; --card: #fff; --ink: #18211e; --muted: #5d6965; --line: #dfe5e3; --brand: #0f766e; --soft: #e3f3f0; --warn: #8a5a00; --warnbg: #fdf0d5; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #0e1412; --card: #151d1a; --ink: #e7eeeb; --muted: #9aa8a3; --line: #2a3632; --brand: #2dd4bf; --soft: #123a35; --warn: #fbbf24; --warnbg: #3a2c10; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { font-size: 1.4rem; margin: 0; }
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  .login { max-width: 360px; margin: 12vh auto; }
+  input, select, button { font: inherit; }
+  input, select { height: 42px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); }
+  button, .btn { height: 42px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; }
+  .primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+  @media (prefers-color-scheme: dark) { .primary { color: #04201c; } }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .stat .k { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }
+  .stat .v { font-size: 1.5rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .filters input[type="search"] { flex: 1; min-width: 200px; }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+  table { width: 100%; border-collapse: collapse; font-size: .88rem; min-width: 900px; }
+  th, td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+  th { background: var(--bg); position: sticky; top: 0; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .pill { font-size: .72rem; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: var(--soft); color: var(--brand); }
+  .pill.premium, .pill.created { background: var(--warnbg); color: var(--warn); }
+  .err { color: #c0392b; min-height: 1.2em; margin-top: 8px; }
+  .muted { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="login" class="card login" hidden>
+    <h1>Biodata admin</h1>
+    <p class="muted">Enter the admin password.</p>
+    <form id="login-form">
+      <input id="pw" type="password" autocomplete="current-password" style="width:100%" required>
+      <div style="margin-top:10px"><button class="primary" type="submit">Log in</button></div>
+      <div class="err" id="login-err"></div>
+    </form>
+  </div>
+
+  <div id="dash" hidden>
+    <div class="top">
+      <h1>Biodata orders</h1>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button id="refresh">Refresh</button>
+        <a class="btn" href="/api/admin/orders.csv">Download CSV</a>
+        <button id="logout">Log out</button>
+      </div>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="filters">
+      <input id="q" type="search" placeholder="Search email, name or payment ID">
+      <select id="tier"><option value="">All designs</option><option value="free">Free</option><option value="premium">Premium</option></select>
+      <select id="status"><option value="">Any status</option><option value="paid">Paid</option><option value="free">Free</option><option value="created">Started, not paid</option></select>
+      <label class="muted" style="display:flex;align-items:center;gap:6px"><input id="dl" type="checkbox" style="height:auto"> Downloaded only</label>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Date</th><th>Email</th><th>Name</th><th>Design</th><th>Type</th><th>Status</th><th class="num">Paid ₹</th><th>Payment ID</th><th class="num">Downloads</th><th>Last download</th><th>Email OK</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <p class="muted" id="count"></p>
+  </div>
+</div>
+<script>
+(function () {
+  var data = null;
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var when = function (s) { if (!s) return ''; var d = new Date(s); return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }); };
+  var inr = new Intl.NumberFormat('en-IN');
+
+  function load() {
+    fetch('/api/admin/orders', { credentials: 'same-origin' }).then(function (r) {
+      if (r.status === 401) { $('dash').hidden = true; $('login').hidden = false; return null; }
+      return r.json();
+    }).then(function (j) {
+      if (!j) return;
+      data = j; $('login').hidden = true; $('dash').hidden = false; render();
+    });
+  }
+  function render() {
+    var s = data.summary;
+    $('stats').innerHTML = [['Revenue', '₹' + inr.format(s.revenue)], ['Paid orders', s.paid], ['Free downloads', s.free], ['Unique emails', s.emails], ['Total downloads', s.downloads], ['Started, not paid', s.abandoned]]
+      .map(function (x) { return '<div class="card stat"><div class="k">' + x[0] + '</div><div class="v">' + x[1] + '</div></div>'; }).join('');
+    var q = $('q').value.toLowerCase(), tier = $('tier').value, st = $('status').value, dl = $('dl').checked;
+    var rows = data.rows.filter(function (r) {
+      return (!q || (r.email + ' ' + r.name + ' ' + r.paymentId).toLowerCase().indexOf(q) !== -1) && (!tier || r.tier === tier) && (!st || r.status === st) && (!dl || r.downloads > 0);
+    });
+    $('rows').innerHTML = rows.map(function (r) {
+      return '<tr><td>' + when(r.createdAt) + '</td><td>' + esc(r.email) + '</td><td>' + esc(r.name) + '</td><td>' + esc(r.template) + '</td>' +
+        '<td><span class="pill ' + r.tier + '">' + r.tier + '</span></td><td><span class="pill ' + r.status + '">' + (r.status === 'created' ? 'not paid' : r.status) + '</span></td>' +
+        '<td class="num">' + (r.amount || '') + '</td><td>' + esc(r.paymentId) + '</td><td class="num">' + r.downloads + '</td><td>' + when(r.lastDownload) + '</td><td>' + (r.consent ? 'Yes' : '—') + '</td></tr>';
+    }).join('') || '<tr><td colspan="11" class="muted">No orders yet.</td></tr>';
+    $('count').textContent = rows.length + ' of ' + data.rows.length + ' orders';
+  }
+  $('login-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    $('login-err').textContent = '';
+    fetch('/api/admin/login', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: $('pw').value }) })
+      .then(function (r) { return r.json().then(function (j) { return [r.ok, j]; }); })
+      .then(function (x) { if (x[0]) { $('pw').value = ''; load(); } else $('login-err').textContent = x[1].error || 'Login failed'; });
+  });
+  $('logout').addEventListener('click', function () { fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' }).then(load); });
+  $('refresh').addEventListener('click', load);
+  ['q', 'tier', 'status', 'dl'].forEach(function (id) { $(id).addEventListener('input', function () { if (data) render(); }); });
+  load();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!--meta
+{
+  "title": "Marriage Biodata Maker – 25 Beautiful Templates, PDF & JPG | LiveLifeTricks",
+  "description": "Make a beautiful marriage biodata in minutes. Choose from 25 designs (10 free), fill in your details with a photo, and download as PDF or JPG. Private: your details stay on your device.",
+  "path": "/biodata/",
+  "priority": "0.9",
+  "breadcrumb": "Biodata Maker",
+  "styles": ["biodata.css"],
+  "externalStyles": ["https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:wght@500;700&family=Great+Vibes&family=Lora:wght@400;600&family=Marcellus&family=Playfair+Display:wght@500;700&family=Poppins:wght@400;600&display=swap"],
+  "scripts": ["biodata-templates.js", "biodata-ui.js"],
+  "schema": {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Marriage Biodata Maker",
+    "url": "https://livelifetricks.com/biodata/",
+    "applicationCategory": "DesignApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "en-IN",
+    "offers": [
+      { "@type": "Offer", "price": "0", "priceCurrency": "INR", "description": "10 free designs" },
+      { "@type": "Offer", "price": "20", "priceCurrency": "INR", "description": "Premium design download" }
+    ]
+  }
+}
+-->
+<section class="hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › Biodata Maker</nav>
+    <h1>Marriage Biodata Maker</h1>
+    <p class="lead">Pick a design, fill in your details and download a beautiful biodata as PDF or JPG, ready to share on WhatsApp or print.</p>
+    <div class="badges">
+      <span class="badge">10 free designs</span>
+      <span class="badge">15 premium designs, ₹20 each</span>
+      <span class="badge">PDF + JPG</span>
+      <span class="badge">Your details stay on your device</span>
+    </div>
+    <div class="bd-steps"><span><b>1.</b> Choose a design</span><span>→</span><span><b>2.</b> Fill in details</span><span>→</span><span><b>3.</b> Download</span></div>
+  </div>
+</section>
+
+<section class="wrap" id="step-designs">
+  <div class="cta" style="margin-bottom:14px">
+    <h2 style="margin:0">Choose a design</h2>
+    <div class="seg" role="group" aria-label="Filter designs" id="bd-filter">
+      <button type="button" data-value="all" aria-pressed="true">All 25</button>
+      <button type="button" data-value="free" aria-pressed="false">Free</button>
+      <button type="button" data-value="premium" aria-pressed="false">Premium ₹20</button>
+    </div>
+  </div>
+  <div class="bd-gallery" id="bd-gallery"></div>
+</section>
+
+<section class="wrap" id="step-editor" hidden>
+  <h2 id="editor-title">Fill in your details</h2>
+  <div class="bd-editor">
+    <form class="card bd-form" id="bd-form" autocomplete="off" onsubmit="return false">
+      <div class="bd-locked" id="bd-locked" hidden></div>
+      <p class="small muted" style="margin-top:0">Only fill in what you want to show. Empty fields are left out of the biodata automatically.</p>
+
+      <div class="row2">
+        <div class="field"><label for="b-symbol">Symbol at the top</label>
+          <select id="b-symbol" data-key="symbol"><option value="">None</option><option value="om">ॐ Om</option><option value="khanda">☬ Khanda</option><option value="cross">✝ Cross</option><option value="crescent">☪ Crescent</option><option value="flower">❁ Flower</option></select></div>
+        <div class="field"><label for="b-invocation">Top line <span class="hint">Optional.</span></label><input id="b-invocation" data-key="invocation" type="text" maxlength="60" placeholder="|| Shree Ganeshay Namah ||"></div>
+        <div class="field"><label for="b-title">Heading</label><input id="b-title" data-key="title" type="text" maxlength="30" value="BIODATA"></div>
+        <div class="field"><label for="b-name">Full name</label><input id="b-name" data-key="name" type="text" maxlength="60"></div>
+      </div>
+      <div class="field">
+        <label for="b-photo">Photo <span class="hint">Optional. A clear, recent photo works best.</span></label>
+        <input id="b-photo" type="file" accept="image/*">
+        <button type="button" class="btn" id="b-photo-remove" hidden style="margin-top:8px">Remove photo</button>
+      </div>
+
+      <details class="more" open><summary>Personal details</summary>
+        <div class="row2">
+          <div class="field"><label for="b-dob">Date of birth</label><input id="b-dob" data-key="dob" type="date"></div>
+          <div class="field"><label for="b-height">Height</label><input id="b-height" data-key="height" type="text" maxlength="20" placeholder="5' 6&quot;"></div>
+          <div class="field"><label for="b-religion">Religion</label><input id="b-religion" data-key="religion" type="text" maxlength="40"></div>
+          <div class="field"><label for="b-caste">Caste / community</label><input id="b-caste" data-key="caste" type="text" maxlength="60"></div>
+          <div class="field"><label for="b-marital">Marital status</label><select id="b-marital" data-key="marital"><option value="">—</option><option>Never married</option><option>Divorced</option><option>Widowed</option><option>Awaiting divorce</option></select></div>
+          <div class="field"><label for="b-diet">Diet</label><select id="b-diet" data-key="diet"><option value="">—</option><option>Vegetarian</option><option>Non-vegetarian</option><option>Eggetarian</option><option>Vegan</option><option>Jain</option></select></div>
+          <div class="field"><label for="b-languages">Languages</label><input id="b-languages" data-key="languages" type="text" maxlength="80"></div>
+          <div class="field"><label for="b-hobbies">Hobbies</label><input id="b-hobbies" data-key="hobbies" type="text" maxlength="100"></div>
+        </div>
+      </details>
+
+      <details class="more"><summary>Horoscope (optional)</summary>
+        <div class="row2">
+          <div class="field"><label for="b-tob">Time of birth</label><input id="b-tob" data-key="tob" type="time"></div>
+          <div class="field"><label for="b-pob">Place of birth</label><input id="b-pob" data-key="pob" type="text" maxlength="60"></div>
+          <div class="field"><label for="b-rashi">Rashi</label><input id="b-rashi" data-key="rashi" type="text" maxlength="30"></div>
+          <div class="field"><label for="b-nakshatra">Nakshatra</label><input id="b-nakshatra" data-key="nakshatra" type="text" maxlength="30"></div>
+          <div class="field"><label for="b-gotra">Gotra</label><input id="b-gotra" data-key="gotra" type="text" maxlength="40"></div>
+          <div class="field"><label for="b-manglik">Manglik</label><select id="b-manglik" data-key="manglik"><option value="">—</option><option>No</option><option>Yes</option><option>Anshik (partial)</option><option>Don't know</option></select></div>
+        </div>
+      </details>
+
+      <details class="more"><summary>Education &amp; career</summary>
+        <div class="row2">
+          <div class="field"><label for="b-education">Education</label><input id="b-education" data-key="education" type="text" maxlength="100"></div>
+          <div class="field"><label for="b-occupation">Occupation</label><input id="b-occupation" data-key="occupation" type="text" maxlength="80"></div>
+          <div class="field"><label for="b-company">Organisation / city</label><input id="b-company" data-key="company" type="text" maxlength="80"></div>
+          <div class="field"><label for="b-income">Annual income <span class="hint">Optional.</span></label><input id="b-income" data-key="income" type="text" maxlength="40"></div>
+        </div>
+      </details>
+
+      <details class="more"><summary>Family details</summary>
+        <div class="row2">
+          <div class="field"><label for="b-father">Father's name</label><input id="b-father" data-key="father" type="text" maxlength="60"></div>
+          <div class="field"><label for="b-fatherOcc">Father's occupation</label><input id="b-fatherOcc" data-key="fatherOcc" type="text" maxlength="80"></div>
+          <div class="field"><label for="b-mother">Mother's name</label><input id="b-mother" data-key="mother" type="text" maxlength="60"></div>
+          <div class="field"><label for="b-motherOcc">Mother's occupation</label><input id="b-motherOcc" data-key="motherOcc" type="text" maxlength="80"></div>
+          <div class="field"><label for="b-siblings">Siblings</label><input id="b-siblings" data-key="siblings" type="text" maxlength="120" placeholder="e.g. 1 elder sister (married)"></div>
+          <div class="field"><label for="b-familyType">Family type</label><select id="b-familyType" data-key="familyType"><option value="">—</option><option>Nuclear</option><option>Joint</option></select></div>
+          <div class="field"><label for="b-native">Native place</label><input id="b-native" data-key="native" type="text" maxlength="60"></div>
+        </div>
+      </details>
+
+      <details class="more"><summary>Contact details</summary>
+        <div class="row2">
+          <div class="field"><label for="b-contactPerson">Contact person</label><input id="b-contactPerson" data-key="contactPerson" type="text" maxlength="60"></div>
+          <div class="field"><label for="b-phone">Phone</label><input id="b-phone" data-key="phone" type="text" maxlength="30" inputmode="tel"></div>
+          <div class="field"><label for="b-email">Email</label><input id="b-email" data-key="email" type="text" maxlength="80" inputmode="email"></div>
+          <div class="field"><label for="b-address">Address / city</label><input id="b-address" data-key="address" type="text" maxlength="120"></div>
+        </div>
+      </details>
+
+      <details class="more"><summary>About me &amp; expectations</summary>
+        <div class="field"><label for="b-about">About me</label><textarea id="b-about" data-key="about" rows="3" maxlength="500"></textarea></div>
+        <div class="field"><label for="b-expectations">Partner expectations</label><textarea id="b-expectations" data-key="expectations" rows="3" maxlength="400"></textarea></div>
+      </details>
+
+      <details class="more"><summary>Add your own fields</summary>
+        <div id="b-custom"></div>
+        <button type="button" class="btn" id="b-custom-add">+ Add a field</button>
+      </details>
+
+      <div class="actions"><button type="button" class="btn" id="b-clear">Clear all details</button></div>
+    </form>
+
+    <div class="bd-preview-col">
+      <div class="card">
+        <div class="cta" style="margin-bottom:10px">
+          <div><strong id="pv-name"></strong> <span class="bd-pill" id="pv-pill"></span></div>
+          <button type="button" class="btn" id="pv-change">Change design</button>
+        </div>
+        <div class="bd-previewbox" id="bd-preview"></div>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" data-dl="pdf">Download PDF</button>
+          <button type="button" class="btn btn-primary" data-dl="jpg">Download JPG</button>
+        </div>
+        <p class="small muted" id="pv-note" style="margin:10px 0 0"></p>
+        <p class="bd-status" id="pv-status" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="bd-modal" id="bd-modal" hidden role="dialog" aria-modal="true" aria-labelledby="m-title">
+  <form class="bd-modal-box" id="m-form">
+    <h2 id="m-title">Almost done</h2>
+    <p class="muted small" id="m-text">Enter your email to download your biodata.</p>
+    <div class="field"><label for="m-email">Your email</label><input id="m-email" type="email" required maxlength="120" autocomplete="email"></div>
+    <label class="check"><input type="checkbox" id="m-consent"> Send me occasional useful tips from LiveLifeTricks (optional)</label>
+    <p class="small muted">We save your email, name and chosen design. Your biodata details and photo are never uploaded. <a href="/privacy-policy/" target="_blank">Privacy policy</a></p>
+    <div class="actions">
+      <button type="submit" class="btn btn-primary" id="m-submit">Continue</button>
+      <button type="button" class="btn" id="m-cancel">Cancel</button>
+    </div>
+    <p class="bd-status" id="m-status"></p>
+  </form>
+</div>
+
+<div class="bd-hidden-render" id="bd-render" aria-hidden="true"></div>
+
+<article class="wrap narrow content">
+  <p class="updated">Last updated: {{updated}}</p>
+  <h2>What to include in a marriage biodata</h2>
+  <ul>
+    <li><strong>Personal:</strong> name, date of birth, height, religion and community, and marital status.</li>
+    <li><strong>Horoscope (if your family uses it):</strong> time and place of birth, rashi, nakshatra, gotra and manglik status.</li>
+    <li><strong>Education and career:</strong> highest degree, job and where you work.</li>
+    <li><strong>Family:</strong> parents' names and occupations, siblings and native place.</li>
+    <li><strong>Contact:</strong> a family member's phone number and your city.</li>
+    <li><strong>A recent photo:</strong> clear, well-lit and smiling.</li>
+  </ul>
+  <h2>Tips for a great biodata</h2>
+  <ul>
+    <li>Keep it to <strong>one page</strong>. Our designs adjust the text size to fit.</li>
+    <li>Be honest. Small details like height and income should match what you'll say in person.</li>
+    <li>Use a short, warm "About me" of 2–3 lines instead of a long essay.</li>
+    <li>Share the <strong>JPG</strong> on WhatsApp and keep the <strong>PDF</strong> for printing.</li>
+  </ul>
+  <h2>Frequently asked questions</h2>
+  <div class="faq-wrap">
+    <details class="faq"><summary>Is the biodata maker free?</summary><p>Yes, 10 designs are completely free: enter your email and download your biodata as PDF and JPG. The 15 premium designs cost ₹20 each.</p></details>
+    <details class="faq"><summary>What do I get for ₹20?</summary><p>Your biodata in the premium design you chose, without the preview watermark, as both PDF and JPG. Download them as often as you like for 48 hours. The paid version is final: to change details later, start a new edit for ₹20.</p></details>
+    <details class="faq"><summary>Are my details safe?</summary><p>Your biodata details and photo stay in your own browser and are never uploaded to our server. We only store your email, the name you enter, the design you chose and whether you paid.</p></details>
+    <details class="faq"><summary>How do I pay?</summary><p>Through Razorpay with UPI, cards, net banking or wallets. The payment page is Razorpay's, so we never see your card or bank details.</p></details>
+    <details class="faq"><summary>Can I print it?</summary><p>Yes. The PDF is A4 size and prints well on any printer.</p></details>
+  </div>
+</article>

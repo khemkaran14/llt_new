@@ -1,0 +1,21 @@
+# systemd service for the LiveLifeTricks API (biodata payments and admin).
+# Install:  cp /root/livelifetricks/deploy/llt-api.service /etc/systemd/system/
+#           systemctl daemon-reload && systemctl enable --now llt-api
+[Unit]
+Description=LiveLifeTricks API (biodata payments and admin)
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=/root/livelifetricks-api.env
+ExecStart=/usr/bin/env node /root/livelifetricks/server/server.js
+Restart=always
+RestartSec=3
+# Keep the orders file safe and the service locked down
+StateDirectory=llt-api
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

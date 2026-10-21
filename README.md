@@ -10,6 +10,7 @@ Website for **livelifetricks.com**:
 - **PPF** (`/ppf-calculator/`), **FD** (`/fd-calculator/`) and **RD** (`/rd-calculator/`): maturity and interest.
 - **GST** (`/gst-calculator/`): add or remove GST at the GST 2.0 rates, with CGST/SGST/IGST split.
 - **Free tools:** Prepay Loan or Invest? (`/prepay-or-invest/`), Rent Receipt Generator (`/rent-receipt-generator/`), Tax Calendar with calendar reminders (`/tax-calendar/`).
+- **Marriage biodata maker** (`/biodata/`): 25 designs (10 free, 15 premium at ₹20) from `src/assets/js/biodata-templates.js`, a live preview, and PDF/JPG export in the browser. Free downloads need an email; premium needs a Razorpay payment, and the paid biodata is locked (changing it needs a new ₹20 payment). The server in `server/` stores orders and runs the admin dashboard at `/admin`. Biodata details and photos never leave the visitor's browser.
 - **Receipt & invoice generators** (`/receipt-generators/`): GST/non-GST invoice with UPI QR code, quotation, proforma invoice and delivery challan (`src/generators/invoice-pages.js` + `assets/js/invoice.js`), plus payment, fee, security deposit, society maintenance and vehicle/item sale receipts. Each receipt type is a small definition in `src/generators/receipt-pages.js`, so new ones are quick to add. Deliberately no fuel, restaurant, medical, hotel/travel bills or salary slips, because self-made versions of those are used for fake claims.
 - **Income tax by salary:** 24 pages from ₹5 lakh to ₹50 lakh (`/income-tax-on-salary/…`), generated at build time by `src/generators/salary-pages.js` from the same tax engine. Add more amounts to `LAKHS` there.
 - **Embeddable calculators:** any page with `"embed": true` gets an "Add this calculator to your website" box. Opening a page with `?embed=1` shows only the calculator plus a credit link back to the site, which earns backlinks.
@@ -241,3 +242,31 @@ Other things to update each year: the deadlines list at the top of `src/assets/j
 - **Rebate, standard deduction and deduction limits:** inside `compute()`
 
 After every Union Budget (1 February), check the rules, add the new year to `YEARS`, update `tests/engines.test.js`, and run `npm test` before pushing. GitHub Actions also refuses to deploy if any test fails.
+
+
+---
+
+# Biodata maker: server, payments and admin
+
+The biodata page is static, but payments, emails and the admin dashboard need the small Node server in `server/` (no npm packages). nginx sends `/api/*` and `/admin` to it.
+
+| File | What it is |
+|---|---|
+| `server/server.js` | Starts the server (port 3077 by default) |
+| `server/api.js` | Orders, Razorpay verification, download checks, admin API |
+| `server/admin.html` | Admin dashboard: orders, revenue, emails, CSV export |
+| `deploy/llt-api.service` | systemd service that keeps the server running |
+| `deploy/nginx-api.conf` | nginx lines that send `/api` and `/admin` to the server |
+| `deploy/api.env.example` | Settings (admin password, Razorpay keys) |
+
+**Test locally** (fake payments, no Razorpay needed):
+
+```bash
+npm run build
+STATIC_DIR=dist DEV_PAYMENTS=1 ADMIN_PASSWORD=test node server/server.js
+# open http://localhost:3077/biodata/ and http://localhost:3077/admin
+```
+
+**How "no edits after payment" works:** when someone pays, the page sends the server a fingerprint (SHA-256) of the finished biodata, not the biodata itself. Each download must match that fingerprint, within 48 hours and up to 10 downloads. The page also locks the form. Anyone technical enough to edit the page's code could get around this, as with any in-browser PDF tool; making that impossible would need the PDF to be built on the server.
+
+**Moving to a subdomain later** (e.g. `biodata.livelifetricks.com`): add a DNS A record for `biodata`, create an nginx server block with `root /var/www/livelifetricks.com;`, the same `include .../nginx-api.conf;` line and `location = / { return 302 /biodata/; }`, then run certbot for the new name.

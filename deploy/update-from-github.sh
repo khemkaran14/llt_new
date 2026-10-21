@@ -39,6 +39,11 @@ main() {
   if id www-data >/dev/null 2>&1 && [ "$(id -u)" = 0 ]; then
     chown -R www-data:www-data "$site_dir"
   fi
+  # Restart the API server (biodata payments) if it's installed
+  if systemctl list-unit-files llt-api.service >/dev/null 2>&1 && systemctl is-enabled llt-api >/dev/null 2>&1; then
+    echo "==> Restarting API server"
+    systemctl restart llt-api
+  fi
   echo "==> Done: $(git log -1 --format='%h %s')"
 }
 
