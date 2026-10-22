@@ -73,6 +73,8 @@
 
 /* band */
 .bd-band { background: var(--bd-side); color: var(--bd-side-ink); padding: 44px 70px 40px; display: flex; align-items: center; justify-content: space-between; gap: 30px; position: relative; z-index: 2; }
+/* The page root also carries .bd-band; keep the band colours on the header only */
+.bd.bd-band { background: var(--bd-bg); color: var(--bd-ink); padding: 0; display: block; z-index: auto; }
 .bd-band .bd-garland { position: absolute; left: 0; right: 0; top: 0; height: 60px; opacity: .9; }
 .bd-band-text { flex: 1; min-width: 0; padding-top: 10px; }
 .bd-band .bd-top, .bd-band .bd-title, .bd-band .bd-name, .bd-band .bd-tag { text-align: left; color: var(--bd-side-ink); }

@@ -1,0 +1,62 @@
+/* Blog list and article pages (rendered by server/blog.js) */
+.blog-hero { padding-bottom: 8px; }
+.blog-hero-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.feed-link { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: .9rem; text-decoration: none; color: #c2410c; border: 1px solid var(--line); background: var(--surface); padding: 6px 12px; border-radius: 999px; }
+.feed-link svg { width: 16px; height: 16px; }
+.blog-topics { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.blog-topics a { text-decoration: none; font-weight: 600; font-size: .9rem; padding: 6px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--text); }
+.blog-topics a[aria-current="page"] { background: var(--brand); border-color: var(--brand); color: #fff; }
+.blog-list { margin-top: 18px; }
+.post-card-big { display: grid; grid-template-columns: 1.2fr 1fr; margin-bottom: 16px; }
+.post-card-big img, .post-card-big .post-cover-ph { height: 100%; min-height: 260px; aspect-ratio: auto; }
+.post-card-big .post-card-body { padding: 26px; align-self: center; }
+.post-card-big h2 { margin: 8px 0; font-size: clamp(1.3rem, 3vw, 1.8rem); }
+.pager { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
+.blog-sub { margin-top: 48px; margin-bottom: 48px; }
+
+.blog-post { padding-top: 28px; }
+.post-head { max-width: 780px; }
+.post-head h1 { font-size: clamp(1.8rem, 4.5vw, 2.6rem); line-height: 1.15; letter-spacing: -.02em; }
+.post-head .lead { font-size: 1.15rem; color: var(--muted); }
+.post-byline { font-size: .9rem; color: var(--muted); }
+.post-cover { width: 100%; max-width: 1000px; height: auto; border-radius: 16px; margin: 8px 0 20px; display: block; }
+.post-layout { display: grid; grid-template-columns: minmax(0, 760px) 260px; gap: 40px; align-items: start; }
+.post-body { font-size: 1.06rem; line-height: 1.75; }
+.post-body h2 { margin-top: 2.2rem; scroll-margin-top: 80px; }
+.post-body img { border-radius: 12px; height: auto; }
+.post-body figure { margin: 1.5rem 0; }
+.post-body figcaption { font-size: .88rem; color: var(--muted); text-align: center; margin-top: 6px; }
+.post-body blockquote { margin: 1.4rem 0; padding: 12px 18px; border-left: 4px solid var(--brand); background: var(--brand-soft); border-radius: 0 12px 12px 0; }
+.post-body blockquote p:last-child { margin: 0; }
+.post-body pre { background: var(--surface-2); padding: 14px; border-radius: 10px; overflow-x: auto; font-size: .9rem; }
+.post-body code { background: var(--surface-2); padding: 1px 6px; border-radius: 6px; font-size: .92em; }
+.post-body pre code { background: none; padding: 0; }
+.post-body hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
+.table-wrap { overflow-x: auto; margin: 0 0 1.2rem; }
+.table-wrap table { margin: 0; min-width: 420px; }
+.toc { padding: 14px 18px; margin: 0 0 1.5rem; font-size: .95rem; }
+.toc ol { margin: 6px 0 0; }
+.toc li { margin: 2px 0; }
+.post-tool { display: flex !important; align-items: center; gap: 14px; margin: 1.4rem 0; padding: 14px 16px; text-decoration: none; }
+.post-tool > span:nth-child(2) { flex: 1; min-width: 0; }
+.post-tool b { display: block; color: var(--text); }
+.post-tool .muted { display: block; line-height: 1.4; }
+.post-tool-go { font-weight: 700; color: var(--brand); white-space: nowrap; }
+.post-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2rem; }
+.post-tags a { font-size: .88rem; text-decoration: none; background: var(--surface-2); padding: 4px 10px; border-radius: 999px; }
+.post-side { position: sticky; top: 84px; }
+.post-side .card { display: grid; gap: 8px; }
+.post-side a { text-decoration: none; font-weight: 600; font-size: .95rem; }
+.share-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 14px 0; }
+.share { font: inherit; font-size: .85rem; font-weight: 600; text-decoration: none; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer; }
+.share:hover { border-color: var(--brand); color: var(--brand-strong); }
+.share-whatsapp { background: #25d366; border-color: #25d366; color: #fff; }
+.share-whatsapp:hover { color: #fff; background: #1ebe5b; }
+.draft-note { background: #fdf0d5; color: #8a5a00; text-align: center; padding: 10px; font-weight: 600; }
+
+@media (max-width: 960px) {
+  .post-layout { grid-template-columns: minmax(0, 1fr); }
+  .post-side { position: static; }
+  .post-card-big { grid-template-columns: 1fr; }
+  .post-card-big img, .post-card-big .post-cover-ph { min-height: 0; aspect-ratio: 40 / 21; }
+}

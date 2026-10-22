@@ -16,6 +16,8 @@ Website for **livelifetricks.com**:
 - **Wedding tools:** invitation card maker (`/wedding-invitation-maker/`, 22 designs: 6 free, 16 premium at ₹29, same engine and payment flow as the biodata maker), Kundli Milan / 36-point Guna Milan from birth details or nakshatra (`kundli.js`), and a wedding budget planner with CSV export.
 - **Documents & photos:** passport, visa and exam form photo and signature resizer with exact pixel and KB limits and a 4×6 print sheet (`/passport-photo-maker/`), and a printable UPI "Scan & Pay" QR standee maker (`/upi-qr-code-generator/`).
 - **Site sections:** every tool is listed once in `src/tools.js`. That list builds the menu, footer, homepage sections, the five section pages (`/tax-and-salary/`, `/loans-and-property/`, `/savings-and-retirement/`, `/wedding/`, `/documents-and-photos/`), breadcrumbs and "related tools". **To add a tool**, create its page and add one line to `src/tools.js`.
+- **Homepage** (`src/pages/index.html`, `assets/js/home.js`): tool search, a quick EMI/SIP calculator, four charts drawn at build time from the real calculator engines (`src/home-charts.js`), a wedding showcase, latest blog posts and an email sign-up.
+- **Blog** (`/blog/`): written in the admin dashboard, no rebuild needed. Topics, tags, RSS feed (`/blog/feed.xml`), its own sitemap (`/blog/sitemap.xml`), share buttons (WhatsApp, X, Facebook, LinkedIn, Telegram), tool cards inside articles (`[[tool:/emi-calculator/]]`), cover images and scheduled publishing. Pages are rendered by `server/blog.js` inside the site's own header and footer (`dist/_shell/blog.html`, made by `build.js`).
 - **Income tax by salary:** 24 pages from ₹5 lakh to ₹50 lakh (`/income-tax-on-salary/…`), generated at build time by `src/generators/salary-pages.js` from the same tax engine. Add more amounts to `LAKHS` there.
 - **Embeddable calculators:** any page with `"embed": true` gets an "Add this calculator to your website" box. Opening a page with `?embed=1` shows only the calculator plus a credit link back to the site, which earns backlinks.
 - Home, About, Contact, Privacy policy, Disclaimer and 404 pages (needed for AdSense approval), plus an automatic `sitemap.xml` and `robots.txt`, SEO tags, FAQ structured data and dark mode.
@@ -252,7 +254,7 @@ After every Union Budget (1 February), check the rules, add the new year to `YEA
 
 ---
 
-# Biodata & invitation makers: server, payments and admin
+# Server: payments, blog, email list and admin
 
 The biodata page is static, but payments, emails and the admin dashboard need the small Node server in `server/` (no npm packages). nginx sends `/api/*` and `/admin` to it.
 
@@ -260,7 +262,9 @@ The biodata page is static, but payments, emails and the admin dashboard need th
 |---|---|
 | `server/server.js` | Starts the server (port 3077 by default) |
 | `server/api.js` | Orders, Razorpay verification, download checks, admin API |
-| `server/admin.html` | Admin dashboard: orders, revenue, emails, CSV export |
+| `server/admin.html` | Admin dashboard at `/admin`: overview charts, orders, blog editor, email list, CSV exports |
+| `server/blog.js`, `server/markdown.js` | Blog pages, RSS feed, image uploads, email sign-ups |
+| `server/blog-seed.js` | Four starter articles, added once when the blog is empty |
 | `deploy/llt-api.service` | systemd service that keeps the server running |
 | `deploy/nginx-api.conf` | nginx lines that send `/api` and `/admin` to the server |
 | `deploy/api.env.example` | Settings (admin password, Razorpay keys, `BIODATA_PRICE`, `INVITE_PRICE`) |
@@ -270,9 +274,15 @@ The biodata page is static, but payments, emails and the admin dashboard need th
 ```bash
 npm run build
 STATIC_DIR=dist DEV_PAYMENTS=1 ADMIN_PASSWORD=test node server/server.js
-# open http://localhost:3077/biodata/ and http://localhost:3077/admin
+# open http://localhost:3077/, /blog/ and /admin
 ```
 
 **How "no edits after payment" works:** when someone pays, the page sends the server a fingerprint (SHA-256) of the finished biodata, not the biodata itself. Each download must match that fingerprint, within 48 hours and up to 10 downloads. The page also locks the form. Anyone technical enough to edit the page's code could get around this, as with any in-browser PDF tool; making that impossible would need the PDF to be built on the server.
 
 **Moving to a subdomain later** (e.g. `biodata.livelifetricks.com`): add a DNS A record for `biodata`, create an nginx server block with `root /var/www/livelifetricks.com;`, the same `include .../nginx-api.conf;` line and `location = / { return 302 /biodata/; }`, then run certbot for the new name.
+
+**Blog and email list data** live in `DATA_DIR` (default `/var/lib/llt-api`): `blog-posts.json`, `subscribers.json` and uploaded images in `blog-media/`. Back up that folder; it is not in git.
+
+**Writing a post:** open `/admin`, sign in, go to **Blog → New post**. Use the toolbar for headings, lists, tables, images and tool cards. *Save draft* keeps it hidden; *Publish* puts it live at once, or on the date you pick. Ctrl+S saves.
+
+**Auto-sharing new posts:** point a free service such as IFTTT, Zapier or dlvr.it at `https://livelifetricks.com/blog/feed.xml` to post each new article to Facebook, X, LinkedIn or Telegram automatically.

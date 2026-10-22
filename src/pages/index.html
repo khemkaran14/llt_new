@@ -4,43 +4,175 @@
   "description": "Free, simple and private tools for India: income tax (FY 2026-27), salary, EMI, SIP, PPF, NPS, EPF calculators, marriage biodata and invitation maker, Kundli Milan, passport photo resizer, receipts and invoices.",
   "path": "/",
   "priority": "1.0",
-  "schema": {
+  "scripts": ["emi-engine.js", "finance-engines.js", "home.js"],
+  "schema": [{
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "LiveLifeTricks",
     "url": "https://livelifetricks.com/",
     "inLanguage": "en-IN",
     "description": "Free calculators, wedding tools and document makers for India"
-  }
+  }, {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "LiveLifeTricks",
+    "url": "https://livelifetricks.com/",
+    "logo": "https://livelifetricks.com/favicon.svg"
+  }]
 }
 -->
-<section class="hero">
-  <div class="wrap">
-    <h1>Smart money &amp; life tools, worked out for you</h1>
-    <p class="lead">Free tools that answer real questions in seconds: how much tax you'll pay, what your loan costs, how your savings grow, plus beautiful biodatas, invitations and print-ready documents. No sign-up. Your details stay on your device.</p>
-    <nav class="cat-pills" aria-label="Sections">
-      <a href="#tax">Tax &amp; Salary</a><a href="#loans">Loans &amp; Property</a><a href="#savings">Savings</a><a href="#wedding">Wedding</a><a href="#documents">Documents &amp; Photos</a>
-    </nav>
+<section class="home-hero">
+  <div class="wrap home-hero-grid">
+    <div>
+      <p class="eyebrow"><span class="dot"></span> Updated for FY 2026-27 · Budget 2026 rules</p>
+      <h1>Money, wedding &amp; document tools that <span class="hl">just work</span></h1>
+      <p class="lead">Work out your tax, EMI and savings in seconds, then make a biodata, invitation card or passport photo that's ready to send. Free, no sign-up, and your details never leave your phone.</p>
+      <form class="tool-search" role="search" id="tool-search" autocomplete="off">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <label class="sr-only" for="ts-q">Search tools</label>
+        <input id="ts-q" type="search" placeholder="Try “EMI”, “biodata” or “passport photo”" aria-controls="ts-results" aria-expanded="false" role="combobox" aria-autocomplete="list">
+        <ul id="ts-results" class="ts-results" role="listbox" hidden></ul>
+      </form>
+      <div class="quick-links"><span class="muted small">Popular:</span>
+        <a href="/income-tax-calculator/">Income tax</a><a href="/emi-calculator/">EMI</a><a href="/biodata/">Biodata</a><a href="/sip-calculator/">SIP</a><a href="/passport-photo-maker/">Passport photo</a>
+      </div>
+    </div>
+
+    <div class="hero-art" aria-hidden="true">
+      <div class="ha-card ha-tax">
+        <div class="ha-head"><span class="ha-ico">₹</span><div><b>Income tax · ₹15 L salary</b><span>FY 2026-27</span></div></div>
+        <div class="ha-bars">
+          <div><span>New regime</span><i style="--w:32%"></i><b>₹{{heroTaxNew}}</b></div>
+          <div><span>Old regime</span><i class="b" style="--w:68%"></i><b>₹{{heroTaxOld}}</b></div>
+        </div>
+        <div class="ha-save">You save <b>₹{{heroTaxSave}}</b> with the new regime</div>
+      </div>
+      <div class="ha-card ha-emi">
+        <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="30" fill="none" stroke-width="12" class="ring-b"/><circle cx="40" cy="40" r="30" fill="none" stroke-width="12" class="ring-a" stroke-dasharray="91 189" transform="rotate(-90 40 40)"/></svg>
+        <div><span>Home loan EMI</span><b>₹{{heroEmi}}</b><small>₹50 L · 20 yrs · 8.5%</small></div>
+      </div>
+      <img class="ha-bio" src="/img/showcase/biodata-1.jpg" width="182" height="257" alt="">
+      <div class="ha-card ha-sip"><span>₹10k/month SIP, 25 yrs</span><b>{{heroSip}}</b>
+        <svg viewBox="0 0 120 36" preserveAspectRatio="none"><path d="M0 34 C30 33 55 30 75 24 S105 8 120 2" fill="none" stroke-width="3" class="line-a"/></svg>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="wrap" id="biodata-promo">
-  <a class="card cta promo" href="/wedding/">
-    <div><span class="tag-new">NEW</span>
-      <h2 style="margin:8px 0 4px">Wedding tools: biodata, invitations &amp; Kundli Milan</h2>
-      <span class="muted">45 biodata designs, invitation cards for WhatsApp and print, 36-point guna matching and a budget planner.</span></div>
-    <span class="btn btn-primary">Explore wedding tools →</span>
-  </a>
+<section class="wrap stat-band" aria-label="LiveLifeTricks in numbers">
+  <div><b>{{toolCount}}+</b><span>free tools</span></div>
+  <div><b>45</b><span>biodata designs</span></div>
+  <div><b>22</b><span>invitation cards</span></div>
+  <div><b>0</b><span>sign-ups needed</span></div>
+  <div><b>100%</b><span>in your browser</span></div>
+</section>
+
+<nav class="wrap cat-tiles" aria-label="Sections">
+  {{catTiles}}
+</nav>
+
+<section class="wrap home-block" id="quick">
+  <div class="block-head"><div><p class="eyebrow">Try it here</p><h2>Quick calculator</h2></div><p class="muted">Move the sliders. For full schedules, tax and charts, open the full tool.</p></div>
+  <div class="card quick-calc">
+    <div class="seg qc-tabs" role="tablist">
+      <button type="button" role="tab" aria-selected="true" data-tab="emi">Loan EMI</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="sip">SIP growth</button>
+    </div>
+    <div class="qc-body">
+      <div class="qc-inputs" data-panel="emi">
+        <label>Loan amount <output id="qe-p-o"></output><input type="range" id="qe-p" min="100000" max="20000000" step="100000" value="5000000"></label>
+        <label>Interest rate <output id="qe-r-o"></output><input type="range" id="qe-r" min="6" max="18" step="0.05" value="8.5"></label>
+        <label>Years <output id="qe-y-o"></output><input type="range" id="qe-y" min="1" max="30" step="1" value="20"></label>
+        <a class="btn" href="/emi-calculator/" id="qe-link">Full EMI calculator →</a>
+      </div>
+      <div class="qc-inputs" data-panel="sip" hidden>
+        <label>Monthly SIP <output id="qs-m-o"></output><input type="range" id="qs-m" min="500" max="200000" step="500" value="10000"></label>
+        <label>Expected return <output id="qs-r-o"></output><input type="range" id="qs-r" min="4" max="18" step="0.5" value="12"></label>
+        <label>Years <output id="qs-y-o"></output><input type="range" id="qs-y" min="1" max="40" step="1" value="15"></label>
+        <a class="btn" href="/sip-calculator/" id="qs-link">Full SIP calculator →</a>
+      </div>
+      <div class="qc-out">
+        <svg viewBox="0 0 120 120" class="qc-donut" aria-hidden="true"><circle cx="60" cy="60" r="46" fill="none" stroke-width="18" class="ring-b"/><circle id="qc-arc" cx="60" cy="60" r="46" fill="none" stroke-width="18" class="ring-a" stroke-dasharray="0 289" transform="rotate(-90 60 60)"/></svg>
+        <div class="qc-nums" aria-live="polite">
+          <span class="muted small" id="qc-k">Monthly EMI</span>
+          <b class="qc-big" id="qc-big">–</b>
+          <div class="qc-split"><span><i class="sw a"></i><span id="qc-a-k">Principal</span> <b id="qc-a">–</b></span><span><i class="sw b"></i><span id="qc-b-k">Interest</span> <b id="qc-b">–</b></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap home-block" id="numbers">
+  <div class="block-head"><div><p class="eyebrow">Numbers that matter this year</p><h2>The money facts most people get wrong</h2></div><p class="muted">Worked out with the same formulas as our calculators.</p></div>
+  {{homeCharts}}
+</section>
+
+<section class="wedding-band">
+  <div class="wrap wedding-grid">
+    <div>
+      <p class="eyebrow light">Wedding season</p>
+      <h2>Biodata, invitations and Kundli matching in one place</h2>
+      <p>Pick from 45 biodata designs with god icons for every religion, and 22 invitation cards for WhatsApp and print. Check 36-point Guna Milan and keep the wedding budget on track.</p>
+      <div class="btn-row"><a class="btn btn-light" href="/biodata/">Make a biodata</a><a class="btn btn-ghost" href="/wedding-invitation-maker/">Design an invitation</a><a class="btn btn-ghost" href="/kundli-milan/">Kundli Milan</a></div>
+    </div>
+    <div class="showcase" aria-hidden="true">
+      <img src="/img/showcase/biodata-2.jpg" width="182" height="257" alt="" loading="lazy">
+      <img src="/img/showcase/invite-1.jpg" width="182" height="257" alt="" loading="lazy">
+      <img src="/img/showcase/biodata-3.jpg" width="182" height="257" alt="" loading="lazy">
+    </div>
+  </div>
 </section>
 
 {{homeSections}}
 
-<section class="wrap narrow content">
-  <h2>Why people use LiveLifeTricks</h2>
-  <ul>
-    <li><strong>Up to date.</strong> Tax rules for FY 2026-27 (Budget 2026), current PPF, Sukanya and EPF rates, and the new HRA city list.</li>
-    <li><strong>Plain answers.</strong> We tell you which option saves more and by how much, not just a number.</li>
-    <li><strong>Private.</strong> Calculations and documents are made in your browser. We never see your salary, loan or personal details.</li>
-    <li><strong>Free.</strong> No sign-up, no app download. Only a few premium designs cost ₹20–₹29.</li>
-  </ul>
+<section class="wrap home-block">
+  <div class="block-head"><div><p class="eyebrow">How it works</p><h2>Three steps, no account</h2></div></div>
+  <ol class="steps">
+    <li class="card"><span class="step-n">1</span><h3>Pick a tool</h3><p class="muted">Search above or browse the five sections. Every tool opens instantly.</p></li>
+    <li class="card"><span class="step-n">2</span><h3>Fill in your details</h3><p class="muted">Results update as you type. Nothing is sent to us; it all runs on your device.</p></li>
+    <li class="card"><span class="step-n">3</span><h3>Save, share or print</h3><p class="muted">Download a PDF or image, share a link with your numbers, or print straight away.</p></li>
+  </ol>
 </section>
+
+<section class="wrap home-block trust">
+  <div class="trust-grid">
+    <div class="card trust-card"><h3>Checked against official rules</h3><p class="muted">Tax slabs from the Finance Act, EPF from EPFO, NPS from PFRDA, savings rates from the Ministry of Finance, and loan limits from RBI. We update them after every Budget and rate change.</p></div>
+    <div class="card trust-card"><h3>Private by design</h3><p class="muted">Calculations, biodatas, invitations and photos are made in your browser. For paid designs we only keep your email and payment record.</p></div>
+    <div class="card trust-card"><h3>Plain answers</h3><p class="muted">We tell you which option saves more and by how much, with the working shown, not just a number.</p></div>
+  </div>
+</section>
+
+<section class="wrap home-block" id="latest-posts" hidden>
+  <div class="block-head"><div><p class="eyebrow">From the blog</p><h2>Guides and updates</h2></div><a href="/blog/">All articles →</a></div>
+  <div class="post-grid" id="latest-list"></div>
+</section>
+
+<section class="wrap home-block">
+  <div class="card newsletter">
+    <div><h2>Never miss a tax deadline</h2><p class="muted">One short email when a deadline is near, rates change or we add a new tool. No spam; leave any time.</p></div>
+    <form id="nl-form" class="nl-form">
+      <label class="sr-only" for="nl-email">Email address</label>
+      <input id="nl-email" type="email" required placeholder="you@example.com" autocomplete="email">
+      <button class="btn btn-primary" type="submit">Get reminders</button>
+      <p class="small muted nl-msg" id="nl-msg" role="status"></p>
+    </form>
+  </div>
+</section>
+
+<section class="wrap narrow content home-faq">
+  <h2>Questions people ask</h2>
+  <details class="faq"><summary>Are the calculators really free?</summary><p>Yes. Every calculator, receipt and document tool is free with no sign-up. Only some premium biodata (₹20) and invitation (₹29) designs are paid; there are free designs too.</p></details>
+  <details class="faq"><summary>Do you store my salary or personal details?</summary><p>No. Calculations run in your browser and are never sent to us. For biodata and invitation downloads we keep only your email and, for paid designs, the payment record.</p></details>
+  <details class="faq"><summary>Which tax year do the calculators use?</summary><p>FY 2026-27 (assessment year 2027-28) by default, with FY 2025-26 available in the income tax calculator. We update the rules after every Union Budget.</p></details>
+  <details class="faq"><summary>Can I put a calculator on my own website?</summary><p>Yes. Open any calculator, scroll to “Add this calculator to your website” and copy the code. It stays up to date automatically.</p></details>
+</section>
+
+<section class="wrap home-block">
+  <div class="cta-band">
+    <h2>Start with the one everyone needs</h2>
+    <p>See your tax under both regimes in under a minute.</p>
+    <a class="btn btn-light" href="/income-tax-calculator/">Open the income tax calculator →</a>
+  </div>
+</section>
+<script type="application/json" id="tool-index">{{toolIndex}}</script>

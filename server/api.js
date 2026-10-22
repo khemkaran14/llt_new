@@ -29,6 +29,8 @@ function createApp(opts) {
     devPayments: false,      // lets you test payments without Razorpay (never in production)
     now: () => Date.now()
   }, opts);
+  // A missing setting must not override the default (server.js passes undefined when SESSION_SECRET is unset)
+  if (!cfg.sessionSecret) cfg.sessionSecret = crypto.randomBytes(32).toString('hex');
   const store = cfg.store;
   const adminHtml = fs.readFileSync(path.join(__dirname, 'admin.html'), 'utf8');
 
@@ -66,8 +68,8 @@ function createApp(opts) {
       req.on('error', reject);
     });
   }
-  async function json(req) {
-    const raw = await readBody(req, 16 * 1024);
+  async function json(req, limit) {
+    const raw = await readBody(req, limit || 16 * 1024);
     try { return JSON.parse(raw.toString('utf8') || '{}'); } catch (e) { throw Object.assign(new Error('Bad JSON'), { status: 400 }); }
   }
   const hmac = s => crypto.createHmac('sha256', cfg.sessionSecret).update(s).digest('hex');
@@ -233,7 +235,11 @@ function createApp(opts) {
     }
   };
 
+  // Blog pages, feed and email list (server/blog.js)
+  if (cfg.blog) Object.assign(routes, cfg.blog.routes({ isAdmin, readJson: json, readBody, limited, clean, EMAIL_RE }));
+
   return async function handle(req, res) {
+    if (cfg.blog && cfg.blog.handlePublic(req, res, isAdmin)) return;
     const url = new URL(req.url, 'http://x');
     let p = url.pathname.replace(/\/+$/, '') || '/';
     const route = routes[req.method + ' ' + p];

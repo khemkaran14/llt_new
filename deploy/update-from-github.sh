@@ -31,7 +31,7 @@ main() {
   echo "==> Publishing to $site_dir"
   mkdir -p "$site_dir"
   if command -v rsync >/dev/null 2>&1; then
-    rsync -a --delete dist/ "$site_dir/"
+    rsync -a --delete --exclude "_shell/" dist/ "$site_dir/"
   else
     find "$site_dir" -mindepth 1 -delete
     cp -a dist/. "$site_dir/"

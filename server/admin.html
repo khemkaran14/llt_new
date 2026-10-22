@@ -6,97 +6,288 @@
 <meta name="robots" content="noindex, nofollow">
 <title>LiveLifeTricks Admin</title>
 <style>
-  :root { --bg: #f6f7f7; --card: #fff; --ink: #18211e; --muted: #5d6965; --line: #dfe5e3; --brand: #0f766e; --soft: #e3f3f0; --warn: #8a5a00; --warnbg: #fdf0d5; }
-  @media (prefers-color-scheme: dark) { :root { --bg: #0e1412; --card: #151d1a; --ink: #e7eeeb; --muted: #9aa8a3; --line: #2a3632; --brand: #2dd4bf; --soft: #123a35; --warn: #fbbf24; --warnbg: #3a2c10; } }
+  :root { --bg: #f4f6f5; --card: #fff; --ink: #18211e; --muted: #5d6965; --line: #dfe5e3; --brand: #0f766e; --brand2: #f59e0b; --soft: #e3f3f0; --warn: #8a5a00; --warnbg: #fdf0d5; --bad: #b42318; --side: #0d2a26; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #0b100e; --card: #151d1a; --ink: #e7eeeb; --muted: #9aa8a3; --line: #2a3632; --brand: #2dd4bf; --brand2: #fbbf24; --soft: #123a35; --warn: #fbbf24; --warnbg: #3a2c10; --bad: #f87171; --side: #08201c; } }
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-  .wrap { max-width: 1200px; margin: 0 auto; padding: 20px 16px 40px; }
+  a { color: var(--brand); }
   h1 { font-size: 1.4rem; margin: 0; }
-  .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  h2 { font-size: 1.1rem; margin: 0 0 10px; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
-  .login { max-width: 360px; margin: 12vh auto; }
-  input, select, button { font: inherit; }
-  input, select { height: 42px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); }
-  button, .btn { height: 42px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; }
+  .login { max-width: 380px; margin: 12vh auto; }
+  .login .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .logo svg { width: 32px; height: 32px; color: var(--brand); }
+  input, select, button, textarea { font: inherit; }
+  input, select, textarea { padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); }
+  input, select { height: 42px; }
+  textarea { padding: 10px 12px; width: 100%; resize: vertical; }
+  button, .btn { height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  button:hover, .btn:hover { border-color: var(--brand); }
   .primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .danger { color: var(--bad); }
   @media (prefers-color-scheme: dark) { .primary { color: #04201c; } }
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 16px; }
-  .stat .k { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }
-  .stat .v { font-size: 1.5rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .err { color: var(--bad); min-height: 1.2em; margin-top: 8px; }
+  .muted { color: var(--muted); }
+  .small { font-size: .85rem; }
+
+  /* Layout */
+  .app { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+  .side { background: var(--side); color: #d5ebe6; padding: 18px 12px; display: flex; flex-direction: column; gap: 4px; position: sticky; top: 0; height: 100vh; }
+  .side .logo { color: #fff; font-weight: 800; padding: 0 8px 14px; display: flex; align-items: center; gap: 8px; }
+  .side .logo svg { color: #2dd4bf; width: 28px; height: 28px; }
+  .side button { background: none; border: 0; color: inherit; justify-content: flex-start; width: 100%; height: 42px; font-weight: 600; }
+  .side button[aria-current="true"] { background: rgba(45, 212, 191, .16); color: #fff; }
+  .side button svg { width: 18px; height: 18px; }
+  .side .spacer { flex: 1; }
+  .side a { color: #9fd8cf; padding: 6px 12px; font-size: .9rem; text-decoration: none; }
+  .main { padding: 22px 24px 48px; min-width: 0; }
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+  /* Overview */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .kpi .k { color: var(--muted); font-size: .76rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; }
+  .kpi .v { font-size: 1.6rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .kpi .d { font-size: .8rem; color: var(--muted); }
+  .grid2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .chart { width: 100%; height: auto; display: block; }
+  .chart .grid { stroke: var(--line); }
+  .chart text { fill: var(--muted); font-size: 11px; }
+  .bar-a { fill: var(--brand); } .bar-b { fill: var(--brand2); }
+  .legend { display: flex; gap: 14px; font-size: .82rem; color: var(--muted); margin-top: 6px; flex-wrap: wrap; }
+  .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; }
+  .toplist { list-style: none; padding: 0; margin: 0; }
+  .toplist li { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: .9rem; }
+  .toplist .bar { grid-column: 1 / -1; height: 6px; border-radius: 4px; background: var(--soft); overflow: hidden; }
+  .toplist .bar i { display: block; height: 100%; background: var(--brand); }
+
+  /* Tables */
   .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
   .filters input[type="search"] { flex: 1; min-width: 200px; }
   .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
-  table { width: 100%; border-collapse: collapse; font-size: .88rem; min-width: 900px; }
+  table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  .wide { min-width: 900px; }
   th, td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
   th { background: var(--bg); position: sticky; top: 0; }
   td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.wrap { white-space: normal; min-width: 240px; }
   .pill { font-size: .72rem; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: var(--soft); color: var(--brand); }
-  .pill.premium, .pill.created { background: var(--warnbg); color: var(--warn); }
-  .err { color: #c0392b; min-height: 1.2em; margin-top: 8px; }
-  .muted { color: var(--muted); }
+  .pill.premium, .pill.created, .pill.draft, .pill.scheduled { background: var(--warnbg); color: var(--warn); }
+  .linkbtn { background: none; border: 0; height: auto; padding: 0; color: var(--brand); font-weight: 600; }
+
+  /* Editor */
+  .editor { display: grid; grid-template-columns: 1fr 340px; gap: 16px; align-items: start; }
+  .field { display: grid; gap: 4px; margin-bottom: 12px; }
+  .field label { font-weight: 600; font-size: .9rem; }
+  .field input, .field select { width: 100%; }
+  .hint { font-size: .8rem; color: var(--muted); }
+  .title-input { font-size: 1.3rem; font-weight: 700; height: 52px; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 4px; padding: 6px; border: 1px solid var(--line); border-bottom: 0; border-radius: 10px 10px 0 0; background: var(--bg); }
+  .toolbar button { height: 32px; padding: 0 10px; font-size: .85rem; }
+  .toolbar select { height: 32px; font-size: .85rem; max-width: 220px; }
+  #p-body { border-radius: 0 0 10px 10px; min-height: 460px; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .panes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .preview { border: 1px solid var(--line); border-radius: 10px; padding: 4px 18px; background: var(--card); max-height: 620px; overflow: auto; font-size: .95rem; }
+  .preview img { max-width: 100%; border-radius: 8px; }
+  .preview table { border-collapse: collapse; }
+  .preview th, .preview td { border: 1px solid var(--line); padding: 4px 8px; white-space: normal; }
+  .preview blockquote { border-left: 4px solid var(--brand); margin: 1em 0; padding: 4px 12px; background: var(--soft); }
+  .preview .post-tool { display: flex; gap: 10px; align-items: center; border: 1px solid var(--brand); border-radius: 10px; padding: 10px; text-decoration: none; color: inherit; }
+  .preview .post-tool svg { width: 22px; height: 22px; }
+  .cover-box { border: 1px dashed var(--line); border-radius: 10px; padding: 10px; text-align: center; }
+  .cover-box img { max-width: 100%; border-radius: 8px; display: block; margin: 0 auto 8px; }
+  .seo-preview { border: 1px solid var(--line); border-radius: 10px; padding: 10px; font-size: .85rem; }
+  .seo-preview .u { color: #1a7f37; }
+  .seo-preview .t { color: #1a0dab; font-size: 1.05rem; }
+  @media (prefers-color-scheme: dark) { .seo-preview .t { color: #8ab4f8; } .seo-preview .u { color: #6ee7b7; } }
+  .count { font-size: .78rem; color: var(--muted); float: right; font-weight: 400; }
+  .saved { color: var(--brand); font-weight: 600; font-size: .9rem; }
+
+  @media (max-width: 1100px) { .editor, .panes, .grid2 { grid-template-columns: 1fr; } }
+  @media (max-width: 760px) {
+    .app { grid-template-columns: 1fr; }
+    .side { position: static; height: auto; flex-direction: row; flex-wrap: wrap; padding: 10px; }
+    .side .logo { width: 100%; padding-bottom: 6px; }
+    .side button { width: auto; }
+    .side .spacer, .side a { display: none; }
+    .main { padding: 16px; }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div id="login" class="card login" hidden>
-    <h1>LiveLifeTricks admin</h1>
-    <p class="muted">Enter the admin password.</p>
-    <form id="login-form">
-      <input id="pw" type="password" autocomplete="current-password" style="width:100%" required>
-      <div style="margin-top:10px"><button class="primary" type="submit">Log in</button></div>
-      <div class="err" id="login-err"></div>
-    </form>
-  </div>
-
-  <div id="dash" hidden>
-    <div class="top">
-      <h1>Biodata &amp; invitation orders</h1>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button id="refresh">Refresh</button>
-        <a class="btn" href="/api/admin/orders.csv">Download CSV</a>
-        <button id="logout">Log out</button>
-      </div>
-    </div>
-    <div class="stats" id="stats"></div>
-    <div class="filters">
-      <input id="q" type="search" placeholder="Search email, name or payment ID">
-      <select id="product"><option value="">Biodata &amp; invitations</option><option value="biodata">Biodata only</option><option value="invite">Invitations only</option></select>
-      <select id="tier"><option value="">All designs</option><option value="free">Free</option><option value="premium">Premium</option></select>
-      <select id="status"><option value="">Any status</option><option value="paid">Paid</option><option value="free">Free</option><option value="created">Started, not paid</option></select>
-      <label class="muted" style="display:flex;align-items:center;gap:6px"><input id="dl" type="checkbox" style="height:auto"> Downloaded only</label>
-    </div>
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>Date</th><th>Email</th><th>Name</th><th>Product</th><th>Design</th><th>Type</th><th>Status</th><th class="num">Paid ₹</th><th>Payment ID</th><th class="num">Downloads</th><th>Last download</th><th>Email OK</th></tr></thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </div>
-    <p class="muted" id="count"></p>
-  </div>
+<div id="login" class="card login" hidden>
+  <div class="logo"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M9 22V10h3v9.5h6V22zm11-12h3v12h-3z" fill="#fff"/></svg><h1>LiveLifeTricks admin</h1></div>
+  <p class="muted">Sign in with the admin password set on the server.</p>
+  <form id="login-form">
+    <label for="pw" class="small muted">Password</label>
+    <input id="pw" type="password" autocomplete="current-password" style="width:100%" required>
+    <div style="margin-top:12px"><button class="primary" type="submit">Sign in</button></div>
+    <div class="err" id="login-err"></div>
+  </form>
 </div>
+
+<div id="app" class="app" hidden>
+  <nav class="side" aria-label="Admin">
+    <div class="logo"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M9 22V10h3v9.5h6V22zm11-12h3v12h-3z" fill="#0d2a26"/></svg>Admin</div>
+    <button data-tab="overview" aria-current="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Overview</button>
+    <button data-tab="orders"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>Orders</button>
+    <button data-tab="blog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg>Blog</button>
+    <button data-tab="subs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Email list</button>
+    <div class="spacer"></div>
+    <a href="/" target="_blank" rel="noopener">View site ↗</a>
+    <a href="/blog/" target="_blank" rel="noopener">View blog ↗</a>
+    <button id="logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11"/></svg>Sign out</button>
+  </nav>
+
+  <main class="main">
+    <!-- Overview -->
+    <section data-panel="overview">
+      <div class="top"><h1>Overview</h1><div class="row"><select id="ov-range"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option><option value="365">Last 12 months</option></select><button class="refresh">Refresh</button></div></div>
+      <div class="kpis" id="kpis"></div>
+      <div class="grid2">
+        <div class="card"><h2>Revenue per day</h2><div id="ch-rev"></div></div>
+        <div class="card"><h2>Biodata vs invitations</h2><div id="ch-prod"></div></div>
+      </div>
+      <div class="grid2">
+        <div class="card"><h2>Downloads per day</h2><div id="ch-dl"></div><div class="legend"><span><i class="sw" style="background:var(--brand)"></i>Free</span><span><i class="sw" style="background:var(--brand2)"></i>Paid</span></div></div>
+        <div class="card"><h2>Most used designs</h2><ul class="toplist" id="top-designs"></ul></div>
+      </div>
+      <div class="card"><h2>Latest activity</h2><div class="tablewrap" style="border:0"><table><tbody id="recent"></tbody></table></div></div>
+    </section>
+
+    <!-- Orders -->
+    <section data-panel="orders" hidden>
+      <div class="top"><h1>Biodata &amp; invitation orders</h1><div class="row"><button class="refresh">Refresh</button><a class="btn" href="/api/admin/orders.csv">Download CSV</a></div></div>
+      <div class="filters">
+        <input id="q" type="search" placeholder="Search email, name or payment ID">
+        <select id="product"><option value="">Biodata &amp; invitations</option><option value="biodata">Biodata only</option><option value="invite">Invitations only</option></select>
+        <select id="tier"><option value="">All designs</option><option value="free">Free</option><option value="premium">Premium</option></select>
+        <select id="status"><option value="">Any status</option><option value="paid">Paid</option><option value="free">Free</option><option value="created">Started, not paid</option></select>
+        <label class="muted" style="display:flex;align-items:center;gap:6px"><input id="dl" type="checkbox" style="height:auto"> Downloaded only</label>
+      </div>
+      <div class="tablewrap">
+        <table class="wide">
+          <thead><tr><th>Date</th><th>Email</th><th>Name</th><th>Product</th><th>Design</th><th>Type</th><th>Status</th><th class="num">Paid ₹</th><th>Payment ID</th><th class="num">Downloads</th><th>Last download</th><th>Email OK</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <p class="muted" id="count"></p>
+    </section>
+
+    <!-- Blog list -->
+    <section data-panel="blog" hidden>
+      <div class="top"><h1>Blog posts</h1><div class="row"><a class="btn" href="/blog/feed.xml" target="_blank" rel="noopener">RSS feed ↗</a><button class="primary" id="new-post">+ New post</button></div></div>
+      <div class="filters"><input id="pq" type="search" placeholder="Search posts"><select id="pstatus"><option value="">All posts</option><option value="published">Published</option><option value="draft">Drafts</option></select></div>
+      <div class="tablewrap"><table><thead><tr><th>Title</th><th>Status</th><th>Topic</th><th>Published</th><th>Updated</th><th></th></tr></thead><tbody id="post-rows"></tbody></table></div>
+    </section>
+
+    <!-- Blog editor -->
+    <section data-panel="editor" hidden>
+      <div class="top">
+        <div class="row"><button id="back-posts">← All posts</button><h1 id="ed-heading">New post</h1></div>
+        <div class="row"><span class="saved" id="ed-saved" role="status"></span><a class="btn" id="ed-view" target="_blank" rel="noopener" hidden>View ↗</a><button id="save-draft">Save draft</button><button class="primary" id="publish">Publish</button></div>
+      </div>
+      <div class="err" id="ed-err"></div>
+      <div class="editor">
+        <div>
+          <div class="field"><label class="sr" for="p-title">Title</label><input id="p-title" class="title-input" placeholder="Post title" maxlength="140"></div>
+          <div class="toolbar" role="toolbar" aria-label="Formatting">
+            <button type="button" data-md="h2" title="Heading">H2</button>
+            <button type="button" data-md="h3" title="Small heading">H3</button>
+            <button type="button" data-md="bold" title="Bold"><b>B</b></button>
+            <button type="button" data-md="italic" title="Italic"><i>I</i></button>
+            <button type="button" data-md="link" title="Link">Link</button>
+            <button type="button" data-md="ul" title="Bullet list">• List</button>
+            <button type="button" data-md="ol" title="Numbered list">1. List</button>
+            <button type="button" data-md="quote" title="Tip box">Tip</button>
+            <button type="button" data-md="table" title="Table">Table</button>
+            <button type="button" id="img-btn" title="Upload an image">Image</button>
+            <select id="tool-insert" aria-label="Insert a tool card"><option value="">+ Tool card…</option></select>
+          </div>
+          <div class="panes">
+            <textarea id="p-body" spellcheck="true" placeholder="Write your post here. Use the buttons above for headings, lists, tables and images."></textarea>
+            <div class="preview" id="p-preview" aria-label="Preview"><p class="muted">Preview appears here.</p></div>
+          </div>
+          <p class="hint">Formatting: <code>## Heading</code>, <code>**bold**</code>, <code>*italic*</code>, <code>[text](https://link)</code>, <code>- list</code>, <code>&gt; tip</code>. Tool cards link readers straight to a calculator.</p>
+        </div>
+        <aside>
+          <div class="card">
+            <div class="field"><label for="p-status">Status</label><select id="p-status"><option value="draft">Draft (hidden)</option><option value="published">Published</option></select></div>
+            <div class="field"><label for="p-date">Publish date</label><input id="p-date" type="datetime-local"><span class="hint">A future date schedules the post.</span></div>
+            <div class="field"><label for="p-cat">Topic</label><select id="p-cat"></select></div>
+            <div class="field"><label for="p-tags">Tags</label><input id="p-tags" placeholder="income tax, salary"><span class="hint">Separate with commas.</span></div>
+            <div class="field"><label>Cover image</label><div class="cover-box"><img id="cover-img" alt="" hidden><button type="button" id="cover-btn">Upload cover</button> <button type="button" id="cover-rm" class="danger" hidden>Remove</button><span class="hint" style="display:block;margin-top:6px">1200×630 works best (also shown when shared).</span></div></div>
+            <div class="field"><label for="p-coveralt">Cover description (alt text)</label><input id="p-coveralt" maxlength="160"></div>
+            <div class="field"><label for="p-author">Author</label><input id="p-author" placeholder="LiveLifeTricks team" maxlength="60"></div>
+          </div>
+          <div class="card" style="margin-top:12px">
+            <h2>Search &amp; sharing</h2>
+            <div class="field"><label for="p-slug">Web address</label><input id="p-slug" placeholder="auto from title"><span class="hint" id="slug-hint"></span></div>
+            <div class="field"><label for="p-desc">Summary <span class="count" id="desc-count"></span></label><textarea id="p-desc" rows="3" maxlength="300" placeholder="One or two sentences. Shown on Google and when shared."></textarea></div>
+            <div class="field"><label for="p-seo">Google title (optional) <span class="count" id="seo-count"></span></label><input id="p-seo" maxlength="70"></div>
+            <div class="seo-preview"><div class="u" id="sp-url"></div><div class="t" id="sp-title"></div><div class="muted" id="sp-desc"></div></div>
+          </div>
+          <button class="danger" id="delete-post" style="margin-top:12px" hidden>Delete this post</button>
+        </aside>
+      </div>
+      <input type="file" id="img-file" accept="image/jpeg,image/png,image/webp" hidden>
+    </section>
+
+    <!-- Subscribers -->
+    <section data-panel="subs" hidden>
+      <div class="top"><h1>Email list</h1><div class="row"><button class="refresh">Refresh</button><a class="btn" href="/api/admin/subscribers.csv">Download CSV</a></div></div>
+      <p class="muted">People who asked for reminders on the homepage or blog. Export the CSV into an email tool (Brevo, Mailchimp, Zoho Campaigns) to send them updates.</p>
+      <div class="kpis" id="sub-kpis"></div>
+      <div class="filters"><input id="sq" type="search" placeholder="Search email"></div>
+      <div class="tablewrap"><table><thead><tr><th>Date</th><th>Email</th><th>From</th><th>Status</th><th></th></tr></thead><tbody id="sub-rows"></tbody></table></div>
+    </section>
+  </main>
+</div>
+
 <script>
 (function () {
-  var data = null;
+  'use strict';
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
-  var when = function (s) { if (!s) return ''; var d = new Date(s); return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }); };
+  var dateOnly = function (s) { return s ? new Date(s).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : ''; };
+  var when = function (s) { if (!s) return ''; var d = new Date(s); return dateOnly(s) + ' ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }); };
   var inr = new Intl.NumberFormat('en-IN');
+  var orders = null, postsData = null, subs = null, tab = 'overview', current = null, dirty = false;
 
-  function load() {
-    fetch('/api/admin/orders', { credentials: 'same-origin' }).then(function (r) {
-      if (r.status === 401) { $('dash').hidden = true; $('login').hidden = false; return null; }
-      return r.json();
-    }).then(function (j) {
-      if (!j) return;
-      data = j; $('login').hidden = true; $('dash').hidden = false; render();
+  function api(url, opts) {
+    opts = opts || {};
+    opts.credentials = 'same-origin';
+    return fetch(url, opts).then(function (r) {
+      if (r.status === 401) { showLogin(); throw new Error('login'); }
+      return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || 'Something went wrong'); return j; });
     });
   }
-  function render() {
-    var s = data.summary;
-    $('stats').innerHTML = [['Revenue', '₹' + inr.format(s.revenue)], ['Paid orders', s.paid], ['Free downloads', s.free], ['Unique emails', s.emails], ['Total downloads', s.downloads], ['Started, not paid', s.abandoned]]
-      .map(function (x) { return '<div class="card stat"><div class="k">' + x[0] + '</div><div class="v">' + x[1] + '</div></div>'; }).join('');
+  function post(url, body) { return api(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) }); }
+  function showLogin() { $('app').hidden = true; $('login').hidden = false; $('pw').focus(); }
+
+  // ---------- Tabs ----------
+  function show(name) {
+    if (tab === 'editor' && name !== 'editor' && dirty && !confirm('Leave without saving your changes?')) return;
+    tab = name;
+    document.querySelectorAll('[data-panel]').forEach(function (p) { p.hidden = p.getAttribute('data-panel') !== name; });
+    document.querySelectorAll('.side [data-tab]').forEach(function (b) { b.setAttribute('aria-current', b.getAttribute('data-tab') === (name === 'editor' ? 'blog' : name) ? 'true' : 'false'); });
+    if (name !== 'editor') history.replaceState(null, '', '#' + name);
+    if ((name === 'overview' || name === 'orders') && !orders) loadOrders();
+    if (name === 'blog' && !postsData) loadPosts();
+    if (name === 'subs' && !subs) loadSubs();
+    if (name === 'overview' && (!postsData || !subs)) { loadPosts(); loadSubs(); }
+  }
+  document.querySelectorAll('.side [data-tab]').forEach(function (b) { b.addEventListener('click', function () { show(b.getAttribute('data-tab')); }); });
+  document.querySelectorAll('.refresh').forEach(function (b) { b.addEventListener('click', function () { orders = null; subs = null; postsData = null; show(tab); }); });
+
+  // ---------- Orders & overview ----------
+  function loadOrders() {
+    return api('/api/admin/orders').then(function (j) { orders = j; $('login').hidden = true; $('app').hidden = false; renderOrders(); renderOverview(); });
+  }
+  function renderOrders() {
     var q = $('q').value.toLowerCase(), tier = $('tier').value, st = $('status').value, dl = $('dl').checked, prod = $('product').value;
-    var rows = data.rows.filter(function (r) {
+    var rows = orders.rows.filter(function (r) {
       return (!q || (r.email + ' ' + r.name + ' ' + r.paymentId).toLowerCase().indexOf(q) !== -1) && (!tier || r.tier === tier) && (!st || r.status === st) && (!dl || r.downloads > 0) && (!prod || r.product === prod);
     });
     $('rows').innerHTML = rows.map(function (r) {
@@ -104,19 +295,299 @@
         '<td><span class="pill ' + r.tier + '">' + r.tier + '</span></td><td><span class="pill ' + r.status + '">' + (r.status === 'created' ? 'not paid' : r.status) + '</span></td>' +
         '<td class="num">' + (r.amount || '') + '</td><td>' + esc(r.paymentId) + '</td><td class="num">' + r.downloads + '</td><td>' + when(r.lastDownload) + '</td><td>' + (r.consent ? 'Yes' : '—') + '</td></tr>';
     }).join('') || '<tr><td colspan="12" class="muted">No orders yet.</td></tr>';
-    $('count').textContent = rows.length + ' of ' + data.rows.length + ' orders';
+    $('count').textContent = rows.length + ' of ' + orders.rows.length + ' orders';
   }
+  ['q', 'product', 'tier', 'status', 'dl'].forEach(function (id) { $(id).addEventListener('input', function () { if (orders) renderOrders(); }); });
+
+  function dayKey(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function barChart(el, labels, a, b) {
+    var W = 640, H = 200, x0 = 40, y0 = 10, ch = 160, cw = W - x0 - 6, n = labels.length;
+    var max = 5; for (var i = 0; i < n; i++) max = Math.max(max, a[i] + (b ? b[i] : 0));
+    var p = Math.pow(10, Math.floor(Math.log10(max))), nice = [1, 2, 2.5, 5, 10].map(function (m) { return m * p; }).filter(function (v) { return v >= max; })[0] || max;
+    var s = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '">';
+    for (var g = 0; g <= 5; g++) { var y = y0 + ch - ch * g / 5; s += '<line class="grid" x1="' + x0 + '" x2="' + (W - 6) + '" y1="' + y + '" y2="' + y + '"/><text x="' + (x0 - 6) + '" y="' + (y + 4) + '" text-anchor="end">' + inr.format(Math.round(nice * g / 5)) + '</text>'; }
+    var band = cw / n, bw = Math.max(2, band * 0.7);
+    for (var k = 0; k < n; k++) {
+      var x = x0 + band * k + (band - bw) / 2, ha = ch * a[k] / nice, hb = b ? ch * b[k] / nice : 0;
+      if (ha) s += '<rect class="bar-a" x="' + x + '" y="' + (y0 + ch - ha) + '" width="' + bw + '" height="' + ha + '"><title>' + labels[k] + ': ' + inr.format(a[k]) + '</title></rect>';
+      if (hb) s += '<rect class="bar-b" x="' + x + '" y="' + (y0 + ch - ha - hb) + '" width="' + bw + '" height="' + hb + '"><title>' + labels[k] + ': ' + inr.format(b[k]) + '</title></rect>';
+      if (n <= 31 ? k % Math.ceil(n / 8) === 0 : k % Math.ceil(n / 6) === 0) s += '<text x="' + (x + bw / 2) + '" y="' + (H - 14) + '" text-anchor="middle">' + labels[k] + '</text>';
+    }
+    el.innerHTML = s + '</svg>';
+  }
+  function donut(el, parts) {
+    var total = parts.reduce(function (t, p) { return t + p[1]; }, 0) || 1, C = 2 * Math.PI * 50, off = 0;
+    var s = '<svg class="chart" viewBox="0 0 160 160" style="max-width:180px;margin:0 auto">';
+    if (!parts.some(function (p) { return p[1]; })) s += '<circle cx="80" cy="80" r="50" fill="none" stroke="var(--line)" stroke-width="22"/>';
+    parts.forEach(function (p) { var len = C * p[1] / total; s += '<circle cx="80" cy="80" r="50" fill="none" stroke="' + p[2] + '" stroke-width="22" stroke-dasharray="' + len + ' ' + C + '" stroke-dashoffset="' + (-off) + '" transform="rotate(-90 80 80)"/>'; off += len; });
+    s += '<text x="80" y="86" text-anchor="middle" style="font-size:20px;font-weight:800;fill:var(--ink)">' + inr.format(parts.reduce(function (t, p) { return t + p[1]; }, 0)) + '</text></svg>';
+    el.innerHTML = s + '<div class="legend" style="justify-content:center">' + parts.map(function (p) { return '<span><i class="sw" style="background:' + p[2] + '"></i>' + p[0] + ' (' + p[1] + ')</span>'; }).join('') + '</div>';
+  }
+  function renderOverview() {
+    if (!orders) return;
+    var days = Number($('ov-range').value), now = new Date(), start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - days + 1);
+    var rows = orders.rows.filter(function (r) { return new Date(r.createdAt) >= start; });
+    var prevStart = new Date(start.getTime() - days * 864e5);
+    var prev = orders.rows.filter(function (r) { var d = new Date(r.createdAt); return d >= prevStart && d < start; });
+    var sum = function (list, f) { return list.reduce(function (t, r) { return t + f(r); }, 0); };
+    var rev = sum(rows, function (r) { return r.status === 'paid' ? r.amount : 0; }), prevRev = sum(prev, function (r) { return r.status === 'paid' ? r.amount : 0; });
+    var paid = rows.filter(function (r) { return r.status === 'paid'; }).length, started = rows.filter(function (r) { return r.tier === 'premium'; }).length;
+    var change = function (a, b) { if (!b) return a ? 'new this period' : '—'; var c = Math.round((a - b) / b * 100); return (c >= 0 ? '▲ ' : '▼ ') + Math.abs(c) + '% vs previous'; };
+    var live = postsData ? postsData.posts.filter(function (p) { return p.status === 'published'; }).length : '…';
+    var subCount = subs ? subs.rows.filter(function (s) { return s.status === 'active'; }).length : '…';
+    $('kpis').innerHTML = [
+      ['Revenue', '₹' + inr.format(rev), change(rev, prevRev)], ['Paid orders', paid, started ? Math.round(paid / started * 100) + '% of paid starts' : '—'],
+      ['Free downloads', rows.filter(function (r) { return r.tier === 'free' && r.downloads; }).length, 'emails collected'], ['New emails', new Set(rows.map(function (r) { return r.email; })).size, 'from biodata & invites'],
+      ['Subscribers', subCount, 'email list, all time'], ['Blog posts', live, 'published']
+    ].map(function (k) { return '<div class="card kpi"><div class="k">' + k[0] + '</div><div class="v">' + k[1] + '</div><div class="d">' + k[2] + '</div></div>'; }).join('');
+
+    // Per-day (or per-month for a year) buckets
+    var monthly = days > 92, labels = [], keys = [], revA = [], dlFree = [], dlPaid = [], idx = {};
+    if (monthly) {
+      for (var m = 11; m >= 0; m--) { var d = new Date(now.getFullYear(), now.getMonth() - m, 1); var key = d.getFullYear() + '-' + d.getMonth(); idx[key] = keys.length; keys.push(key); labels.push(d.toLocaleDateString('en-IN', { month: 'short' })); }
+    } else {
+      for (var i = 0; i < days; i++) { var dd = new Date(start.getTime() + i * 864e5); idx[dayKey(dd)] = keys.length; keys.push(dayKey(dd)); labels.push(dd.getDate() + ' ' + dd.toLocaleDateString('en-IN', { month: 'short' })); }
+    }
+    keys.forEach(function () { revA.push(0); dlFree.push(0); dlPaid.push(0); });
+    var kOf = function (s) { var d = new Date(s); return monthly ? d.getFullYear() + '-' + d.getMonth() : dayKey(d); };
+    rows.forEach(function (r) {
+      var k = idx[kOf(r.paidAt || r.createdAt)];
+      if (k !== undefined && r.status === 'paid') revA[k] += r.amount;
+      var k2 = idx[kOf(r.createdAt)];
+      if (k2 !== undefined && r.downloads) { if (r.tier === 'free') dlFree[k2]++; else dlPaid[k2]++; }
+    });
+    barChart($('ch-rev'), labels, revA);
+    barChart($('ch-dl'), labels, dlFree, dlPaid);
+    var bio = rows.filter(function (r) { return r.product !== 'invite'; }).length;
+    donut($('ch-prod'), [['Biodata', bio, 'var(--brand)'], ['Invitations', rows.length - bio, 'var(--brand2)']]);
+    var counts = {}; rows.forEach(function (r) { counts[r.template] = (counts[r.template] || 0) + 1; });
+    var top = Object.keys(counts).map(function (k) { return [k, counts[k]]; }).sort(function (a, b) { return b[1] - a[1]; }).slice(0, 6);
+    $('top-designs').innerHTML = top.length ? top.map(function (t) { return '<li><span>' + esc(t[0]) + '</span><b>' + t[1] + '</b><span class="bar"><i style="width:' + (t[1] / top[0][1] * 100) + '%"></i></span></li>'; }).join('') : '<li class="muted">No orders in this period.</li>';
+    $('recent').innerHTML = orders.rows.slice(0, 8).map(function (r) {
+      return '<tr><td>' + when(r.createdAt) + '</td><td>' + esc(r.email) + '</td><td>' + (r.product === 'invite' ? 'Invitation' : 'Biodata') + ' · ' + esc(r.template) + '</td><td><span class="pill ' + r.status + '">' + (r.status === 'created' ? 'not paid' : r.status) + '</span></td><td class="num">' + (r.amount ? '₹' + r.amount : '') + '</td></tr>';
+    }).join('') || '<tr><td class="muted">Nothing yet. Orders will appear here.</td></tr>';
+  }
+  $('ov-range').addEventListener('change', renderOverview);
+
+  // ---------- Blog ----------
+  function loadPosts() {
+    return api('/api/admin/posts').then(function (j) {
+      postsData = j;
+      if (!$('p-cat').options.length) {
+        $('p-cat').innerHTML = j.topics.map(function (t) { return '<option value="' + t.id + '">' + esc(t.name) + '</option>'; }).join('');
+        $('tool-insert').innerHTML += j.tools.map(function (t) { return '<option value="' + esc(t.path) + '">' + esc(t.name) + '</option>'; }).join('');
+      }
+      renderPosts(); renderOverview();
+    });
+  }
+  function postState(p) { return p.status === 'published' && new Date(p.publishedAt) > new Date() ? 'scheduled' : p.status; }
+  function renderPosts() {
+    var q = $('pq').value.toLowerCase(), st = $('pstatus').value;
+    var list = postsData.posts.filter(function (p) { return (!q || (p.title + ' ' + (p.tags || []).join(' ')).toLowerCase().indexOf(q) !== -1) && (!st || p.status === st); });
+    var topic = function (id) { var t = postsData.topics.filter(function (x) { return x.id === id; })[0]; return t ? t.name : id; };
+    $('post-rows').innerHTML = list.map(function (p) {
+      return '<tr><td class="wrap"><button class="linkbtn" data-edit="' + p.id + '">' + esc(p.title) + '</button><div class="muted small">/blog/' + esc(p.slug) + '/ · ' + p.minutes + ' min read</div></td>' +
+        '<td><span class="pill ' + postState(p) + '">' + postState(p) + '</span></td><td>' + esc(topic(p.category)) + '</td><td>' + dateOnly(p.publishedAt) + '</td><td>' + when(p.updatedAt) + '</td>' +
+        '<td><a href="' + p.url + '" target="_blank" rel="noopener">View ↗</a></td></tr>';
+    }).join('') || '<tr><td colspan="6" class="muted">No posts yet. Click “New post” to write your first one.</td></tr>';
+  }
+  ['pq', 'pstatus'].forEach(function (id) { $(id).addEventListener('input', function () { if (postsData) renderPosts(); }); });
+  $('post-rows').addEventListener('click', function (e) { var b = e.target.closest('[data-edit]'); if (b) openEditor(postsData.posts.filter(function (p) { return p.id === b.getAttribute('data-edit'); })[0]); });
+  $('new-post').addEventListener('click', function () { openEditor(null); });
+  $('back-posts').addEventListener('click', function () { show('blog'); });
+
+  function localInput(iso) { if (!iso) return ''; var d = new Date(iso); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); }
+  function slugify(s) { return String(s || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80); }
+  function openEditor(p) {
+    current = p || null;
+    $('ed-heading').textContent = p ? 'Edit post' : 'New post';
+    $('p-title').value = p ? p.title : '';
+    $('p-body').value = p ? p.body : '';
+    $('p-status').value = p ? p.status : 'draft';
+    $('p-date').value = p ? localInput(p.publishedAt) : '';
+    $('p-cat').value = p ? p.category : 'general';
+    $('p-tags').value = p ? (p.tags || []).join(', ') : '';
+    $('p-slug').value = p ? p.slug : '';
+    $('p-desc').value = p ? p.description : '';
+    $('p-seo').value = p ? (p.seoTitle || '') : '';
+    $('p-author').value = p ? p.author : '';
+    $('p-coveralt').value = p ? (p.coverAlt || '') : '';
+    setCover(p ? p.cover : '');
+    $('ed-view').hidden = !p; if (p) $('ed-view').href = p.url;
+    $('delete-post').hidden = !p;
+    $('publish').textContent = p && p.status === 'published' ? 'Update' : 'Publish';
+    $('ed-err').textContent = ''; $('ed-saved').textContent = '';
+    dirty = false;
+    show('editor');
+    seo(); preview();
+    $('p-title').focus();
+  }
+  function setCover(url) { var img = $('cover-img'); img.hidden = !url; img.src = url || ''; img.setAttribute('data-url', url || ''); $('cover-rm').hidden = !url; $('cover-btn').textContent = url ? 'Change cover' : 'Upload cover'; }
+  function seo() {
+    var slug = $('p-slug').value ? slugify($('p-slug').value) : slugify($('p-title').value);
+    $('slug-hint').textContent = 'livelifetricks.com/blog/' + (slug || '…') + '/';
+    $('sp-url').textContent = 'livelifetricks.com › blog › ' + (slug || '…');
+    $('sp-title').textContent = ($('p-seo').value || $('p-title').value || 'Post title') + ' | LiveLifeTricks';
+    $('sp-desc').textContent = $('p-desc').value || 'Add a summary so Google and WhatsApp show a good description.';
+    $('desc-count').textContent = $('p-desc').value.length + '/160';
+    $('seo-count').textContent = $('p-seo').value.length + '/60';
+  }
+  var pvTimer = null;
+  function preview() {
+    clearTimeout(pvTimer);
+    pvTimer = setTimeout(function () {
+      var body = $('p-body').value;
+      if (!body.trim()) { $('p-preview').innerHTML = '<p class="muted">Preview appears here.</p>'; return; }
+      post('/api/admin/posts/preview', { body: '# ' + ($('p-title').value || 'Untitled') + '\n\n' + body }).then(function (j) { $('p-preview').innerHTML = j.rendered; }).catch(function () {});
+    }, 350);
+  }
+  ['p-title', 'p-slug', 'p-desc', 'p-seo'].forEach(function (id) { $(id).addEventListener('input', seo); });
+  document.querySelectorAll('[data-panel="editor"] input, [data-panel="editor"] textarea, [data-panel="editor"] select').forEach(function (el) { el.addEventListener('input', function () { dirty = true; $('ed-saved').textContent = ''; }); });
+  $('p-body').addEventListener('input', preview);
+  $('p-title').addEventListener('input', preview);
+  window.addEventListener('beforeunload', function (e) { if (tab === 'editor' && dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+  // Toolbar
+  function wrapSel(before, after, placeholder) {
+    var t = $('p-body'), s = t.selectionStart, e = t.selectionEnd, sel = t.value.slice(s, e) || placeholder;
+    t.setRangeText(before + sel + after, s, e, 'end');
+    t.focus(); t.selectionStart = s + before.length; t.selectionEnd = s + before.length + sel.length;
+    t.dispatchEvent(new Event('input'));
+  }
+  function block(text) {
+    var t = $('p-body'), s = t.selectionStart, v = t.value;
+    var pre = s > 0 && v[s - 1] !== '\n' ? '\n\n' : (s > 1 && v[s - 2] !== '\n' ? '\n' : '');
+    t.setRangeText(pre + text + '\n\n', s, t.selectionEnd, 'end');
+    t.focus(); t.dispatchEvent(new Event('input'));
+  }
+  function linePrefix(prefix, numbered) {
+    var t = $('p-body'), s = t.selectionStart, e = t.selectionEnd, v = t.value;
+    var ls = v.lastIndexOf('\n', s - 1) + 1, le = v.indexOf('\n', e); if (le === -1) le = v.length;
+    var lines = v.slice(ls, le).split('\n').map(function (l, i) { return (numbered ? (i + 1) + '. ' : prefix) + l.replace(/^(#{1,4}\s|[-*]\s|\d+\.\s|>\s?)/, ''); });
+    t.setRangeText(lines.join('\n'), ls, le, 'end'); t.focus(); t.dispatchEvent(new Event('input'));
+  }
+  document.querySelectorAll('[data-md]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var k = b.getAttribute('data-md');
+      if (k === 'bold') wrapSel('**', '**', 'bold text');
+      else if (k === 'italic') wrapSel('*', '*', 'italic text');
+      else if (k === 'h2') linePrefix('## ');
+      else if (k === 'h3') linePrefix('### ');
+      else if (k === 'ul') linePrefix('- ');
+      else if (k === 'ol') linePrefix('', true);
+      else if (k === 'quote') linePrefix('> ');
+      else if (k === 'link') { var u = prompt('Link address (https://… or /emi-calculator/)'); if (u) wrapSel('[', '](' + u.trim() + ')', 'link text'); }
+      else if (k === 'table') block('| Column 1 | Column 2 |\n|---|---|\n| Value | Value |\n| Value | Value |');
+    });
+  });
+  $('tool-insert').addEventListener('change', function () { if (this.value) block('[[tool:' + this.value + ']]'); this.value = ''; });
+
+  // Images: shrink big photos in the browser before upload
+  var imgTarget = 'body';
+  function shrink(file) {
+    return new Promise(function (resolve) {
+      var img = new Image(), url = URL.createObjectURL(file);
+      img.onload = function () {
+        if (img.naturalWidth <= 1600 && file.size < 500 * 1024 && file.type !== 'image/png') { URL.revokeObjectURL(url); return resolve(file); }
+        var scale = Math.min(1, 1600 / img.naturalWidth), c = document.createElement('canvas');
+        c.width = Math.round(img.naturalWidth * scale); c.height = Math.round(img.naturalHeight * scale);
+        var ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); ctx.drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        c.toBlob(function (b) { resolve(b && b.size < file.size ? b : file); }, 'image/jpeg', 0.85);
+      };
+      img.onerror = function () { resolve(file); };
+      img.src = url;
+    });
+  }
+  function upload(file) {
+    return shrink(file).then(function (blob) {
+      return api('/api/admin/upload', { method: 'POST', headers: { 'Content-Type': blob.type || file.type }, body: blob });
+    });
+  }
+  $('img-btn').addEventListener('click', function () { imgTarget = 'body'; $('img-file').click(); });
+  $('cover-btn').addEventListener('click', function () { imgTarget = 'cover'; $('img-file').click(); });
+  $('cover-rm').addEventListener('click', function () { setCover(''); dirty = true; });
+  $('img-file').addEventListener('change', function () {
+    var f = this.files[0]; this.value = '';
+    if (!f) return;
+    $('ed-saved').textContent = 'Uploading image…';
+    upload(f).then(function (j) {
+      $('ed-saved').textContent = 'Image uploaded';
+      dirty = true;
+      if (imgTarget === 'cover') setCover(j.url);
+      else { var alt = prompt('Describe the image (for Google and screen readers):', '') || ''; block('![' + alt.replace(/[\[\]]/g, '') + '](' + j.url + ')'); }
+    }).catch(function (e) { $('ed-saved').textContent = ''; if (e.message !== 'login') $('ed-err').textContent = e.message; });
+  });
+
+  // Save
+  function save(status) {
+    $('ed-err').textContent = '';
+    var d = $('p-date').value;
+    var body = {
+      id: current ? current.id : undefined, title: $('p-title').value, body: $('p-body').value, status: status,
+      publishedAt: d ? new Date(d).toISOString() : '', category: $('p-cat').value, tags: $('p-tags').value, slug: $('p-slug').value,
+      description: $('p-desc').value, seoTitle: $('p-seo').value, author: $('p-author').value, cover: $('cover-img').getAttribute('data-url') || '', coverAlt: $('p-coveralt').value
+    };
+    if (status === 'published' && !body.description.trim() && !confirm('There is no summary. We will use the first lines of the post. Publish anyway?')) return;
+    $('save-draft').disabled = $('publish').disabled = true;
+    post('/api/admin/posts/save', body).then(function (j) {
+      dirty = false;
+      var was = current;
+      current = j.post;
+      postsData = null; loadPosts();
+      $('p-status').value = current.status; $('p-slug').value = current.slug; $('p-date').value = localInput(current.publishedAt); $('p-desc').value = current.description;
+      $('ed-view').hidden = false; $('ed-view').href = current.url; $('delete-post').hidden = false;
+      $('publish').textContent = current.status === 'published' ? 'Update' : 'Publish';
+      $('ed-heading').textContent = 'Edit post';
+      $('ed-saved').textContent = status === 'published' ? (new Date(current.publishedAt) > new Date() ? 'Scheduled ✓' : (was && was.status === 'published' ? 'Updated ✓' : 'Published ✓')) : 'Draft saved ✓';
+      seo();
+    }).catch(function (e) { if (e.message !== 'login') $('ed-err').textContent = e.message; })
+      .then(function () { $('save-draft').disabled = $('publish').disabled = false; });
+  }
+  $('save-draft').addEventListener('click', function () { save('draft'); });
+  $('publish').addEventListener('click', function () { save('published'); });
+  $('p-body').addEventListener('keydown', function (e) { if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); save($('p-status').value); } });
+  $('delete-post').addEventListener('click', function () {
+    if (!current || !confirm('Delete “' + current.title + '”? This cannot be undone.')) return;
+    post('/api/admin/posts/delete', { id: current.id }).then(function () { dirty = false; postsData = null; show('blog'); }).catch(function (e) { $('ed-err').textContent = e.message; });
+  });
+
+  // ---------- Subscribers ----------
+  function loadSubs() { return api('/api/admin/subscribers').then(function (j) { subs = j; renderSubs(); renderOverview(); }); }
+  function renderSubs() {
+    var q = $('sq').value.toLowerCase();
+    var active = subs.rows.filter(function (s) { return s.status === 'active'; });
+    var week = active.filter(function (s) { return new Date(s.createdAt) > new Date(Date.now() - 7 * 864e5); }).length;
+    $('sub-kpis').innerHTML = [['Subscribers', active.length], ['New this week', week], ['From homepage', active.filter(function (s) { return s.source === 'home'; }).length], ['From blog', active.filter(function (s) { return s.source === 'blog'; }).length]]
+      .map(function (k) { return '<div class="card kpi"><div class="k">' + k[0] + '</div><div class="v">' + k[1] + '</div></div>'; }).join('');
+    var rows = subs.rows.filter(function (s) { return !q || s.email.indexOf(q) !== -1; });
+    $('sub-rows').innerHTML = rows.map(function (s) {
+      return '<tr><td>' + when(s.createdAt) + '</td><td>' + esc(s.email) + '</td><td>' + esc(s.source) + '</td><td><span class="pill">' + esc(s.status) + '</span></td><td><button class="linkbtn danger" data-del="' + s.id + '">Remove</button></td></tr>';
+    }).join('') || '<tr><td colspan="5" class="muted">No subscribers yet.</td></tr>';
+  }
+  $('sq').addEventListener('input', function () { if (subs) renderSubs(); });
+  $('sub-rows').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-del]');
+    if (b && confirm('Remove this email from the list?')) post('/api/admin/subscribers/delete', { id: b.getAttribute('data-del') }).then(loadSubs);
+  });
+
+  // ---------- Sign in / out ----------
   $('login-form').addEventListener('submit', function (e) {
     e.preventDefault();
     $('login-err').textContent = '';
     fetch('/api/admin/login', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: $('pw').value }) })
       .then(function (r) { return r.json().then(function (j) { return [r.ok, j]; }); })
-      .then(function (x) { if (x[0]) { $('pw').value = ''; load(); } else $('login-err').textContent = x[1].error || 'Login failed'; });
+      .then(function (x) { if (x[0]) { $('pw').value = ''; start(); } else $('login-err').textContent = x[1].error || 'Sign-in failed'; });
   });
-  $('logout').addEventListener('click', function () { fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' }).then(load); });
-  $('refresh').addEventListener('click', load);
-  ['q', 'product', 'tier', 'status', 'dl'].forEach(function (id) { $(id).addEventListener('input', function () { if (data) render(); }); });
-  load();
+  $('logout').addEventListener('click', function () { fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' }).then(function () { orders = postsData = subs = null; showLogin(); }); });
+
+  function start() {
+    loadOrders().then(function () {
+      var h = location.hash.slice(1);
+      show(['overview', 'orders', 'blog', 'subs'].indexOf(h) !== -1 ? h : 'overview');
+    }).catch(function () {});
+  }
+  start();
 })();
 </script>
 </body>

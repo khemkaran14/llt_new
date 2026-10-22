@@ -60,15 +60,27 @@ function toolsIn(catId) {
   const list = TOOLS.filter(t => t.cat === catId);
   return list.filter(t => t.popular).concat(list.filter(t => !t.popular));
 }
-const navHtml = current => CATEGORIES.map(c => '<a href="' + c.path + '"' + (c.id === current ? ' aria-current="page"' : '') + '>' + c.short + '</a>').join('\n      ') + '\n      <a href="/about/">About</a>';
+const navHtml = current => CATEGORIES.map(c => '<a href="' + c.path + '"' + (c.id === current ? ' aria-current="page"' : '') + '>' + c.short + '</a>').join('\n      ') + '\n      <a href="/blog/"' + (current === 'blog' ? ' aria-current="page"' : '') + '>Blog</a>';
 const footerCols = CATEGORIES.map(c => '<div>\n      <h2 class="footer-h">' + c.name.replace('&', '&amp;') + '</h2>\n      <ul>\n' +
   toolsIn(c.id).slice(0, 6).map(t => '        <li><a href="' + t.path + '">' + t.name + '</a></li>').join('\n') +
   '\n        <li><a href="' + c.path + '"><strong>All ' + c.short.toLowerCase() + ' tools →</strong></a></li>\n      </ul>\n    </div>').join('\n    ');
 const homeSections = CATEGORIES.map(c => {
   const list = toolsIn(c.id);
-  return '<section class="wrap home-cat" id="' + c.id + '">\n  <div class="cat-head"><h2>' + c.name.replace('&', '&amp;') + '</h2><a href="' + c.path + '">All ' + list.length + ' tools →</a></div>\n  <div class="tool-grid">' +
+  return '<section class="wrap home-cat" id="' + c.id + '">\n  <div class="cat-head">' + iconSvg(c.icon) + '<div><h2>' + c.name.replace('&', '&amp;') + '</h2><p class="muted small">' + c.intro + '</p></div><a href="' + c.path + '">All ' + list.length + ' tools →</a></div>\n  <div class="tool-grid">' +
     list.slice(0, 6).map(toolCard).join('') + '</div>\n</section>';
 }).join('\n');
+
+// Homepage extras
+const { homeCharts, heroFacts } = require('./src/home-charts.js');
+const facts = heroFacts();
+const homeVars = {
+  homeCharts: homeCharts(),
+  heroTaxNew: facts.taxNew, heroTaxOld: facts.taxOld, heroTaxSave: facts.taxSave, heroEmi: facts.emi, heroSip: facts.sip25,
+  toolCount: String(Math.floor(TOOLS.length / 5) * 5),
+  catTiles: CATEGORIES.map(c => '<a class="cat-tile cat-' + c.id + '" href="#' + c.id + '">' + iconSvg(c.icon) + '<b>' + c.name.replace('&', '&amp;') + '</b><span>' + toolsIn(c.id).length + ' tools</span></a>').join('\n  '),
+  // Search index for the homepage search box (escaped so it can't close the script tag)
+  toolIndex: JSON.stringify(TOOLS.map(t => ({ n: t.name, p: t.path, b: t.blurb, c: catOf(t.cat).short }))).replace(/</g, '\\u003c')
+};
 
 // One page per section, listing all its tools
 function categoryPage(c) {
@@ -120,6 +132,12 @@ function embedBox(meta) {
 }
 
 const built = new Set();
+// Page shell for the blog: the Node server fills in the @@...@@ parts for each post.
+sources.push({
+  meta: { shell: 'blog', ogImage: '@@OGIMAGE@@', title: '@@TITLE@@', description: '@@DESC@@', path: '@@PATH@@', navCurrent: 'blog', ogType: '@@OGTYPE@@', headExtra: '@@HEAD@@', styles: ['blog.css'], scripts: ['blog.js'] },
+  body: '@@BODY@@'
+});
+
 for (const { meta, body: rawBody } of sources) {
   built.add(meta.path);
   let body = rawBody;
@@ -162,6 +180,7 @@ for (const { meta, body: rawBody } of sources) {
   let head = '';
   for (const s of schemas) head += '<script type="application/ld+json">' + JSON.stringify(s) + '</script>\n';
   if (meta.noindex) head += '<meta name="robots" content="noindex">\n';
+  if (meta.headExtra) head += meta.headExtra + '\n';
   for (const href of meta.externalStyles || []) head += '<link rel="stylesheet" href="' + href + '">\n';
   for (const css of meta.styles || []) head += '<link rel="stylesheet" href="' + asset('css/' + css) + '">\n';
   if (config.ga4Id) {
@@ -179,6 +198,7 @@ for (const { meta, body: rawBody } of sources) {
     title: esc(meta.title),
     description: esc(meta.description),
     canonical: url,
+    ogImage: meta.ogImage || config.siteUrl + '/og-image.png',
     ogType: meta.path === '/' ? 'website' : 'article',
     siteName: config.siteName,
     siteUrl: config.siteUrl,
@@ -188,18 +208,20 @@ for (const { meta, body: rawBody } of sources) {
     updated: meta.updated || today,
     head: head,
     scripts: scripts,
-    nav: navHtml(tool ? tool.cat : (CATEGORIES.find(c => c.path === meta.path) || {}).id),
+    nav: navHtml(meta.navCurrent || (tool ? tool.cat : (CATEGORIES.find(c => c.path === meta.path) || {}).id)),
     footerCols: footerCols,
     homeSections: homeSections
   };
+  if (meta.path === '/') Object.assign(vars, homeVars);
+  if (meta.ogType) vars.ogType = meta.ogType;
   const html = layout
     .replace('{{content}}', () => body)
     .replace(/{{(\w+)}}/g, (all, key) => (key in vars ? vars[key] : all));
 
-  const out = meta.path === '/404' ? path.join(DIST, '404.html') : path.join(DIST, meta.path, 'index.html');
+  const out = meta.shell ? path.join(DIST, '_shell', meta.shell + '.html') : meta.path === '/404' ? path.join(DIST, '404.html') : path.join(DIST, meta.path, 'index.html');
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, html);
-  if (!meta.noindex) pages.push({ loc: url, priority: meta.priority || '0.5' });
+  if (!meta.noindex && !meta.shell) pages.push({ loc: url, priority: meta.priority || '0.5' });
   console.log('built', path.relative(ROOT, out));
 }
 
@@ -207,7 +229,7 @@ const sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://w
   pages.map(p => '  <url><loc>' + p.loc + '</loc><lastmod>' + today + '</lastmod><priority>' + p.priority + '</priority></url>').join('\n') +
   '\n</urlset>\n';
 fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sitemap);
-fs.writeFileSync(path.join(DIST, 'robots.txt'), 'User-agent: *\nAllow: /\n\nSitemap: ' + config.siteUrl + '/sitemap.xml\n');
+fs.writeFileSync(path.join(DIST, 'robots.txt'), 'User-agent: *\nAllow: /\nDisallow: /_shell/\n\nSitemap: ' + config.siteUrl + '/sitemap.xml\nSitemap: ' + config.siteUrl + '/blog/sitemap.xml\n');
 console.log('built sitemap.xml with', pages.length, 'pages');
 const missing = TOOLS.filter(t => !built.has(t.path)).map(t => t.path);
 if (missing.length) console.log('NOTE: listed in src/tools.js but no page yet:', missing.join(', '));
