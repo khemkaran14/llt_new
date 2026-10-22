@@ -22,6 +22,8 @@ const crypto = require('crypto');
 const md = require('./markdown.js');
 const { CATEGORIES, TOOLS, ICONS } = require('../src/tools.js');
 const SEED = require('./blog-seed.js');
+// The first four starters (before seeding was tracked per article)
+const ORIGINAL_SEED_SLUGS = ['new-vs-old-tax-regime-fy-2026-27', 'sukanya-samriddhi-vs-ppf', 'passport-and-exam-photo-size-guide', 'wedding-budget-breakdown-india'];
 
 const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]{0,78}[a-z0-9])?$/;
 const RESERVED = new Set(['tag', 'topic', 'feed.xml', 'sitemap.xml', 'page']);
@@ -49,9 +51,17 @@ function createBlog(opts) {
   const cfg = Object.assign({ siteUrl: 'https://livelifetricks.com', siteName: 'LiveLifeTricks', now: () => Date.now(), seed: true }, opts);
   const { posts, subscribers } = cfg; // stores (see store.js)
   const mediaDir = cfg.mediaDir;
-  if (cfg.seed && posts.all().length === 0 && !posts.meta('seeded')) {
-    SEED.forEach(p => posts.insert(Object.assign({ id: newId(), status: 'published', author: 'LiveLifeTricks team', cover: '', coverAlt: '' }, p, { createdAt: p.publishedAt, updatedAt: p.publishedAt })));
-    posts.meta('seeded', true);
+  // Starter articles: each one is added once, by its slug. A starter you delete
+  // or rename stays gone, and new starters in blog-seed.js appear on the next restart.
+  if (cfg.seed) {
+    let done = posts.meta('seededSlugs');
+    if (!Array.isArray(done)) done = posts.meta('seeded') ? ORIGINAL_SEED_SLUGS.slice() : [];
+    const fresh = SEED.filter(p => done.indexOf(p.slug) === -1);
+    fresh.forEach(p => {
+      if (!posts.findBy('slug', p.slug)) posts.insert(Object.assign({ id: newId(), status: 'published', author: 'LiveLifeTricks team', cover: '', coverAlt: '' }, p, { createdAt: p.publishedAt, updatedAt: p.publishedAt }));
+      done.push(p.slug);
+    });
+    if (fresh.length || !Array.isArray(posts.meta('seededSlugs'))) posts.meta('seededSlugs', done);
   }
 
   function newId() { return 'p_' + Date.now().toString(36) + crypto.randomBytes(4).toString('hex'); }

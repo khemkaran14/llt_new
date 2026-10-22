@@ -60,7 +60,7 @@ test('blog starts with the seed articles and serves list, post, feed and sitemap
   assert.ok(r.text.includes('class="card tool-card post-tool" href="/sukanya-samriddhi-calculator/"'), 'tool card rendered');
   r = await call('GET', '/blog/feed.xml');
   assert.match(r.headers.get('content-type'), /rss/);
-  assert.equal((r.text.match(/<item>/g) || []).length, 4);
+  assert.equal((r.text.match(/<item>/g) || []).length, 9);
   r = await call('GET', '/blog/sitemap.xml');
   assert.ok(r.text.includes('<loc>https://livelifetricks.com/blog/new-vs-old-tax-regime-fy-2026-27/</loc>'));
   r = await call('GET', '/blog/topic/wedding/');
@@ -69,7 +69,7 @@ test('blog starts with the seed articles and serves list, post, feed and sitemap
   assert.equal(r.status, 404);
   r = await call('GET', '/api/blog/latest?limit=2');
   assert.equal(r.json.posts.length, 2);
-  assert.equal(r.json.posts[0].url, '/blog/wedding-budget-breakdown-india/');
+  assert.equal(r.json.posts[0].url, '/blog/home-loan-eligibility-on-salary/');
 }));
 
 test('admin writes, previews, schedules, publishes and deletes posts', () => withBlog(async ({ call, login, logout, advance }) => {
@@ -134,3 +134,20 @@ test('email sign-up stores each address once and admin can export it', () => wit
   r = await call('GET', '/api/admin/subscribers.csv');
   assert.ok(r.text.includes('"reader@example.com","home","active"'));
 }));
+
+test('new starter articles are added once to an existing blog, deleted ones stay deleted', () => {
+  const { createBlog } = require('../server/blog.js');
+  const SEED = require('../server/blog-seed.js');
+  // A blog seeded by the older version: first four starters, one of them deleted by the owner
+  const posts = createStore(null);
+  SEED.slice(0, 4).filter(p => p.slug !== 'sukanya-samriddhi-vs-ppf').forEach((p, i) => posts.insert(Object.assign({ id: 'old' + i, status: 'published' }, p)));
+  posts.meta('seeded', true);
+  const opts = { posts, subscribers: createStore(null), mediaDir: os.tmpdir(), shellFile: '/nonexistent', now: () => Date.parse('2026-10-22T10:00:00Z') };
+  createBlog(opts);
+  const slugs = posts.all().map(p => p.slug);
+  assert.equal(slugs.length, 3 + (SEED.length - 4));
+  assert.ok(!slugs.includes('sukanya-samriddhi-vs-ppf'), 'deleted starter does not come back');
+  assert.ok(slugs.includes('kundli-milan-guna-milan-explained'));
+  createBlog(opts);
+  assert.equal(posts.all().length, slugs.length, 'restart adds nothing twice');
+});
