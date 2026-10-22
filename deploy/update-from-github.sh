@@ -43,6 +43,9 @@ main() {
   if systemctl list-unit-files llt-api.service >/dev/null 2>&1 && systemctl is-enabled llt-api >/dev/null 2>&1; then
     echo "==> Restarting API server"
     systemctl restart llt-api
+  else
+    echo "NOTE: the blog, email sign-up and admin need a one-time setup. Run:"
+    echo "      bash $repo_dir/deploy/setup-server.sh"
   fi
   echo "==> Done: $(git log -1 --format='%h %s')"
 }

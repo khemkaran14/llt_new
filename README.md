@@ -269,6 +269,14 @@ The biodata page is static, but payments, emails and the admin dashboard need th
 | `deploy/nginx-api.conf` | nginx lines that send `/api` and `/admin` to the server |
 | `deploy/api.env.example` | Settings (admin password, Razorpay keys, `BIODATA_PRICE`, `INVITE_PRICE`) |
 
+**One-time setup on the VPS** (blog, admin, email sign-up and paid designs all need it):
+
+```bash
+bash /root/livelifetricks/deploy/setup-server.sh
+```
+
+It creates the settings file (printing a new admin password once), installs and starts the `llt-api` service, adds the nginx line, and checks that `/blog/`, `/api` and `/admin` answer. It is safe to run again.
+
 **Test locally** (fake payments, no Razorpay needed):
 
 ```bash
