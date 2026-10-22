@@ -75,6 +75,9 @@
   .pill { font-size: .72rem; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: var(--soft); color: var(--brand); }
   .pill.premium, .pill.created, .pill.draft, .pill.scheduled { background: var(--warnbg); color: var(--warn); }
   .linkbtn { background: none; border: 0; height: auto; padding: 0; color: var(--brand); font-weight: 600; }
+  .linkbtn.danger { color: var(--bad); }
+  .actions { display: flex; gap: 14px; align-items: center; }
+  #post-rows td.wrap { white-space: normal; min-width: 260px; width: 100%; }
 
   /* Editor */
   .editor { display: grid; grid-template-columns: 1fr 340px; gap: 16px; align-items: start; }
@@ -179,14 +182,15 @@
     <section data-panel="blog" hidden>
       <div class="top"><h1>Blog posts</h1><div class="row"><a class="btn" href="/blog/feed.xml" target="_blank" rel="noopener">RSS feed ↗</a><button class="primary" id="new-post">+ New post</button></div></div>
       <div class="filters"><input id="pq" type="search" placeholder="Search posts"><select id="pstatus"><option value="">All posts</option><option value="published">Published</option><option value="draft">Drafts</option></select></div>
-      <div class="tablewrap"><table><thead><tr><th>Title</th><th>Status</th><th>Topic</th><th>Published</th><th>Updated</th><th></th></tr></thead><tbody id="post-rows"></tbody></table></div>
+      <div class="tablewrap"><table><thead><tr><th>Title</th><th>Status</th><th>Topic</th><th>Published</th><th></th></tr></thead><tbody id="post-rows"></tbody></table></div>
+      <p class="saved" id="posts-msg" role="status"></p>
     </section>
 
     <!-- Blog editor -->
     <section data-panel="editor" hidden>
       <div class="top">
         <div class="row"><button id="back-posts">← All posts</button><h1 id="ed-heading">New post</h1></div>
-        <div class="row"><span class="saved" id="ed-saved" role="status"></span><a class="btn" id="ed-view" target="_blank" rel="noopener" hidden>View ↗</a><button id="save-draft">Save draft</button><button class="primary" id="publish">Publish</button></div>
+        <div class="row"><span class="saved" id="ed-saved" role="status"></span><a class="btn" id="ed-view" target="_blank" rel="noopener" hidden>View ↗</a><button class="danger" id="delete-post" hidden>Delete</button><button id="save-draft">Save draft</button><button class="primary" id="publish">Publish</button></div>
       </div>
       <div class="err" id="ed-err"></div>
       <div class="editor">
@@ -228,7 +232,6 @@
             <div class="field"><label for="p-seo">Google title (optional) <span class="count" id="seo-count"></span></label><input id="p-seo" maxlength="70"></div>
             <div class="seo-preview"><div class="u" id="sp-url"></div><div class="t" id="sp-title"></div><div class="muted" id="sp-desc"></div></div>
           </div>
-          <button class="danger" id="delete-post" style="margin-top:12px" hidden>Delete this post</button>
         </aside>
       </div>
       <input type="file" id="img-file" accept="image/jpeg,image/png,image/webp" hidden>
@@ -387,13 +390,30 @@
     var topic = function (id) { var t = postsData.topics.filter(function (x) { return x.id === id; })[0]; return t ? t.name : id; };
     $('post-rows').innerHTML = list.map(function (p) {
       return '<tr><td class="wrap"><button class="linkbtn" data-edit="' + p.id + '">' + esc(p.title) + '</button><div class="muted small">/blog/' + esc(p.slug) + '/ · ' + p.minutes + ' min read</div></td>' +
-        '<td><span class="pill ' + postState(p) + '">' + postState(p) + '</span></td><td>' + esc(topic(p.category)) + '</td><td>' + dateOnly(p.publishedAt) + '</td><td>' + when(p.updatedAt) + '</td>' +
-        '<td><a href="' + p.url + '" target="_blank" rel="noopener">View ↗</a></td></tr>';
-    }).join('') || '<tr><td colspan="6" class="muted">No posts yet. Click “New post” to write your first one.</td></tr>';
+        '<td><span class="pill ' + postState(p) + '">' + postState(p) + '</span></td><td>' + esc(topic(p.category)) + '</td><td>' + dateOnly(p.publishedAt) + '</td>' +
+        '<td><div class="actions"><button class="linkbtn" data-edit="' + p.id + '">Edit</button><a href="' + p.url + '" target="_blank" rel="noopener">View ↗</a><button class="linkbtn danger" data-del-post="' + p.id + '">Delete</button></div></td></tr>';
+    }).join('') || '<tr><td colspan="5" class="muted">No posts yet. Click “New post” to write your first one.</td></tr>';
   }
   ['pq', 'pstatus'].forEach(function (id) { $(id).addEventListener('input', function () { if (postsData) renderPosts(); }); });
-  $('post-rows').addEventListener('click', function (e) { var b = e.target.closest('[data-edit]'); if (b) openEditor(postsData.posts.filter(function (p) { return p.id === b.getAttribute('data-edit'); })[0]); });
-  $('new-post').addEventListener('click', function () { openEditor(null); });
+  $('post-rows').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-edit]');
+    if (b) return openEditor(postsData.posts.filter(function (p) { return p.id === b.getAttribute('data-edit'); })[0]);
+    var d = e.target.closest('[data-del-post]');
+    if (d) deletePost(postsData.posts.filter(function (p) { return p.id === d.getAttribute('data-del-post'); })[0]);
+  });
+  // Delete a post (from the list or the editor). Returns true when deleted.
+  function deletePost(p) {
+    if (!p) return Promise.resolve(false);
+    var msg = 'Delete “' + p.title + '”?\n\nIt will disappear from the blog, the RSS feed and Google’s sitemap. This cannot be undone.' +
+      (p.status === 'published' ? '\n\nTip: to hide it but keep it, open it and click “Save draft” instead.' : '');
+    if (!confirm(msg)) return Promise.resolve(false);
+    return post('/api/admin/posts/delete', { id: p.id }).then(function () {
+      if (postsData) { postsData.posts = postsData.posts.filter(function (x) { return x.id !== p.id; }); renderPosts(); renderOverview(); }
+      $('posts-msg').textContent = 'Deleted “' + p.title + '”.';
+      return true;
+    }).catch(function (e) { if (e.message !== 'login') alert(e.message); return false; });
+  }
+  $('new-post').addEventListener('click', function () { $('posts-msg').textContent = ''; openEditor(null); });
   $('back-posts').addEventListener('click', function () { show('blog'); });
 
   function localInput(iso) { if (!iso) return ''; var d = new Date(iso); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); }
@@ -548,8 +568,8 @@
   $('publish').addEventListener('click', function () { save('published'); });
   $('p-body').addEventListener('keydown', function (e) { if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); save($('p-status').value); } });
   $('delete-post').addEventListener('click', function () {
-    if (!current || !confirm('Delete “' + current.title + '”? This cannot be undone.')) return;
-    post('/api/admin/posts/delete', { id: current.id }).then(function () { dirty = false; postsData = null; show('blog'); }).catch(function (e) { $('ed-err').textContent = e.message; });
+    if (!current) return;
+    deletePost(current).then(function (ok) { if (ok) { dirty = false; current = null; show('blog'); } });
   });
 
   // ---------- Subscribers ----------
