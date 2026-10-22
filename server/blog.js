@@ -40,6 +40,19 @@ const minutesOf = body => Math.max(1, Math.round(md.plain(body).split(' ').lengt
 const jsonLd = o => '<script type="application/ld+json">' + JSON.stringify(o).replace(/</g, '\\u003c') + '</script>';
 const xml = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+// Graphic shown on cards for posts that have no cover image
+function placeholder(cat) {
+  const c = CATEGORIES.find(x => x.id === cat);
+  const icon = ICONS[(c && c.icon) || 'doc'] || ICONS.doc;
+  const name = md.esc(topicName(cat));
+  return '<div class="post-cover-ph cat-' + md.esc(cat) + '" role="img" aria-label="' + name + '">' +
+    '<svg class="ph-art" viewBox="0 0 400 210" aria-hidden="true"><circle cx="330" cy="30" r="90" fill="rgba(255,255,255,.10)"/><circle cx="40" cy="200" r="70" fill="rgba(255,255,255,.08)"/>' +
+    '<path d="M0 170 C80 140 140 160 210 130 S330 80 400 90 V210 H0Z" fill="rgba(255,255,255,.10)"/>' +
+    '<circle cx="200" cy="96" r="54" fill="rgba(255,255,255,.18)"/>' +
+    '<g transform="translate(170 66) scale(2.5)" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + icon + '</g></svg>' +
+    '<span>' + name + '</span></div>';
+}
+
 function toolCardHtml(p) {
   const t = TOOLS.find(x => x.path === p);
   if (!t) return '';
@@ -62,6 +75,17 @@ function createBlog(opts) {
       done.push(p.slug);
     });
     if (fresh.length || !Array.isArray(posts.meta('seededSlugs'))) posts.meta('seededSlugs', done);
+
+    // Give starter articles their cover image once, if they don't have one yet
+    // (a cover the owner removes or changes later is left alone).
+    const covered = posts.meta('coverSlugs') || [];
+    const todo = SEED.filter(p => p.cover && covered.indexOf(p.slug) === -1);
+    todo.forEach(p => {
+      const post = posts.findBy('slug', p.slug);
+      if (post && !post.cover) posts.update(post.id, { cover: p.cover, coverAlt: p.coverAlt || '' });
+      covered.push(p.slug);
+    });
+    if (todo.length) posts.meta('coverSlugs', covered);
   }
 
   function newId() { return 'p_' + Date.now().toString(36) + crypto.randomBytes(4).toString('hex'); }
@@ -93,7 +117,7 @@ function createBlog(opts) {
   function card(p, big) {
     const cover = p.cover
       ? '<img src="' + md.esc(p.cover) + '" alt="' + md.esc(p.coverAlt || '') + '" loading="lazy" width="800" height="420">'
-      : '<div class="post-cover-ph cat-' + md.esc(p.category) + '"><span>' + md.esc(topicName(p.category)) + '</span></div>';
+      : placeholder(p.category);
     return '<a class="card post-card' + (big ? ' post-card-big' : '') + '" href="' + urlOf(p) + '">' + cover +
       '<div class="post-card-body"><span class="post-meta">' + md.esc(topicName(p.category)) + ' · ' + fmtDate(p.publishedAt) + ' · ' + minutesOf(p.body) + ' min read</span>' +
       '<h' + (big ? 2 : 3) + '>' + md.esc(p.title) + '</h' + (big ? 2 : 3) + '><p class="muted small">' + md.esc(p.description) + '</p></div></a>';
@@ -254,7 +278,7 @@ function createBlog(opts) {
   function routes(h) {
     const { isAdmin, readJson, limited, clean, EMAIL_RE, readBody } = h;
     const need = req => { if (!isAdmin(req)) throw Object.assign(new Error('Please log in.'), { status: 401 }); };
-    const summary = p => ({ title: p.title, description: p.description, url: urlOf(p), cover: p.cover || '', category: p.category, categoryName: topicName(p.category), date: fmtDate(p.publishedAt), minutes: minutesOf(p.body) });
+    const summary = p => ({ placeholder: p.cover ? '' : placeholder(p.category), title: p.title, description: p.description, url: urlOf(p), cover: p.cover || '', coverAlt: p.coverAlt || '', category: p.category, categoryName: topicName(p.category), date: fmtDate(p.publishedAt), minutes: minutesOf(p.body) });
 
     return {
       'GET /api/blog/latest': (req) => {

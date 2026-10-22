@@ -581,12 +581,14 @@ input[type="date"] { height: 46px; padding: 0 12px; background: var(--surface); 
 .post-card p { margin: 0; }
 .post-meta { font-size: .8rem; color: var(--muted); }
 .post-cover-ph { aspect-ratio: 40 / 21; display: grid; place-items: center; background: linear-gradient(135deg, var(--brand), #0891b2); color: #fff; font-weight: 800; letter-spacing: .02em; }
-.post-cover-ph.cat-tax { background: linear-gradient(135deg, #0369a1, #0f766e); }
-.post-cover-ph.cat-loans { background: linear-gradient(135deg, #6d28d9, #4338ca); }
-.post-cover-ph.cat-savings { background: linear-gradient(135deg, #15803d, #0f766e); }
-.post-cover-ph.cat-wedding { background: linear-gradient(135deg, #9f1239, #6b21a8); }
-.post-cover-ph.cat-documents { background: linear-gradient(135deg, #b45309, #c2410c); }
-.post-cover-ph span { background: rgba(0, 0, 0, .18); padding: 6px 14px; border-radius: 999px; }
+.post-cover-ph.cat-tax { background-image: radial-gradient(rgba(255, 255, 255, .14) 1.5px, transparent 1.5px), linear-gradient(135deg, #0369a1, #0f766e); }
+.post-cover-ph.cat-loans { background-image: radial-gradient(rgba(255, 255, 255, .14) 1.5px, transparent 1.5px), linear-gradient(135deg, #6d28d9, #4338ca); }
+.post-cover-ph.cat-savings { background-image: radial-gradient(rgba(255, 255, 255, .14) 1.5px, transparent 1.5px), linear-gradient(135deg, #15803d, #0f766e); }
+.post-cover-ph.cat-wedding { background-image: radial-gradient(rgba(255, 255, 255, .14) 1.5px, transparent 1.5px), linear-gradient(135deg, #9f1239, #6b21a8); }
+.post-cover-ph.cat-documents { background-image: radial-gradient(rgba(255, 255, 255, .14) 1.5px, transparent 1.5px), linear-gradient(135deg, #b45309, #c2410c); }
+.post-cover-ph { position: relative; overflow: hidden; background-image: radial-gradient(rgba(255, 255, 255, .14) 1.5px, transparent 1.5px), linear-gradient(135deg, var(--brand), #0891b2); background-size: 22px 22px, auto; }
+.post-cover-ph .ph-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+.post-cover-ph span { position: absolute; left: 14px; bottom: 12px; font-size: .8rem; background: rgba(0, 0, 0, .22); padding: 5px 12px; border-radius: 999px; }
 
 .newsletter { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; padding: 28px; background: linear-gradient(135deg, var(--brand-soft), var(--surface)); }
 .newsletter h2 { margin: 0 0 6px; }

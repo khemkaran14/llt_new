@@ -8,6 +8,8 @@
 module.exports = [
   {
     slug: 'new-vs-old-tax-regime-fy-2026-27',
+    cover: '/img/blog/new-vs-old-tax-regime-fy-2026-27.jpg',
+    coverAlt: 'Bar chart: tax on a ₹15 lakh salary is ₹97,500 in the new regime and ₹2.03 lakh in the old regime',
     title: 'New vs old tax regime for FY 2026-27: which one should you pick?',
     description: 'For most salaried people the new regime now wins. Here is the tax at ₹8 lakh to ₹30 lakh under both regimes, and the cases where the old regime still saves money.',
     category: 'tax',
@@ -71,6 +73,8 @@ Our income tax calculator shows the exact amount of extra deductions you would n
   },
   {
     slug: 'sukanya-samriddhi-vs-ppf',
+    cover: '/img/blog/sukanya-samriddhi-vs-ppf.jpg',
+    coverAlt: 'Growth chart: Sukanya Samriddhi reaches ₹71.8 lakh and PPF ₹40.7 lakh, with a piggy bank',
     title: 'Sukanya Samriddhi vs PPF: which is better for your daughter?',
     description: 'Sukanya Samriddhi pays 8.2% and PPF 7.1%, both tax-free. See how much each grows to on ₹1.5 lakh a year, and the rules that matter before you open an account.',
     category: 'savings',
@@ -120,6 +124,8 @@ Say you put in **₹1.5 lakh every year for 15 years** (₹22.5 lakh in all):
   },
   {
     slug: 'passport-and-exam-photo-size-guide',
+    cover: '/img/blog/passport-and-exam-photo-size-guide.jpg',
+    coverAlt: 'Passport photo measuring 35 × 45 mm (630 × 810 pixels) and a sample signature',
     title: 'Passport photo and exam form photo size: the exact pixels and KB',
     description: 'Indian passport photos are 35×45 mm (630×810 pixels). Bank and SSC-type exam forms want small photos and signatures under strict KB limits. Here is how to get them right first time.',
     category: 'documents',
@@ -164,6 +170,8 @@ Everything happens in your browser. Your photo is never uploaded to us.`
   },
   {
     slug: 'wedding-budget-breakdown-india',
+    cover: '/img/blog/wedding-budget-breakdown-india.jpg',
+    coverAlt: 'Donut chart splitting a ₹15 lakh wedding budget across catering, venue, outfits, decor and photos',
     title: 'How to split your wedding budget: a simple plan that works',
     description: 'Where the money goes in a typical Indian wedding, with a sample split of a ₹15 lakh budget across venue, catering, outfits, photos and more.',
     category: 'wedding',
@@ -209,6 +217,8 @@ This is the starting split in our free wedding budget planner. Change the percen
   },
   {
     slug: 'home-loan-eligibility-on-salary',
+    cover: '/img/blog/home-loan-eligibility-on-salary.jpg',
+    coverAlt: 'House with a key: a ₹1 lakh monthly salary supports a ₹50,000 EMI and a ₹57.6 lakh loan',
     title: 'How much home loan can I get on my salary?',
     description: 'Banks let your EMIs take about half of your monthly income. Here is the loan you can expect on ₹50,000 to ₹1.5 lakh a month, how much down payment you need, and five ways to borrow more.',
     category: 'loans',
@@ -265,6 +275,8 @@ So on a ₹72 lakh flat you must pay at least ₹14.4 lakh yourself, plus stamp 
   },
   {
     slug: 'epf-balance-at-retirement',
+    cover: '/img/blog/epf-balance-at-retirement.jpg',
+    coverAlt: 'Growing stacks of coins: EPF on a ₹30,000 basic salary can reach ₹1.31 crore by 58',
     title: 'How much will your PF be at retirement? EPF explained with numbers',
     description: 'EPF pays 8.25% and grows quietly every month. See where your 12% goes, how a ₹30,000 basic salary can become over ₹1.3 crore by 58, and when withdrawals are tax-free.',
     category: 'savings',
@@ -315,6 +327,8 @@ EPF interest for FY 2025-26 is **8.25%**, and interest compounds every year. Sta
   },
   {
     slug: 'capital-gains-tax-shares-mutual-funds',
+    cover: '/img/blog/capital-gains-tax-shares-mutual-funds.jpg',
+    coverAlt: 'Rising share price chart with capital gains tax rates: 20% short-term, 12.5% long-term, ₹1.25 lakh exempt',
     title: 'Capital gains tax on shares and mutual funds: a simple guide',
     description: 'Sold shares or mutual fund units? Short-term gains are taxed at 20%, long-term at 12.5% above ₹1.25 lakh, and newer debt funds at your slab rate. Worked examples inside.',
     category: 'tax',
@@ -367,6 +381,8 @@ Long-term gains made before 31 January 2018 were tax-free, and they still are. F
   },
   {
     slug: 'kundli-milan-guna-milan-explained',
+    cover: '/img/blog/kundli-milan-guna-milan-explained.jpg',
+    coverAlt: 'North Indian kundli chart and a Guna Milan score of 28 out of 36 with the eight kootas',
     title: 'Kundli Milan explained: what the 36 gunas mean',
     description: 'What each of the 8 kootas in Guna Milan checks, how many points each carries, what 18, 25 or 33 points mean, and what Nadi and Bhakoot dosha are.',
     category: 'wedding',
@@ -422,6 +438,8 @@ When the match is fixed, make a [biodata](/biodata/) and a [wedding invitation](
   },
   {
     slug: 'how-much-money-to-retire-india',
+    cover: '/img/blog/how-much-money-to-retire-india.jpg',
+    coverAlt: 'Sunset illustration: spending ₹50,000 a month today may need a ₹7.7 crore retirement corpus',
     title: 'How much money do you need to retire in India?',
     description: 'If you spend ₹50,000 a month today, you may need about ₹7.7 crore to retire at 60. Here is how that number is worked out, and the monthly SIP that gets you there.',
     category: 'savings',

@@ -102,7 +102,7 @@
       if (!j || !j.posts || !j.posts.length) return;
       $('latest-list').innerHTML = j.posts.map(function (p) {
         return '<a class="card post-card" href="' + esc(p.url) + '">' +
-          (p.cover ? '<img src="' + esc(p.cover) + '" alt="" loading="lazy" width="400" height="210">' : '<div class="post-cover-ph cat-' + esc(p.category) + '"><span>' + esc(p.categoryName) + '</span></div>') +
+          (p.cover ? '<img src="' + esc(p.cover) + '" alt="' + esc(p.coverAlt) + '" loading="lazy" width="400" height="210">' : (p.placeholder || '')) +
           '<div class="post-card-body"><span class="post-meta">' + esc(p.date) + ' · ' + p.minutes + ' min read</span><h3>' + esc(p.title) + '</h3><p class="muted small">' + esc(p.description) + '</p></div></a>';
       }).join('');
       box.hidden = false;

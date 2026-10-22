@@ -151,3 +151,20 @@ test('new starter articles are added once to an existing blog, deleted ones stay
   createBlog(opts);
   assert.equal(posts.all().length, slugs.length, 'restart adds nothing twice');
 });
+
+test('existing starter posts get their cover image once; a removed cover stays removed', () => {
+  const { createBlog } = require('../server/blog.js');
+  const SEED = require('../server/blog-seed.js');
+  const posts = createStore(null);
+  SEED.forEach((p, i) => posts.insert(Object.assign({}, p, { id: 'p' + i, status: 'published', cover: '', coverAlt: '' })));
+  posts.meta('seededSlugs', SEED.map(p => p.slug));
+  const opts = { posts, subscribers: createStore(null), mediaDir: os.tmpdir(), shellFile: '/nonexistent', now: () => Date.parse('2026-10-22T10:00:00Z') };
+  createBlog(opts);
+  const tax = posts.findBy('slug', 'new-vs-old-tax-regime-fy-2026-27');
+  assert.equal(tax.cover, '/img/blog/new-vs-old-tax-regime-fy-2026-27.jpg');
+  assert.ok(tax.coverAlt.length > 20);
+  posts.update(tax.id, { cover: '' });
+  createBlog(opts);
+  assert.equal(posts.findBy('slug', 'new-vs-old-tax-regime-fy-2026-27').cover, '', 'owner removed it; not re-added');
+  SEED.forEach(p => assert.ok(fs.existsSync(path.join(__dirname, '..', 'src', 'static', p.cover)), 'cover file exists for ' + p.slug));
+});
